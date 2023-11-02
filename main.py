@@ -2,7 +2,7 @@ import pygame
 from Game.snake import Snake
 from Game.gameLogic import GameLogic
 from Graphics.background import Background
-
+from Game.food import Food
 WIDTH, HEIGHT = 1400, 900
 SCREEN_WIDTH, SCREEN_HEIGHT = 900, 800
 GRID_SIZE = 20
@@ -23,6 +23,7 @@ def main():
     screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
     snake = Snake(GRID_WIDTH // 2, GRID_HEIGHT // 2)
     game_logic = GameLogic(snake, GRID_WIDTH, GRID_HEIGHT)
+    food = game_logic.food
     clock = pygame.time.Clock()
     background = Background(WIDTH, HEIGHT)
     running = True
@@ -48,7 +49,7 @@ def main():
             for y in range(GRID_HEIGHT):
                 pygame.draw.rect(screen, GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
 
-        pygame.draw.rect(screen, RED, (game_logic.food[0] * GRID_SIZE, game_logic.food[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, RED, (food.food[0] * GRID_SIZE, food.food[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
         # Vẽ rắn
         for segment in snake.body:
             pygame.draw.rect(screen, GREEN, (segment[0] * GRID_SIZE, segment[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))

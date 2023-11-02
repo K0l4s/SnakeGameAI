@@ -1,25 +1,17 @@
 import random
-
+from Game.food import Food
 class GameLogic:
     def __init__(self, snake, width, height):
         self.snake = snake
         self.width = width
         self.height = height
-        self.spawn_food()
-
-    def spawn_food(self):
-        while True:
-            x = random.randint(0, self.width - 1)
-            y = random.randint(0, self.height - 1)
-            if (x, y) not in self.snake.body:
-                self.food = (x, y)
-                break
+        self.food = Food(width, height, snake)
 
     def update(self):
         head = self.snake.move()
 
-        if head == self.food:
-            self.spawn_food()
+        if head == self.food.food:
+            self.food.spawn_food()
         else:
             self.snake.body.pop(0)
 
