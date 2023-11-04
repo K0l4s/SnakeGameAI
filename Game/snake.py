@@ -1,3 +1,4 @@
+import pygame 
 class Snake:
     def __init__(self, x, y):
         self.body = [(x, y)]
@@ -22,3 +23,4 @@ class Snake:
     def collides_with_self(self):
         head = self.body[-1]
         return head in self.body[:-1]
+    

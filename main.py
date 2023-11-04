@@ -40,9 +40,8 @@ def main():
                     snake.change_direction((-1, 0))
                 elif event.key == pygame.K_RIGHT:
                     snake.change_direction((1, 0))
-
-        background.draw(window)
         game_logic.update()
+        background.draw(window)
         # Vẽ screen
         screen.fill(BLACK)
         for x in range(GRID_WIDTH):

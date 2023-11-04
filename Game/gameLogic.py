@@ -1,5 +1,6 @@
 import random
 from Game.food import Food
+from Game.bfs import bfs
 class GameLogic:
     def __init__(self, snake, width, height):
         self.snake = snake
