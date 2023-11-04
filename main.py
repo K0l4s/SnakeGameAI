@@ -1,5 +1,4 @@
 import pygame
-import sys
 from Game.snake import Snake
 from Game.gameLogic import GameLogic
 from Graphics.background import Background
@@ -40,8 +39,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 playing = False
-                pygame.quit()
-                sys.exit()
+                
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if game_logic.game_over():
@@ -79,11 +77,11 @@ def main():
         if game_logic.game_over():
             screen.fill(BLACK)
             score = game_logic.get_score()
-            display_message(f"Game Over - Press SPACE to restart\nYour score: {score}", screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
+            display_message(f"Game Over - Press SPACE to restart\nYour scores: {score}", screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
             window.blit(screen, (50, 50))
 
         pygame.display.update()
         clock.tick(10)
-
+    pygame.quit()
 if __name__ == "__main__":
     main()
