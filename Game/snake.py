@@ -10,7 +10,7 @@ class Snake:
 
     def move(self):
         head = self.body[-1]
-        print(head)
+        # print(head)
         new_head = (head[0] + self.direction[0], head[1] + self.direction[1])
         self.body.append(new_head)
         return new_head
