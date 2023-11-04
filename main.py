@@ -1,4 +1,5 @@
 import pygame
+import sys
 from Game.snake import Snake
 from Game.gameLogic import GameLogic
 from Graphics.background import Background
@@ -16,6 +17,12 @@ GRAY  = (96, 100, 107)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
+def display_message(message, screen, screen_size):
+    popup_font = pygame.font.Font(None, 48)
+    popup_text = popup_font.render(message, True, RED)
+    popup_rect = popup_text.get_rect(center=(screen_size[0] // 2, screen_size[1] // 2))
+    screen.blit(popup_text, popup_rect)
+    
 def main():
     pygame.init()
     pygame.display.set_caption("Snake Game")
@@ -26,23 +33,36 @@ def main():
     food = game_logic.food
     clock = pygame.time.Clock()
     background = Background(WIDTH, HEIGHT)
-    running = True
-    while running:
+    playing = True
+
+    score = 0
+    while playing:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                playing = False
+                pygame.quit()
+                sys.exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    snake.change_direction((0, -1))
-                elif event.key == pygame.K_DOWN:
-                    snake.change_direction((0, 1))
-                elif event.key == pygame.K_LEFT:
-                    snake.change_direction((-1, 0))
-                elif event.key == pygame.K_RIGHT:
-                    snake.change_direction((1, 0))
+                if event.key == pygame.K_SPACE:
+                    if game_logic.game_over():
+                        game_logic.restart_game()
+
+                elif not game_logic.game_over():
+                    if event.key == pygame.K_UP:
+                        snake.change_direction((0, -1))
+                    elif event.key == pygame.K_DOWN:
+                        snake.change_direction((0, 1))
+                    elif event.key == pygame.K_LEFT:
+                        snake.change_direction((-1, 0))
+                    elif event.key == pygame.K_RIGHT:
+                        snake.change_direction((1, 0))
 
         background.draw(window)
-        game_logic.update()
+
+        if not game_logic.game_over():
+            game_logic.update()
+
+
         # Vẽ screen
         screen.fill(BLACK)
         for x in range(GRID_WIDTH):
@@ -55,10 +75,15 @@ def main():
             pygame.draw.rect(screen, GREEN, (segment[0] * GRID_SIZE, segment[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
 
         window.blit(screen, (50, 50))
+
+        if game_logic.game_over():
+            screen.fill(BLACK)
+            score = game_logic.get_score()
+            display_message(f"Game Over - Press SPACE to restart\nYour score: {score}", screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
+            window.blit(screen, (50, 50))
+
         pygame.display.update()
         clock.tick(10)
-
-    pygame.quit()
 
 if __name__ == "__main__":
     main()
