@@ -66,7 +66,9 @@ def main():
         for x in range(GRID_WIDTH):
             for y in range(GRID_HEIGHT):
                 pygame.draw.rect(screen, GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
-
+        # Vẽ khung viền ngoài
+        pygame.draw.rect(screen, WHITE, (0, 0, SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1), GRID_SIZE )
+        
         pygame.draw.rect(screen, RED, (food.food[0] * GRID_SIZE, food.food[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
         # Vẽ rắn
         for segment in snake.body:
