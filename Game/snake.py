@@ -80,17 +80,35 @@ class Snake:
                 elif previous_block[1] == next_block[1]:
                     screen.blit(self.body_horizontal, rect)
                 else:
+                    head_relation = (self.body[1][0] - self.body[0][0], self.body[1][1] - self.body[0][1])
+                    
                     dx = next_block[0] - previous_block[0]
                     dy = next_block[1] - previous_block[1]
-                    print(dx,dy)
-                    if dx == 1 and dy == -1:
-                        screen.blit(self.body_tl, rect)
-                    elif dx == -1 and dy == 1:
-                        screen.blit(self.body_br, rect)
-                    elif dx == 1 and dy == 1:
-                        screen.blit(self.body_tr, rect)
-                    elif dx == -1 and dy == -1:
-                        screen.blit(self.body_bl, rect)
+                    print(previous_block[0],previous_block[1])
+                    print(next_block[0],next_block[1])
+                    print(head_relation)
+                    print("------------")
+                    # if dx == 1 and dy == -1:
+                    #     screen.blit(self.body_tl, rect)
+                    # elif dx == -1 and dy == 1:
+                    #     screen.blit(self.body_br, rect)
+                    # elif dx == 1 and dy == 1:
+                    #     screen.blit(self.body_tr, rect)
+                    # elif dx == -1 and dy == -1:
+                    #     screen.blit(self.body_bl, rect)
+                    if (dx == 1 and dy == -1) or (dx == -1 and dy == 1):
+                        if head_relation == (0, 1) or head_relation == (1, 0):
+                            screen.blit(self.body_tl, rect)
+                        else:
+                            screen.blit(self.body_br, rect)
+                    elif (dx == 1 and dy == 1) or (dx == -1 and dy == -1):
+                        if head_relation == (-1, 0) or head_relation == (0, 1):
+                            screen.blit(self.body_tr, rect)
+                        else:
+                            screen.blit(self.body_bl, rect)
+
+                
+                    
 
     def update_head_graphics(self):
         head_relation = (self.body[1][0] - self.body[0][0], self.body[1][1] - self.body[0][1])
