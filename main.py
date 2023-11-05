@@ -1,4 +1,5 @@
 import pygame
+from pygame.math import Vector2
 from Game.snake import Snake
 from Game.gameLogic import GameLogic
 from Graphics.background import Background
@@ -43,12 +44,10 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 playing = False
-                
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if game_logic.game_over():
                         game_logic.restart_game()
-
                 elif not game_logic.game_over():
                     if event.key == pygame.K_UP:
                         snake.change_direction((0, -1))
@@ -68,34 +67,32 @@ def main():
         
         if not game_logic.game_over():
             game_logic.update()
-            
-        # Vẽ screen
-        screen.fill(color.BLACK)
+
+        screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
         for x in range(GRID_WIDTH):
             for y in range(GRID_HEIGHT):
                 pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
+        # Vẽ con rắn
+        snake.draw_snake(screen)
                 
         # Vẽ khung viền ngoài
-        pygame.draw.rect(screen, color.WHITE, (0, 0, SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1 ), 3 )
-        
-        # food
-        pygame.draw.rect(screen, color.RED, (food.food[0] * GRID_SIZE, food.food[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
-        
-        # Vẽ rắn
-        for segment in snake.body:
-            pygame.draw.rect(screen, color.GREEN, (segment[0] * GRID_SIZE, segment[1] * GRID_SIZE, GRID_SIZE, GRID_SIZE))
+        pygame.draw.rect(screen, color.WHITE, (0, 0, SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1), 3)
+
+        # Vẽ food
+        screen.blit(game_logic.food.image, (food.food[0] * GRID_SIZE, food.food[1] * GRID_SIZE))
 
         # score
         score = game_logic.get_score()
-        
-        if game_logic.game_over():
-            screen.fill(color.BLACK)
-            
-            display_message(f"Game Over - Press SPACE to restart\nYour scores: {score}", screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
-        window.blit(screen, (50, 50))
 
+        if game_logic.game_over():
+            screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
+            display_message(f"Game Over - Press SPACE to restart\nYour scores: {score}", screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
+
+        window.blit(screen, (50, 50))
         pygame.display.update()
         clock.tick(10)
+
+    pygame.quit()
 
     pygame.quit()
 if __name__ == "__main__":
