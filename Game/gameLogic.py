@@ -15,6 +15,7 @@ class GameLogic:
         head = self.snake.move()
 
         if head == self.food.food:
+            self.snake.play_crunch_sound()
             self.food.spawn_food()
             self.score +=1
             print(self.score)

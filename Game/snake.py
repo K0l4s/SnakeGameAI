@@ -22,6 +22,8 @@ class Snake:
         self.body_br = pygame.image.load('Resources/skin/default_skin/body_br.png').convert_alpha()
         self.body_bl = pygame.image.load('Resources/skin/default_skin/body_bl.png').convert_alpha()
 
+        self.crunch_sound = pygame.mixer.Sound('Resources/Sound/crunch.wav')
+        
         self.head_up = pygame.transform.scale(self.head_up, (20, 20))
         self.head_down = pygame.transform.scale(self.head_down, (20, 20))
         self.head_right = pygame.transform.scale(self.head_right, (20, 20))
@@ -91,11 +93,6 @@ class Snake:
                     elif previous_block[0] == 1 and next_block[1] == 1 or previous_block[1] == 1 and next_block[0] == 1:
                         screen.blit(self.body_br,rect)
                     
-
-
-                
-                    
-
     def update_head_graphics(self):
         head_relation = (self.body[1][0] - self.body[0][0], self.body[1][1] - self.body[0][1])
         if head_relation == (1, 0):
@@ -117,6 +114,9 @@ class Snake:
             self.tail = self.tail_up
         elif tail_relation == (0, -1):
             self.tail = self.tail_down
+
+    def play_crunch_sound(self):
+        self.crunch_sound.play()
 
 
     
