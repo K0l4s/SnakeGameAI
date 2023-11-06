@@ -22,7 +22,7 @@ class GameLogic:
             self.snake.body.pop(0)
 
         if self.snake.collides_with_wall(self.width, self.height) or self.snake.collides_with_self():
-            print("Game over!")
+            # print("Game over!")
             self.game_over_flag = True
             
     def get_score(self):
