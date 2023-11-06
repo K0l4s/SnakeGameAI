@@ -1,1 +1,4 @@
 tempCodeRunnerFile.py
+__pycache__
+Game/__pycache__/
+Graphics/__pycache__/
