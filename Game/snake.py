@@ -45,7 +45,8 @@ class Snake:
     def change_direction(self, new_direction):
         if self.direction[0] + new_direction[0] != 0 or self.direction[1] + new_direction[1] != 0:
             self.direction = new_direction
-
+            self.is_moving = False
+            
     def move(self):
         head = self.body[-1]
         # print(head)

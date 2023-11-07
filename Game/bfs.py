@@ -1,26 +1,16 @@
-from collections import deque
-
-def bfs(snake, width, height, target):
+def bfs(self, start, target):
     visited = set()
-    queue = deque()
-    queue.append((snake.body[-1], []))
+    queue = [(start, [])]
 
     while queue:
-        current, path = queue.popleft()
-        visited.add(current)
+        current, path = queue.pop(0)
 
         if current == target:
             return path
 
-        for direction in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
-            new_position = (current[0] + direction[0], current[1] + direction[1])
-            if (
-                0 <= new_position[0] < width
-                and 0 <= new_position[1] < height
-                and new_position not in visited
-                and new_position not in snake.body
-            ):
-                new_path = path + [direction]
-                queue.append((new_position, new_path))
+        for neighbor in self.get_valid_neighbors(current):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, path + [neighbor]))
 
     return None
