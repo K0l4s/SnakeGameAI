@@ -4,15 +4,15 @@ class Snake:
         self.body = [(x, y), (x-1, y)]
         self.direction = (1, 0)
 
-        self.head_up = pygame.image.load('Resources/skin/default_skin/tail_up.png').convert_alpha()
-        self.head_down = pygame.image.load('Resources/skin/default_skin/tail_down.png').convert_alpha()
-        self.head_right = pygame.image.load('Resources/skin/default_skin/tail_right.png').convert_alpha()
-        self.head_left = pygame.image.load('Resources/skin/default_skin/tail_left.png').convert_alpha()
+        self.tail_up = pygame.image.load('Resources/skin/default_skin/tail_up.png').convert_alpha()
+        self.tail_down = pygame.image.load('Resources/skin/default_skin/tail_down.png').convert_alpha()
+        self.tail_right = pygame.image.load('Resources/skin/default_skin/tail_right.png').convert_alpha()
+        self.tail_left = pygame.image.load('Resources/skin/default_skin/tail_left.png').convert_alpha()
 
-        self.tail_up = pygame.image.load('Resources/skin/default_skin/head_up.png').convert_alpha()
-        self.tail_down = pygame.image.load('Resources/skin/default_skin/head_down.png').convert_alpha()
-        self.tail_right = pygame.image.load('Resources/skin/default_skin/head_right.png').convert_alpha()
-        self.tail_left = pygame.image.load('Resources/skin/default_skin/head_left.png').convert_alpha()
+        self.head_up = pygame.image.load('Resources/skin/default_skin/head_up.png').convert_alpha()
+        self.head_down = pygame.image.load('Resources/skin/default_skin/head_down.png').convert_alpha()
+        self.head_right = pygame.image.load('Resources/skin/default_skin/head_right.png').convert_alpha()
+        self.head_left = pygame.image.load('Resources/skin/default_skin/head_left.png').convert_alpha()
 
         self.body_vertical = pygame.image.load('Resources/skin/default_skin/body_vertical.png').convert_alpha()
         self.body_horizontal = pygame.image.load('Resources/skin/default_skin/body_horizontal.png').convert_alpha()
@@ -66,11 +66,11 @@ class Snake:
             rect = pygame.Rect(x * 20, y * 20, 20, 20)
 
             if index == 0:
+                self.update_tail_graphics()
+                screen.blit(self.tail, rect)                
+            elif index == len(self.body) - 1:
                 self.update_head_graphics()
                 screen.blit(self.head, rect)
-            elif index == len(self.body) - 1:
-                self.update_tail_graphics()
-                screen.blit(self.tail, rect)
             else:
                 previous_block = (self.body[index + 1][0] -x, self.body[index + 1][1] - y)
                 next_block = (self.body[index - 1][0] -x, self.body[index - 1][1] - y)
@@ -80,8 +80,6 @@ class Snake:
                 elif previous_block[1] == next_block[1]:
                     screen.blit(self.body_horizontal, rect)
                 else:
-                    print(previous_block[0],next_block[1])
-                    print("------------")
                     if previous_block[0] == -1 and next_block[1] == -1 or previous_block[1] == -1 and next_block[0] == -1:
                         screen.blit(self.body_tl,rect)
                     elif previous_block[0] == -1 and next_block[1] == 1 or previous_block[1] == 1 and next_block[0] == -1:
@@ -97,7 +95,7 @@ class Snake:
                     
 
     def update_head_graphics(self):
-        head_relation = (self.body[1][0] - self.body[0][0], self.body[1][1] - self.body[0][1])
+        head_relation = (self.body[-2][0] - self.body[-1][0], self.body[-2][1] - self.body[-1][1])
         if head_relation == (1, 0):
             self.head = self.head_left
         elif head_relation == (-1, 0):
@@ -108,7 +106,7 @@ class Snake:
             self.head = self.head_down
 
     def update_tail_graphics(self):
-        tail_relation = (self.body[-2][0] - self.body[-1][0], self.body[-2][1] - self.body[-1][1])
+        tail_relation = (self.body[1][0] - self.body[0][0], self.body[1][1] - self.body[0][1])
         if tail_relation == (1, 0):
             self.tail = self.tail_left
         elif tail_relation == (-1, 0):
