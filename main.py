@@ -7,7 +7,6 @@ from Graphics.button import Button
 from Game.food import Food
 import Game.colors as color
 
-
 pygame.init()
 
 WIDTH, HEIGHT = 1400, 900
@@ -99,17 +98,19 @@ def main():
                     if btn_start_rect.collidepoint(event.pos):
                         playing = True
                         start = True
+                        game_logic.snake.set_moving(True)
                         game_logic.restart_game()
-                        
                     elif btn_exit_rect.collidepoint(event.pos):
                         playing = False
                         start = False
+                        # game_logic.snake.set_moving(False)
                     elif btn_quit_rect.collidepoint(event.pos):
                         pygame.quit()
                         return 
 
             if playing:
                 if event.type == pygame.KEYDOWN:
+                    game_logic.snake.set_moving(True)
                     if event.key == pygame.K_SPACE:
                         if game_logic.game_over():
                             game_logic.restart_game()
@@ -147,12 +148,11 @@ def main():
             for x in range(0, 1280, image.get_width()):
                 for y in range(0, 1280, image.get_height()):
                     screen.blit(image, (x, y))
-            # screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
+            # screen.fill(color.BLACK)
             for x in range(GRID_WIDTH):
                 for y in range(GRID_HEIGHT):
                     pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
             # Vẽ con rắn
-
             snake.draw_snake(screen)
 
             # Vẽ khung viền ngoài

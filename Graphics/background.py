@@ -4,7 +4,7 @@ class Background:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.background_image = pygame.image.load("Resources/menu.jpg")
+        self.background_image = pygame.image.load("Resources/background.jpg")
         self.background_image = pygame.transform.scale(self.background_image, (self.width, self.height))
 
         self.background_menu = pygame.image.load("Resources/menu_game.jpg")

@@ -12,6 +12,8 @@ class GameLogic:
         self.score = 0
 
     def update(self):
+        if not self.snake.is_moving:
+            return
         head = self.snake.move()
 
         if head == self.food.food:

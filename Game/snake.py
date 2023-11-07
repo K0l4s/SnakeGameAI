@@ -2,8 +2,8 @@ import pygame
 class Snake:
     def __init__(self, x, y):
         self.body = [(x, y), (x-1, y)]
-        self.direction = (1, 0)
-
+        self.direction = (-1, 0)
+        self.is_moving = False
         self.tail_up = pygame.image.load('Resources/skin/ekans_skin/tail_up.png').convert_alpha()
         self.tail_down = pygame.image.load('Resources/skin/ekans_skin/tail_down.png').convert_alpha()
         self.tail_right = pygame.image.load('Resources/skin/ekans_skin/tail_right.png').convert_alpha()
@@ -115,6 +115,6 @@ class Snake:
 
     def play_crunch_sound(self):
         self.crunch_sound.play()
-
-
-    
+        
+    def set_moving(self, flag):
+        self.is_moving = flag
