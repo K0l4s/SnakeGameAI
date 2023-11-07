@@ -4,23 +4,23 @@ class Snake:
         self.body = [(x, y), (x-1, y)]
         self.direction = (1, 0)
 
-        self.tail_up = pygame.image.load('Resources/skin/default_skin/tail_up.png').convert_alpha()
-        self.tail_down = pygame.image.load('Resources/skin/default_skin/tail_down.png').convert_alpha()
-        self.tail_right = pygame.image.load('Resources/skin/default_skin/tail_right.png').convert_alpha()
-        self.tail_left = pygame.image.load('Resources/skin/default_skin/tail_left.png').convert_alpha()
+        self.tail_up = pygame.image.load('Resources/skin/ekans_skin/tail_up.png').convert_alpha()
+        self.tail_down = pygame.image.load('Resources/skin/ekans_skin/tail_down.png').convert_alpha()
+        self.tail_right = pygame.image.load('Resources/skin/ekans_skin/tail_right.png').convert_alpha()
+        self.tail_left = pygame.image.load('Resources/skin/ekans_skin/tail_left.png').convert_alpha()
 
-        self.head_up = pygame.image.load('Resources/skin/default_skin/head_up.png').convert_alpha()
-        self.head_down = pygame.image.load('Resources/skin/default_skin/head_down.png').convert_alpha()
-        self.head_right = pygame.image.load('Resources/skin/default_skin/head_right.png').convert_alpha()
-        self.head_left = pygame.image.load('Resources/skin/default_skin/head_left.png').convert_alpha()
+        self.head_up = pygame.image.load('Resources/skin/ekans_skin/head_up.png').convert_alpha()
+        self.head_down = pygame.image.load('Resources/skin/ekans_skin/head_down.png').convert_alpha()
+        self.head_right = pygame.image.load('Resources/skin/ekans_skin/head_right.png').convert_alpha()
+        self.head_left = pygame.image.load('Resources/skin/ekans_skin/head_left.png').convert_alpha()
 
-        self.body_vertical = pygame.image.load('Resources/skin/default_skin/body_vertical.png').convert_alpha()
-        self.body_horizontal = pygame.image.load('Resources/skin/default_skin/body_horizontal.png').convert_alpha()
+        self.body_vertical = pygame.image.load('Resources/skin/ekans_skin/body_vertical.png').convert_alpha()
+        self.body_horizontal = pygame.image.load('Resources/skin/ekans_skin/body_horizontal.png').convert_alpha()
 
-        self.body_tr = pygame.image.load('Resources/skin/default_skin/body_tr.png').convert_alpha()
-        self.body_tl = pygame.image.load('Resources/skin/default_skin/body_tl.png').convert_alpha()
-        self.body_br = pygame.image.load('Resources/skin/default_skin/body_br.png').convert_alpha()
-        self.body_bl = pygame.image.load('Resources/skin/default_skin/body_bl.png').convert_alpha()
+        self.body_tr = pygame.image.load('Resources/skin/ekans_skin/body_tr.png').convert_alpha()
+        self.body_tl = pygame.image.load('Resources/skin/ekans_skin/body_tl.png').convert_alpha()
+        self.body_br = pygame.image.load('Resources/skin/ekans_skin/body_br.png').convert_alpha()
+        self.body_bl = pygame.image.load('Resources/skin/ekans_skin/body_bl.png').convert_alpha()
 
         self.head_up = pygame.transform.scale(self.head_up, (20, 20))
         self.head_down = pygame.transform.scale(self.head_down, (20, 20))

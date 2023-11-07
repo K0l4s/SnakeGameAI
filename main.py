@@ -73,11 +73,11 @@ btn_start = Button(window, btn_start_rect, "Start", color.WHITE, color.GREEN, fo
 
 #button quit
 btn_quit_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2+ 100 , 180, 50)
-btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, color.GREEN, font)
+btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, color.RED, font)
 
 #button exit
 btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 150, 250, 180, 50)
-btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, color.GREEN, font)
+btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, color.RED, font)
 
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
@@ -140,12 +140,19 @@ def main():
 
         if playing:
             game_logic.update()
-
-            screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
+            # Khai báo background
+            image = pygame.image.load("Resources/background_note.png")
+            image = pygame.transform.scale(image, (40, 40))
+            # Vẽ background
+            for x in range(0, 1280, image.get_width()):
+                for y in range(0, 1280, image.get_height()):
+                    screen.blit(image, (x, y))
+            # screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
             for x in range(GRID_WIDTH):
                 for y in range(GRID_HEIGHT):
                     pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
             # Vẽ con rắn
+
             snake.draw_snake(screen)
 
             # Vẽ khung viền ngoài
