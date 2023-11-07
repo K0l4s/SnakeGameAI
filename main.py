@@ -68,12 +68,16 @@ btn_solve_rect = pygame.Rect(SCREEN_WIDTH + 150, 150, 180, 50)
 btn_solve = Button(window, btn_solve_rect, "Solve", color.WHITE, color.RED, font)
 
 #button start
-btn_start_rect = pygame.Rect(SCREEN_WIDTH + 150, 50, 180, 50)
+btn_start_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2 , 180, 50)
 btn_start = Button(window, btn_start_rect, "Start", color.WHITE, color.GREEN, font)
 
-#button start
-btn_quit_rect = pygame.Rect(SCREEN_WIDTH + 150, 250, 180, 50)
-btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, color.GREEN, font)
+#button quit
+btn_quit_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2+ 100 , 180, 50)
+btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, color.RED, font)
+
+#button exit
+btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 150, 250, 180, 50)
+btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, color.RED, font)
 
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
@@ -83,10 +87,9 @@ def display_message(message, color, screen, screen_size):
 
 def main():
     playing = False
-    
+    start = False
     while True:
-        screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
-        display_message("Snake game", color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
+        background.draw_menu(window)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -95,10 +98,15 @@ def main():
                 if event.button == 1:
                     if btn_start_rect.collidepoint(event.pos):
                         playing = True
+                        start = True
                         game_logic.restart_game()
                         
-                    elif btn_quit_rect.collidepoint(event.pos):
+                    elif btn_exit_rect.collidepoint(event.pos):
                         playing = False
+                        start = False
+                    elif btn_quit_rect.collidepoint(event.pos):
+                        pygame.quit()
+                        return 
 
             if playing:
                 if event.type == pygame.KEYDOWN:
@@ -118,23 +126,33 @@ def main():
                     if event.button == 1:
                         if btn_solve_rect.collidepoint(event.pos):
                             print("Solve")
-
-        background.draw(window)
-        # nút solve
-        btn_solve.draw()
-        # nút start
-        btn_start.draw()
-        # nút quit
-        btn_quit.draw()
+        if start :
+            background.draw(window)
+            # nút solve
+            btn_solve.draw()
+            
+            btn_exit.draw()            
+        else:
+            # nút start
+            btn_start.draw()
+            # nút quit
+            btn_quit.draw()
 
         if playing:
             game_logic.update()
-
-            screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
+            # Khai báo background
+            image = pygame.image.load("Resources/background_note.png")
+            image = pygame.transform.scale(image, (40, 40))
+            # Vẽ background
+            for x in range(0, 1280, image.get_width()):
+                for y in range(0, 1280, image.get_height()):
+                    screen.blit(image, (x, y))
+            # screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
             for x in range(GRID_WIDTH):
                 for y in range(GRID_HEIGHT):
                     pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
             # Vẽ con rắn
+
             snake.draw_snake(screen)
 
             # Vẽ khung viền ngoài
@@ -147,13 +165,14 @@ def main():
             score = game_logic.get_score()
 
             # score hiển thị màn hình
-            display_message(f"Score: {score}",color.BLACK,window, (SCREEN_WIDTH + 150, 50))
+            display_message(f"Score: {score}",color.RED,window, (SCREEN_WIDTH + 150, 50))
 
             if game_logic.game_over():
                 screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
-                display_message(f"Game Over - Press SPACE to restart\nYour scores: {score}", color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
+                display_message(f"Game Over - Press SPACE to restart\n              Your scores: {score}", 
+                                color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-        window.blit(screen, (50, 50))
+            window.blit(screen, (50, 50))
         pygame.display.update()
         clock.tick(10)
 
