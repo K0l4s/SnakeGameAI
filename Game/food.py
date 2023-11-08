@@ -5,9 +5,9 @@ class Food:
         self.width = width
         self.height = height
         self.snake = snake
-        self.spawn_food()
         self.image = pygame.image.load("Resources/skin/apple.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (20, 20))
+        self.spawn_food()
     def spawn_food(self):
         while True:
             x = random.randint(0, self.width - 1)

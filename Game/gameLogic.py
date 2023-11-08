@@ -1,6 +1,7 @@
 import random
 import pygame
 from Game.food import Food
+import Game.colors as color
 clock = pygame.time.Clock()
 class GameLogic:
     def __init__(self, snake, width, height):
@@ -40,13 +41,17 @@ class GameLogic:
         self.game_over_flag = False
         self.score = 0
 
-    def bfs(self, start, target):
+    def bfs(self, start, target, screen, window):
         visited = set()
         queue = [(start, [])]
 
         while queue:
             current, path = queue.pop(0)
-
+            if current:
+                node_rect = pygame.Rect(current[0] * 20, current[1] * 20, 20, 20)
+                pygame.draw.rect(screen, color.GRAY , node_rect)
+            window.blit(screen, (50,50))  
+            pygame.display.update(node_rect)
             if current == target:
                 return path
 
@@ -54,7 +59,6 @@ class GameLogic:
                 if neighbor not in visited:
                     visited.add(neighbor)
                     queue.append((neighbor, path + [neighbor]))
-
         return None
     def get_valid_neighbors(self, position):
         x, y = position
@@ -76,3 +80,11 @@ class GameLogic:
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
     
+    def visualize_bfs(self, screen, window):
+        if not self.game_over():
+            start = self.snake.body[-1]
+            target = self.food.food
+            path = self.bfs(start, target, screen, window)
+            if path:
+                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))

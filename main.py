@@ -37,8 +37,10 @@ btn_solve = Button(window, btn_solve_rect, "Solve", color.WHITE, color.RED, font
 btn_start_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2 , 180, 50)
 btn_start = Button(window, btn_start_rect, "Start", color.WHITE, color.GREEN, font)
 
+btn_setting_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2 + 70 , 180, 50)
+btn_setting = Button(window, btn_setting_rect, "Setting", color.WHITE, color.GREEN, font)
 #button quit
-btn_quit_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2+ 100 , 180, 50)
+btn_quit_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2+ 140 , 180, 50)
 btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, color.RED, font)
 
 #button exit
@@ -55,7 +57,7 @@ def move_along_path(game_logic, snake):
     path = game_logic.path
     if path:
         direction = path.pop(0)
-        print(direction)
+        # print(direction)
         snake.change_direction(direction)
         game_logic.snake.set_moving(True)
         game_logic.update()
@@ -67,6 +69,17 @@ def main():
     using_algorithm = False
     while True:
         background.draw_menu(window)
+        image = pygame.image.load("Resources/background_note.png")
+        image = pygame.transform.scale(image, (40, 40))
+        # Vẽ background
+        for x in range(0, 1280, image.get_width()):
+            for y in range(0, 1280, image.get_height()):
+                screen.blit(image, (x, y))
+        # screen.fill(color.BLACK)
+        for x in range(GRID_WIDTH):
+            for y in range(GRID_HEIGHT):
+                pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -78,6 +91,8 @@ def main():
                         start = True
                         game_logic.snake.set_moving(True)
                         game_logic.restart_game()
+                    elif btn_setting.colilidepoint(event.pos) and not playing:
+                        print("SETTING")
                     elif btn_exit_rect.collidepoint(event.pos):
                         playing = False
                         start = False
@@ -108,13 +123,13 @@ def main():
                             if btn_solve_rect.collidepoint(event.pos):
                                 is_finding = True
                                 using_algorithm = True
-                                game_logic.bfs_move()
+                                game_logic.visualize_bfs(screen, window)
 
-        if is_finding and using_algorithm:
-            move_along_path(game_logic, snake)
-            if not game_logic.path:
-                # is_finding = False
-                game_logic.bfs_move()
+        # if is_finding and using_algorithm:
+        #     move_along_path(game_logic, snake)
+        #     if not game_logic.path:
+        #         # is_finding = False
+        #         game_logic.visualize_bfs(screen, window)
 
         if start:
             background.draw(window)
@@ -122,22 +137,12 @@ def main():
             btn_exit.draw()            
         else:
             btn_start.draw()
+            btn_setting.draw()
             btn_quit.draw()
 
         if playing and not using_algorithm:
             game_logic.update()
         if playing:
-            # Khai báo background
-            image = pygame.image.load("Resources/background_note.png")
-            image = pygame.transform.scale(image, (40, 40))
-            # Vẽ background
-            for x in range(0, 1280, image.get_width()):
-                for y in range(0, 1280, image.get_height()):
-                    screen.blit(image, (x, y))
-            # screen.fill(color.BLACK)
-            for x in range(GRID_WIDTH):
-                for y in range(GRID_HEIGHT):
-                    pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
             # Vẽ con rắn
             snake.draw_snake(screen)
 
@@ -146,6 +151,7 @@ def main():
 
             # Vẽ food
             screen.blit(game_logic.food.image, (food.food[0] * GRID_SIZE, food.food[1] * GRID_SIZE))
+            # screen.blit(game_logic.food.image, game_logic.food.food_rect)
 
             # score
             score = game_logic.get_score()
@@ -154,13 +160,18 @@ def main():
             display_message(f"Score: {score}",color.RED,window, (SCREEN_WIDTH + 150, 50))
 
             if game_logic.game_over():
-                screen.fill(color.BLACK)  # Xóa màn hình bằng cách fill BLACK
+                screen.fill(color.BLACK)
                 display_message(f"Game Over - Press SPACE to restart\n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
             window.blit(screen, (50, 50))
         pygame.display.update()
-        clock.tick(60)
+        clock.tick(300)
+        if is_finding and using_algorithm:
+            move_along_path(game_logic, snake)
+            if not game_logic.path:
+                # is_finding = False
+                game_logic.visualize_bfs(screen, window)
 
 if __name__ == "__main__":
     main()
