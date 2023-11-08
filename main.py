@@ -73,7 +73,7 @@ def main():
                 return
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if btn_start_rect.collidepoint(event.pos):
+                    if btn_start_rect.collidepoint(event.pos) and not playing:
                         playing = True
                         start = True
                         game_logic.snake.set_moving(True)
@@ -82,7 +82,7 @@ def main():
                         playing = False
                         start = False
                         using_algorithm = False
-                    elif btn_quit_rect.collidepoint(event.pos):
+                    elif btn_quit_rect.collidepoint(event.pos) and not playing:
                         pygame.quit()
                         return 
 
