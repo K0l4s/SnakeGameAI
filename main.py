@@ -91,7 +91,7 @@ def main():
                         start = True
                         game_logic.snake.set_moving(True)
                         game_logic.restart_game()
-                    elif btn_setting.colilidepoint(event.pos) and not playing:
+                    elif btn_setting_rect.collidepoint(event.pos) and not playing:
                         print("SETTING")
                     elif btn_exit_rect.collidepoint(event.pos):
                         playing = False
@@ -166,7 +166,7 @@ def main():
 
             window.blit(screen, (50, 50))
         pygame.display.update()
-        clock.tick(300)
+        clock.tick(10)
         if is_finding and using_algorithm:
             move_along_path(game_logic, snake)
             if not game_logic.path:
