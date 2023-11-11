@@ -5,6 +5,7 @@ from Game.gameLogic import GameLogic
 from Graphics.background import Background
 from Graphics.button import Button
 import Game.colors as color
+from Game.ranks import ranks
 
 pygame.init()
 
@@ -67,6 +68,7 @@ def main():
     start = False
     is_finding = False
     using_algorithm = False
+    is_over = False
     while True:
         background.draw_menu(window)
         image = pygame.image.load("Resources/background_note.png")
@@ -91,8 +93,8 @@ def main():
                         start = True
                         game_logic.snake.set_moving(True)
                         game_logic.restart_game()
-                    elif btn_setting.colilidepoint(event.pos) and not playing:
-                        print("SETTING")
+                    # elif btn_setting.colilidepoint(event.pos) and not playing:
+                    #     print("SETTING")
                     elif btn_exit_rect.collidepoint(event.pos):
                         playing = False
                         start = False
@@ -106,6 +108,7 @@ def main():
                     game_logic.snake.set_moving(True)
                     if event.key == pygame.K_SPACE:
                         if game_logic.game_over():
+                            is_over = False
                             game_logic.restart_game()
                     elif not game_logic.game_over() and not using_algorithm:
                         if event.key == pygame.K_UP:
@@ -160,13 +163,17 @@ def main():
             display_message(f"Score: {score}",color.RED,window, (SCREEN_WIDTH + 150, 50))
 
             if game_logic.game_over():
+                if not is_over:
+                    rank = ranks(score)
+                    rank.high_score(score)
+                    is_over = True
                 screen.fill(color.BLACK)
                 display_message(f"Game Over - Press SPACE to restart\n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
             window.blit(screen, (50, 50))
         pygame.display.update()
-        clock.tick(300)
+        clock.tick(10)
         if is_finding and using_algorithm:
             move_along_path(game_logic, snake)
             if not game_logic.path:
