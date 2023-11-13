@@ -60,7 +60,6 @@ def display_message(message, color, screen, screen_size):
 def main():
     playing = False
     start = False
-    is_finding = False
     is_over = False
     is_AI = True
     while True:
@@ -118,7 +117,6 @@ def main():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
                             if btn_solve_rect.collidepoint(event.pos):
-                                is_finding = True
                                 game_logic.using_algorithm = True
                                 # game_logic.visualize_bfs(screen, window)
 
@@ -171,11 +169,11 @@ def main():
             clock.tick(100)
         else:
             clock.tick(15)
-        if is_finding and game_logic.using_algorithm:
+        if game_logic.using_algorithm:
             game_logic.visualize_bfs(screen, window)
             game_logic.move_along_path()
             # if not game_logic.path:
-                # is_finding = False
+            #     game_logic.using_algorithm = False
         pygame.display.update()
 if __name__ == "__main__":
     main()

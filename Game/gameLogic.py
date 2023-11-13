@@ -19,7 +19,7 @@ class GameLogic:
             return
         head = self.snake.move()
 
-        self.visualize_bfs(cf.screen, cf.window)
+        # self.visualize_bfs(cf.screen, cf.window)
         if head == self.food.food:
             self.snake.play_crunch_sound()
             self.food.spawn_food()
@@ -93,7 +93,7 @@ class GameLogic:
             0 <= new_head[0] < self.width and 0 <= new_head[1] < self.height and new_head not in self.snake.body[:-1]
         )
 
-    def chang_direction_safely(self):
+    def change_direction_safely(self):
         possible_directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
         safe_directions = [direction for direction in possible_directions if self.is_direction_safe(direction)]
@@ -102,8 +102,20 @@ class GameLogic:
             new_direction = random.choice(safe_directions)
             print(f"choose: {new_direction}")
             self.snake.change_direction(new_direction)
+            self.update()
         else:
             pass
+
+    def open_path(self):
+        # Nếu không sử dụng BFS, thực hiện đi an toàn và tối đa 10 lần
+        for _ in range(30):
+            self.change_direction_safely()
+            self.snake.set_moving(True)
+            self.visualize_bfs(cf.screen, cf.window)
+            # Kiểm tra xem đã tìm thấy path chưa, nếu có thì dừng vòng lặp
+            if self.path:
+                self.move_along_path()
+                break
     
     def move_along_path(self):
         if self.path:
@@ -113,5 +125,5 @@ class GameLogic:
             self.snake.set_moving(True)
             self.update()
         else:
-            print("NO")
-            self.chang_direction_safely()
+            self.using_algorithm = False
+            self.open_path()
