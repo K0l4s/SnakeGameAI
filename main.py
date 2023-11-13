@@ -174,13 +174,15 @@ def main():
                                 color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
             window.blit(screen, (0+1, 0+1))
-        pygame.display.update()
+        # pygame.display.update()
         clock.tick(20)
         if is_finding and using_algorithm:
             move_along_path(game_logic, snake)
             if not game_logic.path:
                 # is_finding = False
                 game_logic.visualize_bfs(screen, window)
+        pygame.display.update()
+        
 
 if __name__ == "__main__":
     main()

@@ -45,24 +45,15 @@ class GameLogic:
     def bfs(self, start, target, screen, window):
         visited = set()
         queue = [(start, [])]
-
+        
         while queue:
             current, path = queue.pop(0)
-            # if current:
-            #     node_rect = pygame.Rect(current[0] * 20, current[1] * 20, 20, 20)
-            #     pygame.draw.rect(screen, color.GRAY , node_rect, 2)
-            # window.blit(screen, (1,1))  
-            # pygame.display.update(node_rect)
-
-            if path:
-                for i in range(len(path)):
-                    node_rect = pygame.Rect( 7 + path[i][0] * 20, 7 + path[i][1] * 20, 7, 7)
-                    pygame.draw.rect(screen, color.GREEN , node_rect)
-                window.blit(screen, (0,0))  
-                pygame.display.update(node_rect)
+            if current:
+                node_rect = pygame.Rect(current[0] * 20, current[1] * 20, 20, 20)
+                pygame.draw.rect(screen, color.GRAY , node_rect, 2)
             if current == target:
-                # window.blit(screen, (1,1))  
-                # pygame.display.update(node_rect)
+                window.blit(screen, (1,1))  
+                pygame.display.update(node_rect)
                 return path
             pygame.event.pump()
             for neighbor in self.get_valid_neighbors(current):
