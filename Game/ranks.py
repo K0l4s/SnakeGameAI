@@ -18,8 +18,13 @@ class ranks:
 
                 df = df.sort_values(by='High score', ascending=False).reset_index(drop=True)
         print("--------------------------------")
+        # high = df.values.tolist()
+        # print(high)
         print(df.head(10))
         print("--------------------------------")
         df = df.iloc[:10]
         df.to_excel(file_path, index=False)
+        
+        
+    
     

@@ -17,11 +17,11 @@ class GameLogic:
         if not self.snake.is_moving:
             return
         head = self.snake.move()
-
+        self.visualize_bfs()
         if head == self.food.food:
             self.snake.play_crunch_sound()
-            self.food.spawn_food()
             self.score +=1
+            self.food.spawn_food()
             print(self.score)
         else:
             self.snake.body.pop(0)
@@ -56,7 +56,7 @@ class GameLogic:
                     pygame.draw.rect(screen, color.GREEN , node_rect)
                 window.blit(screen, (0,0))  
                 pygame.display.update(node_rect)
-
+            pygame.event.pump()
             if current == target:
                 return path
 
@@ -93,4 +93,6 @@ class GameLogic:
             if path:
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+                
+                
                 
