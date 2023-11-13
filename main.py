@@ -5,18 +5,21 @@ from Game.gameLogic import GameLogic
 from Graphics.background import Background
 from Graphics.button import Button
 import Game.colors as color
-
+from Game.ranks import ranks
+import Game.config as cf
 pygame.init()
 
 WIDTH, HEIGHT = 1400, 900
-SCREEN_WIDTH, SCREEN_HEIGHT = 900, 800
+SCREEN_WIDTH, SCREEN_HEIGHT = 700, 600
 GRID_SIZE = 20
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
 GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
 
 pygame.display.set_caption("Snake Game")
-window = pygame.display.set_mode((WIDTH, HEIGHT))
-screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+# window = pygame.display.set_mode((WIDTH, HEIGHT))
+# screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+window = cf.window
+screen = cf.screen
 btn_screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 snake = Snake(GRID_WIDTH // 2, GRID_HEIGHT // 2)
 game_logic = GameLogic(snake, GRID_WIDTH, GRID_HEIGHT)
@@ -67,6 +70,7 @@ def main():
     start = False
     is_finding = False
     using_algorithm = False
+    is_over = False
     while True:
         background.draw_menu(window)
         image = pygame.image.load("Resources/background_note.png")
@@ -76,9 +80,9 @@ def main():
             for y in range(0, 1280, image.get_height()):
                 screen.blit(image, (x, y))
         # screen.fill(color.BLACK)
-        for x in range(GRID_WIDTH):
-            for y in range(GRID_HEIGHT):
-                pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
+        # for x in range(GRID_WIDTH):
+        #     for y in range(GRID_HEIGHT):
+        #         pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -91,8 +95,8 @@ def main():
                         start = True
                         game_logic.snake.set_moving(True)
                         game_logic.restart_game()
-                    elif btn_setting_rect.collidepoint(event.pos) and not playing:
-                        print("SETTING")
+                    # elif btn_setting.colilidepoint(event.pos) and not playing:
+                    #     print("SETTING")
                     elif btn_exit_rect.collidepoint(event.pos):
                         playing = False
                         start = False
@@ -106,6 +110,7 @@ def main():
                     game_logic.snake.set_moving(True)
                     if event.key == pygame.K_SPACE:
                         if game_logic.game_over():
+                            is_over = False
                             game_logic.restart_game()
                     elif not game_logic.game_over() and not using_algorithm:
                         if event.key == pygame.K_UP:
@@ -160,13 +165,17 @@ def main():
             display_message(f"Score: {score}",color.RED,window, (SCREEN_WIDTH + 150, 50))
 
             if game_logic.game_over():
+                if not is_over:
+                    rank = ranks(score)
+                    rank.high_score(score)
+                    is_over = True
                 screen.fill(color.BLACK)
                 display_message(f"Game Over - Press SPACE to restart\n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-            window.blit(screen, (50, 50))
+            window.blit(screen, (0+1, 0+1))
         pygame.display.update()
-        clock.tick(10)
+        clock.tick(20)
         if is_finding and using_algorithm:
             move_along_path(game_logic, snake)
             if not game_logic.path:
