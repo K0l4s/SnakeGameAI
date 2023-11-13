@@ -47,11 +47,16 @@ class GameLogic:
 
         while queue:
             current, path = queue.pop(0)
-            if current:
-                node_rect = pygame.Rect(current[0] * 20, current[1] * 20, 20, 20)
-                pygame.draw.rect(screen, color.GRAY , node_rect)
-            window.blit(screen, (50,50))  
-            pygame.display.update(node_rect)
+            # if current:
+            #     node_rect = pygame.Rect(current[0] * 20, current[1] * 20, 10, 10)
+            #     pygame.draw.rect(screen, color.GRAY , node_rect)
+            if path:
+                for i in range(len(path)):
+                    node_rect = pygame.Rect( 7 + path[i][0] * 20, 7 + path[i][1] * 20, 7, 7)
+                    pygame.draw.rect(screen, color.GREEN , node_rect)
+                window.blit(screen, (0,0))  
+                pygame.display.update(node_rect)
+
             if current == target:
                 return path
 
@@ -88,3 +93,4 @@ class GameLogic:
             if path:
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+                
