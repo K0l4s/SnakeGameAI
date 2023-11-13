@@ -22,8 +22,8 @@ class GameLogic:
         self.visualize_bfs(cf.screen, cf.window)
         if head == self.food.food:
             self.snake.play_crunch_sound()
-            self.score +=1
             self.food.spawn_food()
+            self.score +=1
             print(self.score)
         else:
             self.snake.body.pop(0)
@@ -49,25 +49,21 @@ class GameLogic:
 
         while queue:
             current, path = queue.pop(0)
+            if current:
+                node_rect = pygame.Rect( 7 + current[0] * 20, 7 + current[1] * 20, 5, 5)
+                pygame.draw.rect(screen, color.GREEN , node_rect)
+                
 
-
-            if path:
-                for i in range(len(path)):
-                    node_rect = pygame.Rect( 7 + path[i][0] * 20, 7 + path[i][1] * 20, 7, 7)
-                    pygame.draw.rect(screen, color.GREEN , node_rect)
+            if current == target:
                 window.blit(screen, (0,0))  
                 pygame.display.update(node_rect)
-            if current == target:
-                # window.blit(screen, (1,1))  
-                # pygame.display.update(node_rect)
                 return path
-            pygame.event.pump()
+
             for neighbor in self.get_valid_neighbors(current):
                 if neighbor not in visited:
                     visited.add(neighbor)
                     queue.append((neighbor, path + [neighbor]))
         return None
-    
     def get_valid_neighbors(self, position):
         x, y = position
         valid_neighbors = []
@@ -98,4 +94,4 @@ class GameLogic:
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
                 
                 
-                
+        

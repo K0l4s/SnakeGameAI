@@ -175,7 +175,7 @@ def main():
                                 color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
             window.blit(screen, (0, 0))
-        pygame.display.update()
+        
         if using_algorithm:
             clock.tick(50)
         else:
@@ -185,6 +185,6 @@ def main():
             if not game_logic.path:
                 # is_finding = False
                 game_logic.visualize_bfs(screen, window)
-
+        pygame.display.update()
 if __name__ == "__main__":
     main()
