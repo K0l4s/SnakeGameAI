@@ -7,9 +7,10 @@ from Graphics.button import Button
 import Game.colors as color
 from Game.ranks import ranks
 import Game.config as cf
+import random
 pygame.init()
 
-WIDTH, HEIGHT = 1400, 900
+WIDTH, HEIGHT = 1400, 800
 SCREEN_WIDTH, SCREEN_HEIGHT = 700, 600
 GRID_SIZE = 20
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
@@ -56,21 +57,12 @@ def display_message(message, color, screen, screen_size):
     popup_rect = popup_text.get_rect(center=(screen_size[0] // 2, screen_size[1] // 2))
     screen.blit(popup_text, popup_rect)
 
-def move_along_path(game_logic, snake):
-    path = game_logic.path
-    if path:
-        direction = path.pop(0)
-        # print(direction)
-        snake.change_direction(direction)
-        game_logic.snake.set_moving(True)
-        game_logic.update()
-
 def main():
     playing = False
     start = False
     is_finding = False
-    using_algorithm = False
     is_over = False
+    is_AI = True
     while True:
         background.draw_menu(window)
         image = pygame.image.load("Resources/background_note.png")
@@ -100,7 +92,7 @@ def main():
                     elif btn_exit_rect.collidepoint(event.pos):
                         playing = False
                         start = False
-                        using_algorithm = False
+                        game_logic.using_algorithm = False
                     elif btn_quit_rect.collidepoint(event.pos) and not playing:
                         pygame.quit()
                         return 
@@ -112,7 +104,7 @@ def main():
                         if game_logic.game_over():
                             is_over = False
                             game_logic.restart_game()
-                    elif not game_logic.game_over() and not using_algorithm:
+                    elif not game_logic.game_over() and not game_logic.using_algorithm:
                         if event.key == pygame.K_UP:
                             snake.change_direction((0, -1))
                         elif event.key == pygame.K_DOWN:
@@ -127,8 +119,8 @@ def main():
                         if event.button == 1:
                             if btn_solve_rect.collidepoint(event.pos):
                                 is_finding = True
-                                using_algorithm = True
-                                game_logic.visualize_bfs(screen, window)
+                                game_logic.using_algorithm = True
+                                # game_logic.visualize_bfs(screen, window)
 
         # if is_finding and using_algorithm:
         #     move_along_path(game_logic, snake)
@@ -145,13 +137,13 @@ def main():
             btn_setting.draw()
             btn_quit.draw()
 
-        if playing and not using_algorithm:
+        if playing and not game_logic.using_algorithm:
             game_logic.update()
         if playing:
             # Vẽ con rắn
             snake.draw_snake(screen)
 
-            # Vẽ khung viền ngoài
+            # # Vẽ khung viền ngoài
             pygame.draw.rect(screen, color.WHITE, (0, 0, SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1), 3)
 
             # Vẽ food
@@ -162,7 +154,7 @@ def main():
             score = game_logic.get_score()
 
             # score hiển thị màn hình
-            display_message(f"Score: {score}",color.RED,window, (SCREEN_WIDTH + 150, 50))
+            display_message(f"Score: {score}",color.RED,window, (SCREEN_WIDTH + 1400, 150))
 
             if game_logic.game_over():
                 if not is_over:
@@ -170,19 +162,20 @@ def main():
                     rank.high_score(score)
                     is_over = True
                 screen.fill(color.BLACK)
-                display_message(f"Game Over - Press SPACE to restart\n Your scores: {score}", 
+                display_message(f"Game Over - Press SPACE to restart \n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-            window.blit(screen, (0+1, 0+1))
-        # pygame.display.update()
-        clock.tick(20)
-        if is_finding and using_algorithm:
-            move_along_path(game_logic, snake)
-            if not game_logic.path:
-                # is_finding = False
-                game_logic.visualize_bfs(screen, window)
-        pygame.display.update()
+            window.blit(screen, (0, 0))
         
-
+        if game_logic.using_algorithm:
+            clock.tick(100)
+        else:
+            clock.tick(15)
+        if is_finding and game_logic.using_algorithm:
+            game_logic.visualize_bfs(screen, window)
+            game_logic.move_along_path()
+            # if not game_logic.path:
+                # is_finding = False
+        pygame.display.update()
 if __name__ == "__main__":
     main()
