@@ -6,18 +6,20 @@ from Graphics.background import Background
 from Graphics.button import Button
 import Game.colors as color
 from Game.ranks import ranks
-
+import Game.config as cf
 pygame.init()
 
 WIDTH, HEIGHT = 1400, 900
-SCREEN_WIDTH, SCREEN_HEIGHT = 900, 800
+SCREEN_WIDTH, SCREEN_HEIGHT = 700, 600
 GRID_SIZE = 20
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
 GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
 
 pygame.display.set_caption("Snake Game")
-window = pygame.display.set_mode((WIDTH, HEIGHT))
-screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+# window = pygame.display.set_mode((WIDTH, HEIGHT))
+# screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+window = cf.window
+screen = cf.screen
 btn_screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 snake = Snake(GRID_WIDTH // 2, GRID_HEIGHT // 2)
 game_logic = GameLogic(snake, GRID_WIDTH, GRID_HEIGHT)
@@ -79,9 +81,9 @@ def main():
             for y in range(0, 1280, image.get_height()):
                 screen.blit(image, (x, y))
         # screen.fill(color.BLACK)
-        for x in range(GRID_WIDTH):
-            for y in range(GRID_HEIGHT):
-                pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
+        # for x in range(GRID_WIDTH):
+        #     for y in range(GRID_HEIGHT):
+        #         pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -177,7 +179,7 @@ def main():
         if using_algorithm:
             clock.tick(50)
         else:
-            clock.tick(10)
+            clock.tick(20)
         if is_finding and using_algorithm:
             move_along_path(game_logic, snake)
             if not game_logic.path:
