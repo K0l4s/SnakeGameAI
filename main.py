@@ -69,6 +69,7 @@ def main():
     is_finding = False
     using_algorithm = False
     is_over = False
+    is_AI = True
     while True:
         background.draw_menu(window)
         image = pygame.image.load("Resources/background_note.png")
@@ -149,8 +150,8 @@ def main():
             # Vẽ con rắn
             snake.draw_snake(screen)
 
-            # Vẽ khung viền ngoài
-            pygame.draw.rect(screen, color.WHITE, (0, 0, SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1), 3)
+            # # Vẽ khung viền ngoài
+            # pygame.draw.rect(screen, color.WHITE, (0, 0, SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1), 3)
 
             # Vẽ food
             screen.blit(game_logic.food.image, (food.food[0] * GRID_SIZE, food.food[1] * GRID_SIZE))
@@ -160,7 +161,7 @@ def main():
             score = game_logic.get_score()
 
             # score hiển thị màn hình
-            display_message(f"Score: {score}",color.RED,window, (SCREEN_WIDTH + 150, 50))
+            display_message(f"Score: {score}",color.RED,window, (SCREEN_WIDTH + 1400, 150))
 
             if game_logic.game_over():
                 if not is_over:
@@ -171,9 +172,12 @@ def main():
                 display_message(f"Game Over - Press SPACE to restart\n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
-            window.blit(screen, (50, 50))
+            window.blit(screen, (0, 0))
         pygame.display.update()
-        clock.tick(10)
+        if using_algorithm:
+            clock.tick(50)
+        else:
+            clock.tick(10)
         if is_finding and using_algorithm:
             move_along_path(game_logic, snake)
             if not game_logic.path:
