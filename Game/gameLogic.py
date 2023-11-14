@@ -110,7 +110,9 @@ class GameLogic:
                         self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                         self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
                 else:
-                    self.game_over_flag = True
+                # Thay vì kết thúc trò chơi, hãy di chuyển theo đầu rắn
+                    head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+                    self.path = [head_direction]
             elif not path:
                 print("path: 333")
                 path = self.bfs(start, target, screen, window)
