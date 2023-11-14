@@ -70,10 +70,6 @@ def main():
         for x in range(0, 1280, image.get_width()):
             for y in range(0, 1280, image.get_height()):
                 screen.blit(image, (x, y))
-        # screen.fill(color.BLACK)
-        # for x in range(GRID_WIDTH):
-        #     for y in range(GRID_HEIGHT):
-        #         pygame.draw.rect(screen, color.GRAY, (x * GRID_SIZE, y * GRID_SIZE, GRID_SIZE, GRID_SIZE), 1)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -118,14 +114,6 @@ def main():
                         if event.button == 1:
                             if btn_solve_rect.collidepoint(event.pos):
                                 game_logic.using_algorithm = True
-                                # game_logic.visualize_bfs(screen, window)
-
-        # if is_finding and using_algorithm:
-        #     move_along_path(game_logic, snake)
-        #     if not game_logic.path:
-        #         # is_finding = False
-        #         game_logic.visualize_bfs(screen, window)
-
         if start:
             background.draw(window)
             btn_solve.draw()
@@ -166,7 +154,7 @@ def main():
             window.blit(screen, (0, 0))
         
         if game_logic.using_algorithm:
-            clock.tick(100)
+            clock.tick(50)
         else:
             clock.tick(15)
         if game_logic.using_algorithm:

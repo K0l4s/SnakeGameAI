@@ -52,8 +52,7 @@ class GameLogic:
             if current:
                 node_rect = pygame.Rect( 7 + current[0] * 20, 7 + current[1] * 20, 5, 5)
                 pygame.draw.rect(screen, color.GREEN , node_rect)
-                
-
+        
             if current == target:
                 window.blit(screen, (0,0))  
                 pygame.display.update(node_rect)
@@ -102,19 +101,21 @@ class GameLogic:
             new_direction = random.choice(safe_directions)
             print(f"choose: {new_direction}")
             self.snake.change_direction(new_direction)
+            self.snake.set_moving(True)
             self.update()
         else:
             pass
 
     def open_path(self):
-        # Nếu không sử dụng BFS, thực hiện đi an toàn và tối đa 10 lần
-        for _ in range(30):
+        for _ in range(50):
             self.change_direction_safely()
             self.snake.set_moving(True)
             self.visualize_bfs(cf.screen, cf.window)
-            # Kiểm tra xem đã tìm thấy path chưa, nếu có thì dừng vòng lặp
+            self.update()
             if self.path:
+                self.using_algorithm = True
                 self.move_along_path()
+                self.update()
                 break
     
     def move_along_path(self):
@@ -125,5 +126,10 @@ class GameLogic:
             self.snake.set_moving(True)
             self.update()
         else:
+            print("No path")
             self.using_algorithm = False
             self.open_path()
+        
+
+        
+        
