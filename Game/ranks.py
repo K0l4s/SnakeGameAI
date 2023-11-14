@@ -1,10 +1,16 @@
+import os
 import pandas as pd
+
 class ranks:
     def __init__(self,score):
         self.score = score
+
     def high_score(self,score):
         file_path = 'ranks.xlsx'
 
+        if not os.path.exists(file_path):
+            df = pd.DataFrame(columns=['High score'])
+            df.to_excel(file_path, index=False)
 
         try:
             df = pd.read_excel(file_path)
@@ -24,7 +30,6 @@ class ranks:
         print("--------------------------------")
         df = df.iloc[:10]
         df.to_excel(file_path, index=False)
-        
         
     
     
