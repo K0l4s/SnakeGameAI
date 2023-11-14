@@ -22,7 +22,7 @@ class GameLogic:
 
         # self.visualize_bfs(cf.screen, cf.window)
         if head == self.food.food:
-            self.snake.play_crunch_sound()
+            # self.snake.play_crunch_sound()
             self.food.spawn_food()
             self.score +=1
             print(self.score)
@@ -57,7 +57,7 @@ class GameLogic:
                 pygame.draw.rect(screen, color.GREEN , node_rect)
 
             if current == target:
-                window.blit(screen, (0,0))  
+                window.blit(screen, (30,30))  
                 pygame.display.update(node_rect)
                 self.is_finding = True
                 return path

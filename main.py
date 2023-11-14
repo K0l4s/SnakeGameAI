@@ -10,15 +10,13 @@ import Game.config as cf
 import random
 pygame.init()
 
-WIDTH, HEIGHT = 1400, 800
-SCREEN_WIDTH, SCREEN_HEIGHT = 700, 600
-GRID_SIZE = 20
+WIDTH, HEIGHT = cf.WIDTH, cf.HEIGHT
+SCREEN_WIDTH, SCREEN_HEIGHT = cf.SCREEN_WIDTH, cf.SCREEN_HEIGHT
+GRID_SIZE = cf.GRID_SIZE
 GRID_WIDTH = SCREEN_WIDTH // GRID_SIZE
 GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE
 
 pygame.display.set_caption("Snake Game")
-# window = pygame.display.set_mode((WIDTH, HEIGHT))
-# screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 window = cf.window
 screen = cf.screen
 btn_screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -34,27 +32,27 @@ score = 0
 font = pygame.font.Font(pygame.font.get_default_font(), 40)
 
 #button solve
-btn_solve_rect = pygame.Rect(SCREEN_WIDTH + 150, 150, 180, 50)
-btn_solve = Button(window, btn_solve_rect, "Solve", color.WHITE, color.RED, font)
+btn_solve_rect = pygame.Rect(SCREEN_WIDTH + 120, 100, 180, 50)
+btn_solve = Button(window, btn_solve_rect, "BFS", color.WHITE, color.RED, font)
 
 #button start
-btn_start_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2 , 180, 50)
+btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 50)
 btn_start = Button(window, btn_start_rect, "Start", color.WHITE, color.GREEN, font)
 
-btn_setting_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2 + 70 , 180, 50)
+btn_setting_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 + 70 , 180, 50)
 btn_setting = Button(window, btn_setting_rect, "Setting", color.WHITE, color.GREEN, font)
 #button quit
-btn_quit_rect = pygame.Rect(SCREEN_WIDTH //2 + 150, SCREEN_HEIGHT //2+ 140 , 180, 50)
+btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 180, 50)
 btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, color.RED, font)
 
 #button exit
-btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 150, 250, 180, 50)
+btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 180, 180, 50)
 btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, color.RED, font)
 
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
     popup_text = popup_font.render(message, True, color)
-    popup_rect = popup_text.get_rect(center=(screen_size[0] // 2, screen_size[1] // 2))
+    popup_rect = popup_text.get_rect(center=(screen_size[0], screen_size[1]))
     screen.blit(popup_text, popup_rect)
 
 def main():
@@ -129,8 +127,8 @@ def main():
             # Vẽ con rắn
             snake.draw_snake(screen)
 
-            # # Vẽ khung viền ngoài
-            pygame.draw.rect(screen, color.WHITE, (0, 0, SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1), 3)
+            # Vẽ border
+            background.draw_border(window)
 
             # Vẽ food
             screen.blit(game_logic.food.image, (food.food[0] * GRID_SIZE, food.food[1] * GRID_SIZE))
@@ -140,7 +138,7 @@ def main():
             score = game_logic.get_score()
 
             # score hiển thị màn hình
-            display_message(f"Score: {score}",color.RED,window, (SCREEN_WIDTH + 1400, 150))
+            display_message(f"Score: {score}",color.WHITE,window, (SCREEN_WIDTH + 200, 50))
 
             if game_logic.game_over():
                 if not is_over:
@@ -148,10 +146,10 @@ def main():
                     rank.high_score(score)
                     is_over = True
                 screen.fill(color.BLACK)
-                display_message(f"Game Over - Press SPACE to restart \n Your scores: {score}", 
-                                color.RED, screen, (SCREEN_WIDTH, SCREEN_HEIGHT))
+                display_message(f"Game Over - Press SPACE to restart! \n Your scores: {score}", 
+                                color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
-            window.blit(screen, (0, 0))
+            window.blit(screen, (30, 30))
         
         if using_algorithm:
             clock.tick(50)
