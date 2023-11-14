@@ -102,7 +102,13 @@ class GameLogic:
                     self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                     self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
                 elif alternative_direction:
+                    print("change path: 2222222222222")
                     self.path = [alternative_direction]    
+                    path = self.bfs(start, target, screen, window)
+                    
+                    if path:
+                        self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                        self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
                 else:
                     self.game_over_flag = True
             elif not path:
@@ -116,30 +122,30 @@ class GameLogic:
                     self.path.extend((self.path[i][0] - self.path[i-1][0], self.path[i][1] - self.path[i-1][1]) for i in range(1, len(self.path)))
                         
     def get_alternative_direction(self, start):
-        max_space = 0
-        best_direction = None
+        # max_space = 0
+        # best_direction = None
 
+        # for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+        #     new_x, new_y = start[0] + dx, start[1] + dy
+
+        #     if (0 < new_x < self.width-1) and (0 < new_y < self.height-1) and (new_x, new_y) not in self.snake.body:
+        #         space_count = 0
+        #         for ddx, ddy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+        #             nx, ny = new_x + ddx, new_y + ddy
+        #             if (0 <= nx < self.width) and (0 <= ny < self.height) and (nx, ny) not in self.snake.body:
+        #                 space_count += 1
+
+        #         # Update if the current direction provides more space
+        #         if space_count > max_space:
+        #             max_space = space_count
+        #             best_direction = (dx, dy)
+        # print(max_space)
+        # return best_direction
+    
         for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             new_x, new_y = start[0] + dx, start[1] + dy
-
-            if (0 < new_x < self.width-1) and (0 < new_y < self.height-1) and (new_x, new_y) not in self.snake.body:
-                space_count = 0
-                for ddx, ddy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
-                    nx, ny = new_x + ddx, new_y + ddy
-                    if (0 <= nx < self.width) and (0 <= ny < self.height) and (nx, ny) not in self.snake.body:
-                        space_count += 1
-
-                # Update if the current direction provides more space
-                if space_count > max_space:
-                    max_space = space_count
-                    best_direction = (dx, dy)
-        print(max_space)
-        return best_direction
-    
-        # for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
-        #         new_x, new_y = start[0] + dx, start[1] + dy
-        #         if (0 < new_x < self.width) and (0 < new_y < self.height) and (new_x, new_y) not in self.snake.body:
-        #             return (dx, dy)
-        #     return None
+            if (0 < new_x < self.width) and (0 < new_y < self.height) and (new_x, new_y) not in self.snake.body:
+                return (dx, dy)
+        return None
 
         
