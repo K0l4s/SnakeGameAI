@@ -61,7 +61,7 @@ def main():
     playing = False
     start = False
     is_over = False
-    is_AI = True
+    using_algorithm = False
     while True:
         background.draw_menu(window)
         image = pygame.image.load("Resources/background_note.png")
@@ -87,7 +87,7 @@ def main():
                     elif btn_exit_rect.collidepoint(event.pos):
                         playing = False
                         start = False
-                        game_logic.using_algorithm = False
+                        using_algorithm = False
                     elif btn_quit_rect.collidepoint(event.pos) and not playing:
                         pygame.quit()
                         return 
@@ -99,7 +99,7 @@ def main():
                         if game_logic.game_over():
                             is_over = False
                             game_logic.restart_game()
-                    elif not game_logic.game_over() and not game_logic.using_algorithm:
+                    elif not game_logic.game_over() and not using_algorithm:
                         if event.key == pygame.K_UP:
                             snake.change_direction((0, -1))
                         elif event.key == pygame.K_DOWN:
@@ -113,7 +113,7 @@ def main():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
                             if btn_solve_rect.collidepoint(event.pos):
-                                game_logic.using_algorithm = True
+                                using_algorithm = True
         if start:
             background.draw(window)
             btn_solve.draw()
@@ -123,7 +123,7 @@ def main():
             btn_setting.draw()
             btn_quit.draw()
 
-        if playing and not game_logic.using_algorithm:
+        if playing and not using_algorithm:
             game_logic.update()
         if playing:
             # Vẽ con rắn
@@ -153,15 +153,13 @@ def main():
 
             window.blit(screen, (0, 0))
         
-        if game_logic.using_algorithm:
+        if using_algorithm:
             clock.tick(50)
         else:
             clock.tick(15)
-        if game_logic.using_algorithm:
+        if using_algorithm:
             game_logic.visualize_bfs(screen, window)
             game_logic.move_along_path()
-            # if not game_logic.path:
-            #     game_logic.using_algorithm = False
         pygame.display.update()
 if __name__ == "__main__":
     main()

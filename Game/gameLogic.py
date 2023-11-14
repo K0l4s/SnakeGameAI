@@ -13,7 +13,8 @@ class GameLogic:
         self.game_over_flag = False
         self.score = 0
         self.path = []
-        self.using_algorithm = False
+        self.is_finding = False
+
     def update(self):
         if not self.snake.is_moving:
             return
@@ -46,16 +47,19 @@ class GameLogic:
     def bfs(self, start, target, screen, window):
         visited = set()
         queue = [(start, [])]
-        
+        self.is_finding = False
         while queue:
+            self.is_finding = False
             current, path = queue.pop(0)
+
             if current:
                 node_rect = pygame.Rect( 7 + current[0] * 20, 7 + current[1] * 20, 5, 5)
                 pygame.draw.rect(screen, color.GREEN , node_rect)
-        
+
             if current == target:
                 window.blit(screen, (0,0))  
                 pygame.display.update(node_rect)
+                self.is_finding = True
                 return path
 
             for neighbor in self.get_valid_neighbors(current):
@@ -80,44 +84,70 @@ class GameLogic:
             start = self.snake.body[-1]
             target = self.food.food
             path = self.bfs(start, target, screen, window)
+            
             if path:
+                print("path: 1")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+            elif not self.is_finding:
+                print("path: 22")
+                alternative_direction = self.get_alternative_direction(start)
                 
+                path = self.bfs(start, target, screen, window)
+            
+                if path:
+                    print("change path: 2")
+                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+                elif alternative_direction:
+                    print("change path: 2222222222222")
+                    self.path = [alternative_direction]    
+                    path = self.bfs(start, target, screen, window)
+                    
+                    if path:
+                        self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                        self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+                else:
+                # Thay vì kết thúc trò chơi, hãy di chuyển theo đầu rắn
+                    head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+                    self.path = [head_direction]
+            elif not path:
+                print("path: 333")
+                path = self.bfs(start, target, screen, window)
+                if not path:
+                    path = self.bfs(start, self.food.food, screen, window)
+                    print("change")
+                if path:
+                    self.path = [(self.path[0][0] - start[0], self.path[0][1] - start[1])]
+                    self.path.extend((self.path[i][0] - self.path[i-1][0], self.path[i][1] - self.path[i-1][1]) for i in range(1, len(self.path)))
+                        
+    def get_alternative_direction(self, start):
+        # max_space = 0
+        # best_direction = None
+
+        # for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+        #     new_x, new_y = start[0] + dx, start[1] + dy
+
+        #     if (0 < new_x < self.width-1) and (0 < new_y < self.height-1) and (new_x, new_y) not in self.snake.body:
+        #         space_count = 0
+        #         for ddx, ddy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+        #             nx, ny = new_x + ddx, new_y + ddy
+        #             if (0 <= nx < self.width) and (0 <= ny < self.height) and (nx, ny) not in self.snake.body:
+        #                 space_count += 1
+
+        #         # Update if the current direction provides more space
+        #         if space_count > max_space:
+        #             max_space = space_count
+        #             best_direction = (dx, dy)
+        # print(max_space)
+        # return best_direction
     
-    def is_direction_safe(self, direction):
-        head = self.snake.body[-1]
-        new_head = (head[0] + direction[0], head[1] + direction[1])
-        return (
-            0 <= new_head[0] < self.width and 0 <= new_head[1] < self.height and new_head not in self.snake.body[:-1]
-        )
+        for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+            new_x, new_y = start[0] + dx, start[1] + dy
+            if (0 < new_x < self.width) and (0 < new_y < self.height) and (new_x, new_y) not in self.snake.body:
+                return (dx, dy)
+        return None
 
-    def change_direction_safely(self):
-        possible_directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-
-        safe_directions = [direction for direction in possible_directions if self.is_direction_safe(direction)]
-        print(f"safe: {safe_directions}")
-        if safe_directions:
-            new_direction = random.choice(safe_directions)
-            print(f"choose: {new_direction}")
-            self.snake.change_direction(new_direction)
-            self.snake.set_moving(True)
-            self.update()
-        else:
-            pass
-
-    def open_path(self):
-        for _ in range(50):
-            self.change_direction_safely()
-            self.snake.set_moving(True)
-            self.visualize_bfs(cf.screen, cf.window)
-            self.update()
-            if self.path:
-                self.using_algorithm = True
-                self.move_along_path()
-                self.update()
-                break
-    
     def move_along_path(self):
         if self.path:
             direction = self.path.pop(0)
@@ -125,11 +155,3 @@ class GameLogic:
             self.snake.change_direction(direction)
             self.snake.set_moving(True)
             self.update()
-        else:
-            print("No path")
-            self.using_algorithm = False
-            self.open_path()
-        
-
-        
-        
