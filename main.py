@@ -29,25 +29,26 @@ background = Background(WIDTH, HEIGHT)
 
 score = 0
 
-font = pygame.font.Font(pygame.font.get_default_font(), 40)
+# font = pygame.font.Font(pygame.font.get_default_font(), 40)
+font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 40)
 
 #button solve
-btn_solve_rect = pygame.Rect(SCREEN_WIDTH + 120, 100, 180, 50)
-btn_solve = Button(window, btn_solve_rect, "BFS", color.WHITE, color.RED, font)
+btn_solve_rect = pygame.Rect(SCREEN_WIDTH + 120, 100, 180, 60)
+btn_solve = Button(window, btn_solve_rect, "BFS", color.WHITE, font)
 
 #button start
-btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 50)
-btn_start = Button(window, btn_start_rect, "Start", color.WHITE, color.GREEN, font)
+btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 60)
+btn_start = Button(window, btn_start_rect, "Start", color.WHITE, font)
 
-btn_setting_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 + 70 , 180, 50)
-btn_setting = Button(window, btn_setting_rect, "Setting", color.WHITE, color.GREEN, font)
+btn_setting_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 + 70 , 180, 60)
+btn_setting = Button(window, btn_setting_rect, "Setting", color.WHITE, font)
 #button quit
-btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 180, 50)
-btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, color.RED, font)
+btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 180, 60)
+btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, font)
 
 #button exit
-btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 180, 180, 50)
-btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, color.RED, font)
+btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 180, 180, 60)
+btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
 
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
