@@ -185,7 +185,7 @@ def main():
             window.blit(screen, (30, 30))
         
         if using_algorithm:
-            clock.tick(30)
+            clock.tick(2500)
         else:
             clock.tick(15)
         if using_algorithm and selected_alogrithm == "BFS":
@@ -193,7 +193,7 @@ def main():
             game_logic.move_along_path()
 
         if using_algorithm and selected_alogrithm == "UCS":
-            game_logic.visualize_ucs(screen, window)
+            game_logic.visualize_a_star(screen, window)
             game_logic.move_along_path()
 
         if start:
