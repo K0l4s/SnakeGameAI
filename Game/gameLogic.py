@@ -71,10 +71,6 @@ class GameLogic:
                 pygame.draw.rect(screen, color.GREEN , node_rect)
 
             if current == target:
-                for step in path:
-                    x, y = step
-                    pygame.draw.rect(screen, color.WHITE, (7 + x * 20, 7 + y * 20, 10, 10))
-                window.blit(screen, (30,30))  
                 pygame.display.update(node_rect)
                 self.is_finding = True
                 return path
@@ -99,9 +95,6 @@ class GameLogic:
                 pygame.draw.rect(screen, color.GREEN, node_rect)
 
             if current == target:
-                for step in path:
-                    x, y = step
-                    pygame.draw.rect(screen, color.WHITE, (7 + x * 20, 7 + y * 20, 10, 10))
                 window.blit(screen, (30, 30))
                 pygame.display.update(node_rect)
                 return path
@@ -136,7 +129,7 @@ class GameLogic:
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
                 for step in path:
-                    node_rect = pygame.Rect(7 + step[0] * 20, 7 + step[1] * 20, 5, 5)
+                    node_rect = pygame.Rect(7 + step[0] * 20, 7 + step[1] * 20, 7, 7)
                     pygame.draw.rect(screen, color.WHITE, node_rect)
                     window.blit(screen, (30, 30)) 
             elif not self.is_finding:
@@ -187,7 +180,7 @@ class GameLogic:
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
                 
                 for step in path:
-                    node_rect = pygame.Rect(7 + step[0] * 20, 7 + step[1] * 20, 5, 5)
+                    node_rect = pygame.Rect(7 + step[0] * 20, 7 + step[1] * 20, 7, 7)
                     pygame.draw.rect(screen, color.WHITE, node_rect)
                     window.blit(screen, (30, 30))                
             elif not self.is_finding:
@@ -221,7 +214,7 @@ class GameLogic:
     def is_possible_direction(self, start):
         for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             new_x, new_y = start[0] + dx, start[1] + dy
-            if (0 <= new_x <= self.width) and (0 <= new_y <= self.height) and (new_x, new_y) not in self.snake.body:
+            if (0 < new_x < self.width) and (0 < new_y < self.height) and (new_x, new_y) not in self.snake.body:
                 return (dx, dy)
         return None
     
