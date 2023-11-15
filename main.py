@@ -55,6 +55,10 @@ btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
 
 btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 
+btn_music_mute = RoundButton(window, (40, 685), 30, "Resources/btn_music_mute.png")
+btn_music = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
+
+
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
     popup_text = popup_font.render(message, True, color)
@@ -130,9 +134,11 @@ def main():
                             elif btn_music_toggle.collidepoint(event.pos):
                                 print("Music changed")
                                 if game_logic.is_on_music:
+                                    btn_music_toggle.image = btn_music_mute.image
                                     background.pause_background_music()
                                     game_logic.is_on_music = False
                                 else:
+                                    btn_music_toggle.image = btn_music.image
                                     background.unpause_background_music()
                                     game_logic.is_on_music = True
         if start:
