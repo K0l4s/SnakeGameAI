@@ -151,10 +151,15 @@ def main():
                                 print("Paused")
                                 game_logic.toggle_pause()
                                 if game_logic.is_paused:
-                                    background.unpause_background_music()
+                                    if(game_logic.is_on_music):
+                                        btn_music_toggle.image = btn_music_mute.image
+                                        game_logic.is_on_music = False
+                                    
                                     btn_pause_toggle.image = btn_unpause.image
-                                else:
-                                    background.unpause_background_music()
+                                else: 
+                                    if(not game_logic.is_on_music):
+                                        btn_music_toggle.image = btn_music.image
+                                        game_logic.is_on_music = True
                                     btn_pause_toggle.image = btn_pause.image
         if start:
             background.draw(window)
