@@ -141,7 +141,51 @@ class GameLogic:
                 valid_neighbors.append((new_x, new_y))
 
         return valid_neighbors
+    def A_star(self, start, target, screen, window):
+        visited = set()
+        queue = PriorityQueue()
+        queue.put((0, start, []))
+        while not queue.empty():
+            cost, current, path = queue.get()
+            if current:
+                node_rect = pygame.Rect(7 + current[0] * 20, 7 + current[1] * 20, 5, 5)
+                pygame.draw.rect(screen, color.GREEN, node_rect)
+
+            if current == target:
+                window.blit(screen, (30, 30))
+                pygame.display.update(node_rect)
+                return path
+
+            if current not in visited:
+                visited.add(current)
+                for neighbor in self.get_valid_neighbors(current):
+                    new_cost = cost + 1  # Assuming all steps have equal cost
+                    queue.put((new_cost, neighbor, path + [neighbor]))
+        return None
     
+    def visualize_a_star(self, screen, window):
+        if not self.game_over():
+            start = self.snake.body[-1]
+            target = self.food.food
+            path = self.A_star(start, target, screen, window)
+
+            if path:
+                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+            else:
+                print("None path")
+                self.path = [self.get_tail_coordinates()]
+    def get_random_direction(self):
+        import random
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # You can customize the directions based on your game
+        return random.choice(directions)
+    def get_tail_coordinates(self):
+        if self.snake.body:
+            tail_coordinates = self.snake.body[0]
+            return tail_coordinates
+        else:
+            return None
+
     def visualize_bfs(self, screen, window):
         if not self.game_over():
             start = self.snake.body[-1]

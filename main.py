@@ -194,7 +194,7 @@ def main():
             window.blit(screen, (30, 30))
         
         if using_algorithm:
-            clock.tick(30)
+            clock.tick(2500)
         else:
             clock.tick(15)
         if using_algorithm and selected_alogrithm == "BFS":
