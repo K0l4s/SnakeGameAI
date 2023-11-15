@@ -31,3 +31,20 @@ class Background:
         for y in range(0, cf.SCREEN_HEIGHT, cf.GRID_SIZE):
             window.blit(self.block_image, (0 + 10, y + 30))
             window.blit(self.block_image, (cf.SCREEN_WIDTH + 30, y + 30))
+
+    def start_background_music(self):
+        pygame.mixer.music.load("Resources/Sound/background_music.wav")
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.5)
+
+    def stop_background_music(self):
+        pygame.mixer.music.stop()
+
+    def pause_background_music(self):
+        pygame.mixer.music.pause()
+
+    def unpause_background_music(self):
+        pygame.mixer.music.unpause()
+
+    def set_volume_background_music(self, volume):
+        pygame.mixer.music.set_volume(volume)

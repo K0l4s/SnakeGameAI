@@ -68,6 +68,7 @@ def main():
     using_algorithm = False
     selected_alogrithm = ""
     setting_clicked = False
+    background.start_background_music()
     while True:
         background.draw_menu(window)
         image = pygame.image.load("Resources/background_note.png")
@@ -104,6 +105,7 @@ def main():
                     game_logic.snake.set_moving(True)
                     if event.key == pygame.K_SPACE:
                         if game_logic.game_over():
+                            background.unpause_background_music()
                             is_over = False
                             game_logic.restart_game()
                     elif not game_logic.game_over() and not using_algorithm:
@@ -128,8 +130,10 @@ def main():
                             elif btn_music_toggle.collidepoint(event.pos):
                                 print("Music changed")
                                 if game_logic.is_on_music:
+                                    background.pause_background_music()
                                     game_logic.is_on_music = False
                                 else:
+                                    background.unpause_background_music()
                                     game_logic.is_on_music = True
         if start:
             background.draw(window)
@@ -164,6 +168,7 @@ def main():
 
             if game_logic.game_over():
                 if not is_over:
+                    background.pause_background_music()
                     rank = ranks(score)
                     rank.high_score(score)
                     is_over = True
