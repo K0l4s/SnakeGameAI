@@ -193,7 +193,7 @@ def main():
             game_logic.move_along_path()
 
         if using_algorithm and selected_alogrithm == "UCS":
-            game_logic.visualize_a_star(screen, window)
+            game_logic.visualize_ucs(screen, window)
             game_logic.move_along_path()
 
         if start:
