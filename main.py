@@ -178,14 +178,14 @@ def main():
                     rank = ranks(score)
                     rank.high_score(score)
                     is_over = True
-                screen.fill(color.BLACK)
+                #screen.fill(color.BLACK)
                 display_message(f"Game Over - Press SPACE to restart! \n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
             window.blit(screen, (30, 30))
         
         if using_algorithm:
-            clock.tick(2500)
+            clock.tick(5000)
         else:
             clock.tick(15)
         if using_algorithm and selected_alogrithm == "BFS":
