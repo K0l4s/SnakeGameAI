@@ -37,3 +37,31 @@ class Button:
         text_rect = text_surface.get_rect()
         text_rect.center = self.rect.center
         self.screen.blit(text_surface, text_rect)
+class RoundButton:
+    def __init__(self, screen, center, radius, image_path):
+        self.screen = screen
+        self.center = center
+        self.radius = radius
+        self.image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(self.image, (self.radius * 2, radius * 2))
+
+    def check_hover(self, mouse_pos):
+        distance = pygame.math.Vector2(self.center[0] - mouse_pos[0], self.center[1] - mouse_pos[1]).length()
+        return distance <= self.radius
+
+    def collidepoint(self, point):
+        return self.check_hover(point)
+    
+    def draw(self):
+        mouse_pos = pygame.mouse.get_pos()
+        img = self.image.copy()
+
+        if self.check_hover(mouse_pos):
+            img.set_alpha(180)
+        else:
+            img = self.image
+        
+        image_rect = img.get_rect()
+        image_rect.center = self.center
+        self.screen.blit(img, image_rect)
+        

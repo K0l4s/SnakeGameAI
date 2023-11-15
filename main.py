@@ -3,7 +3,7 @@ from pygame.math import Vector2
 from Game.snake import Snake
 from Game.gameLogic import GameLogic
 from Graphics.background import Background
-from Graphics.button import Button
+from Graphics.button import Button, RoundButton
 import Game.colors as color
 from Game.ranks import ranks
 import Game.config as cf
@@ -50,6 +50,8 @@ btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, font)
 btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 180, 180, 60)
 btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
 
+btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
+
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
     popup_text = popup_font.render(message, True, color)
@@ -61,6 +63,7 @@ def main():
     start = False
     is_over = False
     using_algorithm = False
+    setting_clicked = False
     while True:
         background.draw_menu(window)
         image = pygame.image.load("Resources/background_note.png")
@@ -81,8 +84,9 @@ def main():
                         start = True
                         game_logic.snake.set_moving(True)
                         game_logic.restart_game()
-                    # elif btn_setting.colilidepoint(event.pos) and not playing:
-                    #     print("SETTING")
+                    elif btn_setting_rect.collidepoint(event.pos) and not playing:
+                        setting_clicked = True
+                        print("SETTING")
                     elif btn_exit_rect.collidepoint(event.pos):
                         playing = False
                         start = False
@@ -113,15 +117,23 @@ def main():
                         if event.button == 1:
                             if btn_solve_rect.collidepoint(event.pos):
                                 using_algorithm = True
+                            elif btn_music_toggle.collidepoint(event.pos):
+                                print("Music changed")
+                                if game_logic.is_on_music:
+                                    game_logic.is_on_music = False
+                                else:
+                                    game_logic.is_on_music = True
         if start:
             background.draw(window)
             btn_solve.draw()
             btn_exit.draw()            
-        else:
+        if not start:
             btn_start.draw()
             btn_setting.draw()
             btn_quit.draw()
-
+        
+        if setting_clicked:
+            print("OK")
         if playing and not using_algorithm:
             game_logic.update()
         if playing:
@@ -159,6 +171,9 @@ def main():
         if using_algorithm:
             game_logic.visualize_bfs(screen, window)
             game_logic.move_along_path()
+
+        if start:
+            btn_music_toggle.draw()
         pygame.display.update()
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ class GameLogic:
         self.score = 0
         self.path = []
         self.is_finding = False
-
+        self.is_on_music = True
     def update(self):
         if not self.snake.is_moving:
             return
@@ -22,7 +22,8 @@ class GameLogic:
 
         # self.visualize_bfs(cf.screen, cf.window)
         if head == self.food.food:
-            # self.snake.play_crunch_sound()
+            if self.is_on_music:
+                self.snake.play_crunch_sound()
             self.food.spawn_food()
             self.score +=1
             print(self.score)
