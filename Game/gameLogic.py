@@ -71,10 +71,6 @@ class GameLogic:
                 pygame.draw.rect(screen, color.GREEN , node_rect)
 
             if current == target:
-                for step in path:
-                    x, y = step
-                    pygame.draw.rect(screen, color.WHITE, (7 + x * 20, 7 + y * 20, 10, 10))
-                window.blit(screen, (30,30))  
                 pygame.display.update(node_rect)
                 self.is_finding = True
                 return path
@@ -85,23 +81,6 @@ class GameLogic:
                     queue.append((neighbor, path + [neighbor]))
         
         return None
-    def ids(self, start, target, depth_limit, screen, window):
-        visited = set()
-        result = self.dfs(start, target, depth_limit, visited, screen, window)
-        return result
-    
-    def dfs(self, current, target, depth_limit, visited, screen, window):
-        if current == target:
-            return []
-        if depth_limit == 0:
-            return None
-        visited.add(current)
-
-        for neighbor in self.get_valid_neighbors(current):
-            if neighbor not in visited:
-                result = self.dfs(neighbor, target, depth_limit - 1, visited.copy(), screen, window)
-                if result is not None:
-                    return [(current[0] - neighbor[0], current[1] - neighbor[1])] + result
     
     def ucs(self, start, target, screen, window):
         visited = set()
@@ -116,9 +95,6 @@ class GameLogic:
                 pygame.draw.rect(screen, color.GREEN, node_rect)
 
             if current == target:
-                for step in path:
-                    x, y = step
-                    pygame.draw.rect(screen, color.WHITE, (7 + x * 20, 7 + y * 20, 10, 10))
                 window.blit(screen, (30, 30))
                 pygame.display.update(node_rect)
                 return path
@@ -141,50 +117,56 @@ class GameLogic:
                 valid_neighbors.append((new_x, new_y))
 
         return valid_neighbors
-    def A_star(self, start, target, screen, window):
-        visited = set()
-        queue = PriorityQueue()
-        queue.put((0, start, []))
-        while not queue.empty():
-            cost, current, path = queue.get()
-            if current:
-                node_rect = pygame.Rect(7 + current[0] * 20, 7 + current[1] * 20, 5, 5)
-                pygame.draw.rect(screen, color.GREEN, node_rect)
 
-            if current == target:
-                window.blit(screen, (30, 30))
-                pygame.display.update(node_rect)
-                return path
-
-            if current not in visited:
-                visited.add(current)
-                for neighbor in self.get_valid_neighbors(current):
-                    new_cost = cost + 1  # Assuming all steps have equal cost
-                    queue.put((new_cost, neighbor, path + [neighbor]))
-        return None
-    
-    def visualize_a_star(self, screen, window):
+    def visualize_ucs(self, screen, window):
         if not self.game_over():
             start = self.snake.body[-1]
             target = self.food.food
-            path = self.A_star(start, target, screen, window)
-
+            path = self.ucs(start, target, screen, window)
+            
             if path:
+                print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-            else:
-                print("None path")
-                self.path = [self.get_tail_coordinates()]
-    def get_random_direction(self):
-        import random
-        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # You can customize the directions based on your game
-        return random.choice(directions)
-    def get_tail_coordinates(self):
-        if self.snake.body:
-            tail_coordinates = self.snake.body[0]
-            return tail_coordinates
-        else:
-            return None
+                for step in path:
+                    node_rect = pygame.Rect(7 + step[0] * 20, 7 + step[1] * 20, 7, 7)
+                    pygame.draw.rect(screen, color.WHITE, node_rect)
+                    window.blit(screen, (30, 30)) 
+            elif not self.is_finding:
+                print("following tail")
+                target = self.snake.body[0]
+                path = self.ucs(start, target, screen, window)
+                if path:
+                    self.path = [(self.path[0][0] - start[0], self.path[0][1] - start[1])]
+                    self.path.extend((self.path[i][0] - self.path[i-1][0], self.path[i][1] - self.path[i-1][1]) for i in range(1, len(self.path)))         
+                else:
+                    print("change path: choose_longest_path")
+                    choose_longest_path = self.choose_longest_path(start)
+                    
+                    if choose_longest_path:
+                        self.path = [choose_longest_path]    
+                    else:
+                        alternative_direction = self.get_alternative_direction(start)
+                        if alternative_direction:
+                            print("change path: alternative_direction")
+                            self.path = [alternative_direction]
+                        else:
+                            is_possible_direction = self.is_possible_direction(start)
+                            if is_possible_direction:
+                                print("change path: is_possible_direction")
+                                self.path = [is_possible_direction]
+                            else:
+                                print("follow default head")
+                                head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+                                self.path = [head_direction]
+    
+    def move_along_path(self):
+        if self.path:
+            direction = self.path.pop(0)
+            # print(direction)
+            self.snake.change_direction(direction)
+            self.snake.set_moving(True)
+            self.update()
 
     def visualize_bfs(self, screen, window):
         if not self.game_over():
@@ -193,91 +175,84 @@ class GameLogic:
             path = self.bfs(start, target, screen, window)
             
             if path:
-                print("path: 1")
+                print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-            elif not self.is_finding:
-                print("path: 22")
-                alternative_direction = self.get_alternative_direction(start)
                 
+                for step in path:
+                    node_rect = pygame.Rect(7 + step[0] * 20, 7 + step[1] * 20, 7, 7)
+                    pygame.draw.rect(screen, color.WHITE, node_rect)
+                    window.blit(screen, (30, 30))                
+            elif not self.is_finding:
+                print("following tail")
+                target = self.snake.body[0]
                 path = self.bfs(start, target, screen, window)
-            
-                if path:
-                    print("change path: 2")
-                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-                elif alternative_direction:
-                    print("change path: 2222222222222")
-                    self.path = [alternative_direction]    
-                    path = self.bfs(start, target, screen, window)
-                    
-                    if path:
-                        self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                        self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-                else:
-                # Thay vì kết thúc trò chơi, hãy di chuyển theo đầu rắn
-                    head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
-                    self.path = [head_direction]
-            elif not path:
-                print("path: 333")
-                path = self.bfs(start, target, screen, window)
-                if not path:
-                    path = self.bfs(start, self.food.food, screen, window)
-                    print("change")
                 if path:
                     self.path = [(self.path[0][0] - start[0], self.path[0][1] - start[1])]
-                    self.path.extend((self.path[i][0] - self.path[i-1][0], self.path[i][1] - self.path[i-1][1]) for i in range(1, len(self.path)))
-    def visualize_ids(self, screen, window):
-        if not self.game_over():
-            start = self.snake.body[-1]
-            target = self.food.food
-            depth_limit = 5 * 5
-            path = self.ids(start, target, depth_limit, screen, window)
-            print(path)
-            if path:
-                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-
-    def visualize_ucs(self, screen, window):
-        if not self.game_over():
-            start = self.snake.body[-1]
-            target = self.food.food
-            path = self.ucs(start, target, screen, window)
-            if path:
-                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-
-    def get_alternative_direction(self, start):
-        # max_space = 0
-        # best_direction = None
-
-        # for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
-        #     new_x, new_y = start[0] + dx, start[1] + dy
-
-        #     if (0 < new_x < self.width-1) and (0 < new_y < self.height-1) and (new_x, new_y) not in self.snake.body:
-        #         space_count = 0
-        #         for ddx, ddy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
-        #             nx, ny = new_x + ddx, new_y + ddy
-        #             if (0 <= nx < self.width) and (0 <= ny < self.height) and (nx, ny) not in self.snake.body:
-        #                 space_count += 1
-
-        #         # Update if the current direction provides more space
-        #         if space_count > max_space:
-        #             max_space = space_count
-        #             best_direction = (dx, dy)
-        # print(max_space)
-        # return best_direction
-    
+                    self.path.extend((self.path[i][0] - self.path[i-1][0], self.path[i][1] - self.path[i-1][1]) for i in range(1, len(self.path)))         
+                else:
+                    print("change path: choose_longest_path")
+                    choose_longest_path = self.choose_longest_path(start)
+                    
+                    if choose_longest_path:
+                        self.path = [choose_longest_path]    
+                    else:
+                        alternative_direction = self.get_alternative_direction(start)
+                        if alternative_direction:
+                            print("change path: alternative_direction")
+                            self.path = [alternative_direction]
+                        else:
+                            is_possible_direction = self.is_possible_direction(start)
+                            if is_possible_direction:
+                                print("change path: is_possible_direction")
+                                self.path = [is_possible_direction]
+                            else:
+                                print("follow default head")
+                                head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+                                self.path = [head_direction]
+                                
+    def is_possible_direction(self, start):
         for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             new_x, new_y = start[0] + dx, start[1] + dy
             if (0 < new_x < self.width) and (0 < new_y < self.height) and (new_x, new_y) not in self.snake.body:
                 return (dx, dy)
         return None
+    
+    def get_alternative_direction(self, start):
+        max_space = 0
+        best_direction = None
 
-    def move_along_path(self):
-        if self.path:
-            direction = self.path.pop(0)
-            # print(direction)
-            self.snake.change_direction(direction)
-            self.snake.set_moving(True)
-            self.update()
+        for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+            new_x, new_y = start[0] + dx, start[1] + dy
+
+            if (0 < new_x < self.width-1) and (0 < new_y < self.height-1) and (new_x, new_y) not in self.snake.body:
+                space_count = 0
+                for ddx, ddy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+                    nx, ny = new_x + ddx, new_y + ddy
+                    if (0 <= nx < self.width) and (0 <= ny < self.height) and (nx, ny) not in self.snake.body:
+                        space_count += 1
+
+                # Update if the current direction provides more space
+                if space_count > max_space:
+                    max_space = space_count
+                    best_direction = (dx, dy)
+        print(max_space)
+        return best_direction
+    
+    def choose_longest_path(self, start):
+        max_distance = 0
+        best_direction = None
+
+        for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
+            new_x, new_y = start[0] + dx, start[1] + dy
+            distance = self.calculate_distance_to_tail((new_x, new_y))
+
+            if (0 < new_x < self.width) and (0 < new_y < self.height) and (new_x, new_y) not in self.snake.body and distance > max_distance:
+                max_distance = distance
+                best_direction = (dx, dy)
+
+        return best_direction
+
+    def calculate_distance_to_tail(self, position):
+        tail = self.snake.body[0]
+        return abs(position[0] - tail[0]) + abs(position[1] - tail[1])

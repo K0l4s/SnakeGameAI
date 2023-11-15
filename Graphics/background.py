@@ -35,7 +35,7 @@ class Background:
     def start_background_music(self):
         pygame.mixer.music.load("Resources/Sound/background_music.wav")
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.set_volume(0.05)
 
     def stop_background_music(self):
         pygame.mixer.music.stop()

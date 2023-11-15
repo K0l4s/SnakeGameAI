@@ -60,6 +60,7 @@ btn_music = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 
 btn_pause = RoundButton(window, (120, 685), 30, "Resources/btn_pause.png")
 btn_unpause = RoundButton(window, (120, 685), 30, "Resources/btn_unpause.png")
+
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
     popup_text = popup_font.render(message, True, color)
