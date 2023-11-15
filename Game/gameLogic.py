@@ -4,6 +4,7 @@ from Game.food import Food
 import Game.colors as color
 import Game.config as cf
 clock = pygame.time.Clock()
+from queue import PriorityQueue
 class GameLogic:
     def __init__(self, snake, width, height):
         self.snake = snake
@@ -69,6 +70,49 @@ class GameLogic:
                     queue.append((neighbor, path + [neighbor]))
         
         return None
+    def ids(self, start, target, depth_limit, screen, window):
+        visited = set()
+        result = self.dfs(start, target, depth_limit, visited, screen, window)
+        return result
+    
+    def dfs(self, current, target, depth_limit, visited, screen, window):
+        if current == target:
+            return []
+        if depth_limit == 0:
+            return None
+        visited.add(current)
+
+        for neighbor in self.get_valid_neighbors(current):
+            if neighbor not in visited:
+                result = self.dfs(neighbor, target, depth_limit - 1, visited.copy(), screen, window)
+                if result is not None:
+                    return [(current[0] - neighbor[0], current[1] - neighbor[1])] + result
+    
+    def ucs(self, start, target, screen, window):
+        visited = set()
+        queue = PriorityQueue()
+        queue.put((0, start, []))  # (cost, current, path)
+        
+        while not queue.empty():
+            cost, current, path = queue.get()
+            
+            if current:
+                node_rect = pygame.Rect(7 + current[0] * 20, 7 + current[1] * 20, 5, 5)
+                pygame.draw.rect(screen, color.GREEN, node_rect)
+
+            if current == target:
+                window.blit(screen, (30, 30))
+                pygame.display.update(node_rect)
+                return path
+
+            if current not in visited:
+                visited.add(current)
+                for neighbor in self.get_valid_neighbors(current):
+                    new_cost = cost + 1  # Assuming all steps have equal cost
+                    queue.put((new_cost, neighbor, path + [neighbor]))
+
+        return None
+
     def get_valid_neighbors(self, position):
         x, y = position
         valid_neighbors = []
@@ -121,7 +165,26 @@ class GameLogic:
                 if path:
                     self.path = [(self.path[0][0] - start[0], self.path[0][1] - start[1])]
                     self.path.extend((self.path[i][0] - self.path[i-1][0], self.path[i][1] - self.path[i-1][1]) for i in range(1, len(self.path)))
-                        
+    def visualize_ids(self, screen, window):
+        if not self.game_over():
+            start = self.snake.body[-1]
+            target = self.food.food
+            depth_limit = 5 * 5
+            path = self.ids(start, target, depth_limit, screen, window)
+            print(path)
+            if path:
+                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+
+    def visualize_ucs(self, screen, window):
+        if not self.game_over():
+            start = self.snake.body[-1]
+            target = self.food.food
+            path = self.ucs(start, target, screen, window)
+            if path:
+                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+
     def get_alternative_direction(self, start):
         # max_space = 0
         # best_direction = None

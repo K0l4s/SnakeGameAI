@@ -33,8 +33,11 @@ score = 0
 font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 40)
 
 #button solve
-btn_solve_rect = pygame.Rect(SCREEN_WIDTH + 120, 100, 180, 60)
-btn_solve = Button(window, btn_solve_rect, "BFS", color.WHITE, font)
+btn_bfs_rect = pygame.Rect(SCREEN_WIDTH + 120, 100, 180, 60)
+btn_bfs = Button(window, btn_bfs_rect, "BFS", color.WHITE, font)
+
+btn_ucs_rect = pygame.Rect(SCREEN_WIDTH + 120, 180, 180, 60)
+btn_ucs = Button(window, btn_ucs_rect, "UCS", color.WHITE, font)
 
 #button start
 btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 60)
@@ -47,7 +50,7 @@ btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 180, 60)
 btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, font)
 
 #button exit
-btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 180, 180, 60)
+btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 260, 180, 60)
 btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
 
 btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
@@ -63,6 +66,7 @@ def main():
     start = False
     is_over = False
     using_algorithm = False
+    selected_alogrithm = ""
     setting_clicked = False
     while True:
         background.draw_menu(window)
@@ -115,8 +119,12 @@ def main():
                 if not game_logic.game_over():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
-                            if btn_solve_rect.collidepoint(event.pos):
+                            if btn_bfs_rect.collidepoint(event.pos):
                                 using_algorithm = True
+                                selected_alogrithm = "BFS"
+                            elif btn_ucs_rect.collidepoint(event.pos):
+                                using_algorithm = True
+                                selected_alogrithm = "UCS"
                             elif btn_music_toggle.collidepoint(event.pos):
                                 print("Music changed")
                                 if game_logic.is_on_music:
@@ -125,7 +133,8 @@ def main():
                                     game_logic.is_on_music = True
         if start:
             background.draw(window)
-            btn_solve.draw()
+            btn_bfs.draw()
+            btn_ucs.draw()
             btn_exit.draw()            
         if not start:
             btn_start.draw()
@@ -165,11 +174,15 @@ def main():
             window.blit(screen, (30, 30))
         
         if using_algorithm:
-            clock.tick(50)
+            clock.tick(30)
         else:
             clock.tick(15)
-        if using_algorithm:
+        if using_algorithm and selected_alogrithm == "BFS":
             game_logic.visualize_bfs(screen, window)
+            game_logic.move_along_path()
+
+        if using_algorithm and selected_alogrithm == "UCS":
+            game_logic.visualize_ucs(screen, window)
             game_logic.move_along_path()
 
         if start:
