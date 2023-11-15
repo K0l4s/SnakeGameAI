@@ -58,7 +58,8 @@ btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 btn_music_mute = RoundButton(window, (40, 685), 30, "Resources/btn_music_mute.png")
 btn_music = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 
-
+btn_pause = RoundButton(window, (120, 685), 30, "Resources/btn_pause.png")
+btn_unpause = RoundButton(window, (120, 685), 30, "Resources/btn_unpause.png")
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
     popup_text = popup_font.render(message, True, color)
@@ -91,6 +92,7 @@ def main():
                     if btn_start_rect.collidepoint(event.pos) and not playing:
                         playing = True
                         start = True
+                        game_logic.is_paused = False
                         game_logic.snake.set_moving(True)
                         game_logic.restart_game()
                     elif btn_setting_rect.collidepoint(event.pos) and not playing:
@@ -105,7 +107,7 @@ def main():
                         return 
 
             if playing:
-                if event.type == pygame.KEYDOWN:
+                if event.type == pygame.KEYDOWN and not game_logic.is_paused:
                     game_logic.snake.set_moving(True)
                     if event.key == pygame.K_SPACE:
                         if game_logic.game_over():
@@ -141,6 +143,13 @@ def main():
                                     btn_music_toggle.image = btn_music.image
                                     background.unpause_background_music()
                                     game_logic.is_on_music = True
+                            elif btn_pause.collidepoint(event.pos):
+                                print("Paused")
+                                game_logic.toggle_pause()
+                                if game_logic.is_paused:
+                                    btn_pause.image = btn_unpause.image
+                                else:
+                                    btn_pause.image = btn_pause.image
         if start:
             background.draw(window)
             btn_bfs.draw()
@@ -198,6 +207,7 @@ def main():
 
         if start:
             btn_music_toggle.draw()
+            btn_pause.draw()
         pygame.display.update()
 if __name__ == "__main__":
     main()
