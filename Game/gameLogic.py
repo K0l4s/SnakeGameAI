@@ -5,7 +5,9 @@ import Game.colors as color
 import Game.config as cf
 clock = pygame.time.Clock()
 from queue import PriorityQueue
-import math
+from Graphics.background import Background
+bg = Background(cf.WIDTH, cf.HEIGHT)
+
 class GameLogic:
     def __init__(self, snake, width, height):
         self.snake = snake
@@ -17,8 +19,17 @@ class GameLogic:
         self.path = []
         self.is_finding = False
         self.is_on_music = True
+        self.is_paused = False
+
+    def toggle_pause(self):
+        self.is_paused = not self.is_paused
+        if self.is_paused:
+            bg.pause_background_music()
+        else:
+            bg.unpause_background_music()
+        
     def update(self):
-        if not self.snake.is_moving:
+        if not self.snake.is_moving or self.is_paused:
             return
         head = self.snake.move()
 
@@ -60,6 +71,9 @@ class GameLogic:
                 pygame.draw.rect(screen, color.GREEN , node_rect)
 
             if current == target:
+                for step in path:
+                    x, y = step
+                    pygame.draw.rect(screen, color.WHITE, (7 + x * 20, 7 + y * 20, 10, 10))
                 window.blit(screen, (30,30))  
                 pygame.display.update(node_rect)
                 self.is_finding = True
@@ -85,6 +99,9 @@ class GameLogic:
                 pygame.draw.rect(screen, color.GREEN, node_rect)
 
             if current == target:
+                for step in path:
+                    x, y = step
+                    pygame.draw.rect(screen, color.WHITE, (7 + x * 20, 7 + y * 20, 10, 10))
                 window.blit(screen, (30, 30))
                 pygame.display.update(node_rect)
                 return path
