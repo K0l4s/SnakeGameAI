@@ -107,7 +107,7 @@ def main():
                     elif btn_quit_rect.collidepoint(event.pos) and not playing:
                         pygame.quit()
                         return 
-
+                
             if playing:
                 if event.type == pygame.KEYDOWN and not game_logic.is_paused:
                     game_logic.snake.set_moving(True)
@@ -167,7 +167,9 @@ def main():
             btn_quit.draw()
         
         if setting_clicked:
-            print("OK")
+            blur_rect = pygame.Surface((SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), pygame.SRCALPHA)
+            blur_rect.fill((0,0,0,128))
+            window.blit(blur_rect, (200,200))
         if playing and not using_algorithm:
             game_logic.update()
         if playing:
