@@ -137,6 +137,7 @@ def main():
                             if btn_bfs_rect.collidepoint(event.pos):
                                 using_algorithm = True
                                 selected_alogrithm = "BFS"
+                                game_logic.visualize_bfs(screen, window)
                             elif btn_ucs_rect.collidepoint(event.pos):
                                 using_algorithm = True
                                 selected_alogrithm = "UCS"
@@ -208,12 +209,12 @@ def main():
         else:
             clock.tick(15)
         if using_algorithm and selected_alogrithm == "BFS":
-            game_logic.visualize_bfs(screen, window)
+            #game_logic.visualize_bfs(screen, window) 
             game_logic.move_along_path()
+            if game_logic.is_eaten:
+                game_logic.is_eaten = False
+                game_logic.visualize_bfs(screen, window)
 
-        if using_algorithm and selected_alogrithm == "UCS":
-            game_logic.visualize_ucs(screen, window)
-            game_logic.move_along_path()
 
         if start:
             btn_music_toggle.draw()

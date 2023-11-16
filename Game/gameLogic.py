@@ -20,6 +20,7 @@ class GameLogic:
         self.is_finding = False
         self.is_on_music = True
         self.is_paused = False
+        self.is_eaten = False
 
     def toggle_pause(self):
         self.is_paused = not self.is_paused
@@ -36,6 +37,7 @@ class GameLogic:
             self.food.spawn_food()
             self.score +=1
             print(self.score)
+            self.is_eaten = True
         else:
             self.snake.body.pop(0)
 
@@ -84,35 +86,6 @@ class GameLogic:
         
         return None
     
-    def ucs(self, start, target, screen, window):
-        visited = set()
-        queue = PriorityQueue()
-        queue.put((0, start, []))  # (cost, current, path)
-        
-        while not queue.empty():
-            cost, current, path = queue.get()
-            
-            if current:
-                node_rect = pygame.Rect(7 + current[0] * 20, 7 + current[1] * 20, 5, 5)
-                pygame.draw.rect(screen, color.GREEN, node_rect)
-
-            if current == target:
-                window.blit(screen, (30, 30))
-                pygame.display.update(node_rect)
-                return path
-
-            if current not in visited:
-                visited.add(current)
-                if target == self.snake.body[0]:
-                    for neighbor in self.get_valid_neighbors_new(current):
-                        new_cost = cost + 1
-                        queue.put((new_cost, neighbor, path + [neighbor]))
-                else:
-                    for neighbor in self.get_valid_neighbors(current):
-                        new_cost = cost + 1  # Assuming all steps have equal cost
-                        queue.put((new_cost, neighbor, path + [neighbor]))
-        return None
-
     def get_valid_neighbors(self, position):
         x, y = position
         valid_neighbors = []
@@ -134,37 +107,6 @@ class GameLogic:
                 valid_neighbors.append((new_x, new_y))
 
         return valid_neighbors
-
-    def visualize_ucs(self, screen, window):
-        if not self.game_over():
-            start = self.snake.body[-1]
-            target = self.food.food
-            path = self.ucs(start, target, screen, window)
-            
-            if path:
-                print("default path")
-                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-                for step in path:
-                    node_rect = pygame.Rect(7 + step[0] * 20, 7 + step[1] * 20, 7, 7)
-                    pygame.draw.rect(screen, color.WHITE, node_rect)
-                    window.blit(screen, (30, 30)) 
-            elif not self.is_finding:
-                tail = self.snake.body[0]
-                path = self.ucs(start, tail, screen, window)
-                if path:
-                    print("following tail")
-                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))       
-                else:
-                    choose_longest_path = self.choose_longest_path(start)
-                    if choose_longest_path:
-                        print("choose_longest_path")
-                        self.path = [choose_longest_path]    
-                    else:
-                        print("follow default head")
-                        head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
-                        self.path = [head_direction]
     
     def move_along_path(self):
         if self.path:
@@ -179,28 +121,32 @@ class GameLogic:
             start = self.snake.body[-1]
             target = self.food.food
             path = self.bfs(start, target, screen, window)
-            
             if path:
+                self.is_finding = True
                 print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-                
                 for step in path:
                     node_rect = pygame.Rect(7 + step[0] * 20, 7 + step[1] * 20, 7, 7)
                     pygame.draw.rect(screen, color.WHITE, node_rect)
-                    window.blit(screen, (30, 30))                
-            elif not self.is_finding:
-                tail = self.snake.body[0]
-                path = self.bfs(start, tail, screen, window)
-                if path:
-                    print("following tail")
-                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))         
-                else:
+                    window.blit(screen, (30, 30)) 
+            elif not path and not self.is_finding:
+                while not path:
+                    start = self.snake.body[-1]
+                    target = self.food.food
+                    path = self.bfs(start, target, screen, window)
+                    if path:
+                        self.is_finding = True
+                        print("default path")
+                        self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                        self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+                        
                     choose_longest_path = self.choose_longest_path(start)
                     if choose_longest_path:
                         print("choose_longest_path")
-                        self.path = [choose_longest_path]    
+                        self.path = [choose_longest_path]  
+                        if self.bfs(start, target, screen, window):
+                            self.is_eaten = True  
                     else:
                         print("follow default head")
                         head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
