@@ -62,6 +62,8 @@ btn_pause_toggle = RoundButton(window, (120, 685), 30, "Resources/btn_pause.png"
 btn_pause = RoundButton(window, (120, 685), 30, "Resources/btn_pause.png")
 btn_unpause = RoundButton(window, (120, 685), 30, "Resources/btn_unpause.png")
 
+pause = False
+
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
     popup_text = popup_font.render(message, True, color)
@@ -138,23 +140,21 @@ def main():
                             elif btn_music_toggle.collidepoint(event.pos):
                                 print("Music changed")
                                 if game_logic.is_on_music:
-                                    if(btn_music_toggle.image == btn_music.image):
-                                        btn_music_toggle.image = btn_music_mute.image
-                                        background.pause_background_music()
-                                        game_logic.is_on_music = False
+                                    btn_music_toggle.image = btn_music_mute.image
+                                    background.pause_background_music()
+                                    game_logic.is_on_music = False
                                 else:
-                                    if(btn_music_toggle.image == btn_music_mute.image):
-                                        btn_music_toggle.image = btn_music.image
-                                        background.unpause_background_music()
-                                        game_logic.is_on_music = True
+                                    btn_music_toggle.image = btn_music.image
+                                    background.unpause_background_music()
+                                    game_logic.is_on_music = True
                             elif btn_pause_toggle.collidepoint(event.pos):
                                 print("Paused")
                                 game_logic.toggle_pause()
                                 if game_logic.is_paused:
-                                    btn_music_toggle.image = btn_music_mute.image
+                                    background.unpause_background_music()
                                     btn_pause_toggle.image = btn_unpause.image
                                 else:
-                                    btn_music_toggle.image = btn_music.image
+                                    background.unpause_background_music()
                                     btn_pause_toggle.image = btn_pause.image
         if start:
             background.draw(window)
