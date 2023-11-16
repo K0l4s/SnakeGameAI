@@ -20,6 +20,7 @@ pygame.display.set_caption("Snake Game")
 window = cf.window
 screen = cf.screen
 btn_screen = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+algo_screen = cf.screen.copy()
 snake = Snake(GRID_WIDTH // 2, GRID_HEIGHT // 2)
 game_logic = GameLogic(snake, GRID_WIDTH, GRID_HEIGHT)
 food = game_logic.food
@@ -75,7 +76,7 @@ def main():
     start = False
     is_over = False
     using_algorithm = False
-    selected_alogrithm = ""
+    selected_algorithm = ""
     setting_clicked = False
     background.start_background_music()
     while True:
@@ -136,10 +137,10 @@ def main():
                         if event.button == 1:
                             if btn_bfs_rect.collidepoint(event.pos):
                                 using_algorithm = True
-                                selected_alogrithm = "BFS"
+                                selected_algorithm = "BFS"
                             elif btn_ucs_rect.collidepoint(event.pos):
                                 using_algorithm = True
-                                selected_alogrithm = "UCS"
+                                selected_algorithm = "UCS"
                             elif btn_music_toggle.collidepoint(event.pos):
                                 print("Music changed")
                                 if game_logic.is_on_music:
@@ -151,12 +152,13 @@ def main():
                                     background.unpause_background_music()
                                     game_logic.is_on_music = True
                             elif btn_pause_toggle.collidepoint(event.pos):
-                                print("Paused")
                                 game_logic.toggle_pause()
                                 if game_logic.is_paused:
                                     btn_pause_toggle.image = btn_unpause.image
+                                    print("Paused")
                                 else: 
                                     btn_pause_toggle.image = btn_pause.image
+                                    print("unpaused")
         if start:
             background.draw(window)
             btn_bfs.draw()
@@ -203,21 +205,33 @@ def main():
 
             window.blit(screen, (30, 30))
         
-        if using_algorithm:
-            clock.tick(50)
-        else:
-            clock.tick(15)
-        if using_algorithm and selected_alogrithm == "BFS":
-            game_logic.visualize_bfs(screen, window)
-            game_logic.move_along_path()
-
-        if using_algorithm and selected_alogrithm == "UCS":
-            game_logic.visualize_ucs(screen, window)
-            game_logic.move_along_path()
-
         if start:
             btn_music_toggle.draw()
             btn_pause_toggle.draw()
+
         pygame.display.update()
+
+        if using_algorithm:
+            clock.tick(30)
+        else:
+            clock.tick(15)
+
+        if using_algorithm and selected_algorithm == "BFS":
+            if not game_logic.is_paused:
+                if not game_logic.path:
+                    game_logic.visualize_bfs(screen, window)
+                    if game_logic.path_to_draw:
+                        for rect_color, rect in game_logic.path_to_draw:
+                            pygame.draw.rect(screen, rect_color, rect)
+                else:
+                    game_logic.move_along_path()
+
+        if using_algorithm and selected_algorithm == "UCS":
+            if not game_logic.is_paused:
+                if not game_logic.path:
+                    game_logic.visualize_ucs(screen, window)
+                else:
+                    game_logic.move_along_path()
+
 if __name__ == "__main__":
     main()
