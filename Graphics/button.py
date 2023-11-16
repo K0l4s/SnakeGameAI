@@ -1,5 +1,5 @@
 import pygame
-
+import Game.colors as color
 class Button:
     def __init__(self, screen, rect, text, text_color, font):
         self.screen = screen
@@ -37,6 +37,9 @@ class Button:
         text_rect = text_surface.get_rect()
         text_rect.center = self.rect.center
         self.screen.blit(text_surface, text_rect)
+    
+    def reset_text_color(self):
+        self.text_color = color.WHITE
 class RoundButton:
     def __init__(self, screen, center, radius, image_path):
         self.screen = screen

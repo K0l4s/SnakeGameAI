@@ -62,7 +62,7 @@ btn_pause_toggle = RoundButton(window, (120, 685), 30, "Resources/btn_pause.png"
 btn_pause = RoundButton(window, (120, 685), 30, "Resources/btn_pause.png")
 btn_unpause = RoundButton(window, (120, 685), 30, "Resources/btn_unpause.png")
 
-pause = False
+btn_close = RoundButton(window, (WIDTH // 2 + 150, 600), 30, "Resources/btn_close.png")
 
 def display_message(message, color, screen, screen_size):
     popup_font = pygame.font.Font(None, 48)
@@ -97,6 +97,7 @@ def main():
                         playing = True
                         start = True
                         game_logic.is_paused = False
+                        btn_pause_toggle.image = btn_pause.image
                         game_logic.snake.set_moving(True)
                         game_logic.restart_game()
                     elif btn_setting_rect.collidepoint(event.pos) and not playing:
@@ -106,6 +107,8 @@ def main():
                         playing = False
                         start = False
                         using_algorithm = False
+                    elif btn_close.collidepoint(event.pos):
+                        setting_clicked = False
                     elif btn_quit_rect.collidepoint(event.pos) and not playing:
                         pygame.quit()
                         return 
@@ -151,15 +154,8 @@ def main():
                                 print("Paused")
                                 game_logic.toggle_pause()
                                 if game_logic.is_paused:
-                                    if(game_logic.is_on_music):
-                                        btn_music_toggle.image = btn_music_mute.image
-                                        game_logic.is_on_music = False
-                                    
                                     btn_pause_toggle.image = btn_unpause.image
                                 else: 
-                                    if(not game_logic.is_on_music):
-                                        btn_music_toggle.image = btn_music.image
-                                        game_logic.is_on_music = True
                                     btn_pause_toggle.image = btn_pause.image
         if start:
             background.draw(window)
@@ -172,9 +168,10 @@ def main():
             btn_quit.draw()
         
         if setting_clicked:
-            blur_rect = pygame.Surface((SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2), pygame.SRCALPHA)
-            blur_rect.fill((0,0,0,128))
-            window.blit(blur_rect, (200,200))
+            blur_rect = pygame.Surface((SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 100), pygame.SRCALPHA)
+            blur_rect.fill((0,0,0,200))
+            window.blit(blur_rect, (WIDTH // 3 - 20, HEIGHT // 3))
+            btn_close.draw()
         if playing and not using_algorithm:
             game_logic.update()
         if playing:

@@ -116,6 +116,7 @@ class Snake:
 
     def play_crunch_sound(self):
         self.crunch_sound.play()
+        self.crunch_sound.set_volume(0.3)
         
     def set_moving(self, flag):
         self.is_moving = flag
