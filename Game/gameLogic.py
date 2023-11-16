@@ -23,10 +23,6 @@ class GameLogic:
 
     def toggle_pause(self):
         self.is_paused = not self.is_paused
-        if self.is_paused:
-            bg.pause_background_music()
-        else:
-            bg.unpause_background_music()
         
     def update(self):
         if not self.snake.is_moving or self.is_paused:
