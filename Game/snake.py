@@ -43,9 +43,10 @@ class Snake:
         self.body_bl = pygame.transform.scale(self.body_bl, (20, 20))
 
     def change_direction(self, new_direction):
-        if self.direction[0] + new_direction[0] != 0 or self.direction[1] + new_direction[1] != 0:
-            self.direction = new_direction
-            self.is_moving = False
+        if isinstance(new_direction, tuple) and len(new_direction) == 2:
+            if self.direction[0] + new_direction[0] != 0 or self.direction[1] + new_direction[1] != 0:
+                self.direction = new_direction
+                self.is_moving = False
             
     def move(self):
         head = self.body[-1]
