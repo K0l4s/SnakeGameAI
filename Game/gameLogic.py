@@ -236,13 +236,30 @@ class GameLogic:
             distance = self.calculate_distance_to_body((new_x, new_y))
 
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) and (new_x, new_y) not in self.snake.body:
-                distance = self.calculate_distance_to_body((new_x, new_y))
                 if distance > max_distance:
                     max_distance = distance
                     best_direction = (dx, dy)
 
         return best_direction
 
-    def calculate_distance_to_tail(self, position):
-        tail = self.snake.body[0]
-        return abs(position[0] - tail[0]) + abs(position[1] - tail[1])
+    def calculate_distance_to_body(self, position):
+        max_distance = 0
+        distance = 0
+        for segment in self.snake.body:
+            distance = abs(position[0] - segment[0]) + abs(position[1] - segment[1])
+            if distance > max_distance:
+                max_distance = distance
+        return max_distance
+    
+    #draw nodes when simulating
+    def draw_nodes(self, screen):
+        for node in self.visited_nodes:
+            pygame.draw.rect(screen, color.GREEN, (7 + node[0] * 20, 7 + node[1] * 20, 5, 5), 5)
+
+        for step in self.current_path:
+            x, y = step
+            pygame.draw.rect(screen, color.WHITE, (7 + x * 20, 7 + y * 20, 7, 7))
+
+    #delete nodes for the next simulation
+    def reset_nodes(self):
+        self.visited_nodes = []
