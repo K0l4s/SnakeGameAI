@@ -212,7 +212,7 @@ def main():
         pygame.display.update()
 
         if using_algorithm:
-            clock.tick(30)
+            clock.tick(300)
         else:
             clock.tick(15)
 

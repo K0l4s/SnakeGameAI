@@ -184,34 +184,39 @@ class GameLogic:
         return valid_neighbors
 
     def visualize_ucs(self, screen, window):
+        global count
+        count += 1
+        print(count)
         if not self.game_over():
             start = self.snake.body[-1]
             target = self.food.food
-            if not self.path:
-                path = self.ucs(start, target, screen, window)
-            
-                if path:
-                    print("default path")
-                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-                    
+            path = self.ucs(start, target, screen, window)
+            # print(self.path)
+            if path:
+                print("default path")
+                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+                # for step in path:
+                #     path_rect = pygame.Rect(7 + step[0] * 20, 7 + step[1] * 20, 7, 7)
+                #     pygame.draw.rect(screen, color.WHITE, path_rect)
+                #     pygame.display.update(path_rect)
             elif not self.is_finding:
                 tail = self.snake.body[0]
-                if not self.path:
-                    path = self.ucs(start, tail, screen, window)
-                    if path:
-                        print("following tail")
-                        self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                        self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))       
+
+                path = self.ucs(start, tail, screen, window)
+                if path:
+                    print("following tail")
+                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))         
+                else:
+                    choose_longest_path = self.choose_longest_path(start)
+                    if choose_longest_path:
+                        print("choose_longest_path")
+                        self.path = [choose_longest_path]    
                     else:
-                        choose_longest_path = self.choose_longest_path(start)
-                        if choose_longest_path:
-                            print("choose_longest_path")
-                            self.path = [choose_longest_path]    
-                        else:
-                            print("follow default head")
-                            head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
-                            self.path = [head_direction]
+                        print("follow default head")
+                        head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+                        self.path = [head_direction]
     
     def visualize_astar(self, screen, window):
         if not self.game_over():
@@ -270,7 +275,7 @@ class GameLogic:
 
         for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             new_x, new_y = start[0] + dx, start[1] + dy
-            distance = self.calculate_distance_to_tail((new_x, new_y))
+            distance = self.calculate_distance_to_head((new_x, new_y))
 
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) and (new_x, new_y) not in self.snake.body:
                 if distance > max_distance:
@@ -279,6 +284,6 @@ class GameLogic:
 
         return best_direction
 
-    def calculate_distance_to_tail(self, position):
-        tail = self.snake.body[0]
-        return abs(position[0] - tail[0]) + abs(position[1] - tail[1])
+    def calculate_distance_to_head(self, position):
+        head = self.snake.body[-1]
+        return abs(position[0] - head[0]) + abs(position[1] - head[1])
