@@ -156,13 +156,6 @@ class GameLogic:
 
         return valid_neighbors
 
-    def visualize_ucs(self, screen, window):
-        global count
-        if not self.game_over():
-            count += 1
-            print(count)
-        else: 
-            count = 0
     def simulate_ucs(self, screen, window):
         if not self.game_over():
             start = self.snake.body[-1]
