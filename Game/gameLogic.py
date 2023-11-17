@@ -185,8 +185,9 @@ class GameLogic:
 
     def visualize_ucs(self, screen, window):
         global count
-        count += 1
-        print(count)
+        if not self.game_over():
+            count += 1
+            print(count)
         if not self.game_over():
             start = self.snake.body[-1]
             target = self.food.food
@@ -237,8 +238,9 @@ class GameLogic:
             self.update()
     def visualize_bfs(self, screen, window):
         global count
-        count += 1
-        print(count)
+        if not self.game_over():
+            count += 1
+            print(count)
         if not self.game_over():
             start = self.snake.body[-1]
             target = self.food.food
@@ -275,7 +277,7 @@ class GameLogic:
 
         for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             new_x, new_y = start[0] + dx, start[1] + dy
-            distance = self.calculate_distance_to_head((new_x, new_y))
+            distance = self.calculate_distance_to_body((new_x, new_y))
 
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) and (new_x, new_y) not in self.snake.body:
                 if distance > max_distance:
@@ -284,6 +286,11 @@ class GameLogic:
 
         return best_direction
 
-    def calculate_distance_to_head(self, position):
-        head = self.snake.body[-1]
-        return abs(position[0] - head[0]) + abs(position[1] - head[1])
+    def calculate_distance_to_body(self, position):
+        max_distance = 0
+        distance = 0
+        for segment in self.snake.body:
+            distance = abs(position[0] - segment[0]) + abs(position[1] - segment[1])
+            if distance > max_distance:
+                max_distance = distance
+        return max_distance
