@@ -48,3 +48,12 @@ class Background:
 
     def set_volume_background_music(self, volume):
         pygame.mixer.music.set_volume(volume)
+
+    #Draw to delete previous frame
+    def reset_frame(self, screen):
+        image = pygame.image.load("Resources/background_note.png")
+        image = pygame.transform.scale(image, (40, 40))
+        # Vẽ background
+        for x in range(0, 1280, image.get_width()):
+            for y in range(0, 1280, image.get_height()):
+                screen.blit(image, (x, y))
