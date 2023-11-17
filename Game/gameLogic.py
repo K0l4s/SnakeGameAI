@@ -156,6 +156,13 @@ class GameLogic:
 
         return valid_neighbors
 
+    def visualize_ucs(self, screen, window):
+        global count
+        if not self.game_over():
+            count += 1
+            print(count)
+        else: 
+            count = 0
     def simulate_ucs(self, screen, window):
         if not self.game_over():
             start = self.snake.body[-1]
@@ -236,6 +243,7 @@ class GameLogic:
             distance = self.calculate_distance_to_body((new_x, new_y))
 
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) and (new_x, new_y) not in self.snake.body:
+                distance = self.calculate_distance_to_body((new_x, new_y))
                 if distance > max_distance:
                     max_distance = distance
                     best_direction = (dx, dy)
