@@ -18,7 +18,6 @@ class GameLogic:
         self.score = 0
         self.path = []
         self.path_to_draw = []
-        self.is_finding = False
         self.is_on_music = True
         self.is_paused = False
         self.visited_nodes = []
@@ -60,9 +59,7 @@ class GameLogic:
     def bfs(self, start, target, screen, window):
         visited = set()
         queue = [(start, [])]
-        self.is_finding = False
         while queue:
-            self.is_finding = False
             current, path = queue.pop(0)
             if current:
                 self.visited_nodes.append(current)
@@ -115,21 +112,25 @@ class GameLogic:
         def heuristic(a, b):
             return abs(a[0] - b[0]) + abs(a[1] - b[1])
             
-        def cost(current, neighbor):
+        def calculate_cost(current, neighbor):
             return 1
         visited = set()
         queue = [(0, start, [])]
         
         while queue:
             cost, current, path = heapq.heappop(queue)
+            
+            if current:
+                self.visited_nodes.append(current)
 
             if current == target:
+                self.current_path = path if path else []
                 return path
 
             if current not in visited:
                 visited.add(current)
                 for neighbor in self.get_valid_neighbors(current):
-                    new_cost = cost + cost(current, neighbor) + heuristic(neighbor, target)
+                    new_cost = cost + calculate_cost(current, neighbor) + heuristic(neighbor, target)
                     heapq.heappush(queue, (new_cost, neighbor, path + [neighbor]))
 
         return None
@@ -165,7 +166,7 @@ class GameLogic:
                 print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-            elif not self.is_finding:
+            else:
                 tail = self.snake.body[0]
 
                 path = self.ucs(start, tail, screen, window)
@@ -193,6 +194,23 @@ class GameLogic:
                 print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+            else:
+                tail = self.snake.body[0]
+
+                path = self.ucs(start, tail, screen, window)
+                if path:
+                    print("following tail")
+                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))         
+                else:
+                    choose_longest_path = self.choose_longest_path(start)
+                    if choose_longest_path:
+                        print("choose_longest_path")
+                        self.path = [choose_longest_path]    
+                    else:
+                        print("follow default head")
+                        head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+                        self.path = [head_direction]
 
     def move_along_path(self):
         if self.path:
@@ -210,7 +228,7 @@ class GameLogic:
                 print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-            elif not self.is_finding:
+            else:
                 tail = self.snake.body[0]
                 path = self.bfs(start, tail, screen, window)
                 if path:
@@ -245,7 +263,7 @@ class GameLogic:
     def calculate_distance_to_body(self, position):
         max_distance = 0
         distance = 0
-        for segment in self.snake.body:
+        for segment in self.snake.body[0:-1]:
             distance = abs(position[0] - segment[0]) + abs(position[1] - segment[1])
             if distance > max_distance:
                 max_distance = distance
