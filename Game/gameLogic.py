@@ -212,7 +212,7 @@ class GameLogic:
 
         for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             new_x, new_y = start[0] + dx, start[1] + dy
-            distance = self.calculate_distance_to_tail((new_x, new_y))
+            distance = self.calculate_distance_to_head((new_x, new_y))
 
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) and (new_x, new_y) not in self.snake.body:
                 if distance > max_distance:
@@ -221,6 +221,7 @@ class GameLogic:
 
         return best_direction
 
-    def calculate_distance_to_tail(self, position):
-        tail = self.snake.body[0]
-        return abs(position[0] - tail[0]) + abs(position[1] - tail[1])
+    def calculate_distance_to_head(self, position):
+        head = self.snake.body[-1]
+        return abs(position[0] - head[0]) + abs(position[1] - head[1])
+
