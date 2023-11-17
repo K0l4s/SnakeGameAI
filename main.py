@@ -113,6 +113,7 @@ def main():
                         if game_logic.game_over():
                             background.unpause_background_music()
                             is_over = False
+                            using_algorithm = False
                             game_logic.restart_game()
                     elif not game_logic.game_over() and not using_algorithm:
                         if event.key == pygame.K_UP:
@@ -231,7 +232,7 @@ def main():
         
         #FPS
         if using_algorithm:
-            clock.tick(50)
+            clock.tick(300)
         else:
             clock.tick(15)
 
