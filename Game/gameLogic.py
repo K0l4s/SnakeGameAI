@@ -188,6 +188,8 @@ class GameLogic:
         if not self.game_over():
             count += 1
             print(count)
+        else: 
+            count = 0
         if not self.game_over():
             start = self.snake.body[-1]
             target = self.food.food
@@ -213,7 +215,7 @@ class GameLogic:
                     choose_longest_path = self.choose_longest_path(start)
                     if choose_longest_path:
                         print("choose_longest_path")
-                        self.path = [choose_longest_path]    
+                        self.path = [choose_longest_path]   
                     else:
                         print("follow default head")
                         head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
@@ -241,6 +243,8 @@ class GameLogic:
         if not self.game_over():
             count += 1
             print(count)
+        else:
+            count = 0
         if not self.game_over():
             start = self.snake.body[-1]
             target = self.food.food
@@ -277,9 +281,9 @@ class GameLogic:
 
         for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
             new_x, new_y = start[0] + dx, start[1] + dy
-            distance = self.calculate_distance_to_body((new_x, new_y))
 
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) and (new_x, new_y) not in self.snake.body:
+                distance = self.calculate_distance_to_body((new_x, new_y))
                 if distance > max_distance:
                     max_distance = distance
                     best_direction = (dx, dy)
