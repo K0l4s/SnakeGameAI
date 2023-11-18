@@ -280,7 +280,7 @@ def main():
                     rank = ranks(score)
                     rank.high_score(score)
                     is_over = True
-                #screen.fill(color.BLACK)
+                screen.fill(color.BLACK)
                 display_message(f"Game Over - Press SPACE to restart! \n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
@@ -295,7 +295,7 @@ def main():
         
         #FPS
         if using_algorithm:
-            clock.tick(300)
+            clock.tick(AI_speed)
         else:
             clock.tick(player_speed)
 
