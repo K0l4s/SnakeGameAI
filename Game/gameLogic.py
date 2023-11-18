@@ -110,13 +110,13 @@ class GameLogic:
                         queue.put((new_cost, neighbor, path + [neighbor]))
         return None
     
+    def heuristic(self, a, b):
+        return abs(a[0] - b[0]) + abs(a[1] - b[1])
+    
+    def calculate_cost(self, current, neighbor):
+        return 1
     
     def a_star(self, start, target, screen, window):
-        def heuristic(a, b):
-            return abs(a[0] - b[0]) + abs(a[1] - b[1])
-            
-        def calculate_cost(current, neighbor):
-            return 1
         visited = set()
         queue = [(0, start, [])]
         
@@ -132,12 +132,47 @@ class GameLogic:
 
             if current not in visited:
                 visited.add(current)
-                for neighbor in self.get_valid_neighbors(current):
-                    new_cost = cost + calculate_cost(current, neighbor) + heuristic(neighbor, target)
-                    heapq.heappush(queue, (new_cost, neighbor, path + [neighbor]))
+                if target == self.snake.body[0]:
+                    for neighbor in self.get_valid_neighbors_new(current):
+                        new_cost = cost + self.calculate_cost(current, neighbor)
+                        priority = new_cost + self.heuristic(neighbor, target)
+                        heapq.heappush(queue, (priority, neighbor, path + [neighbor]))
+                else:
+                    for neighbor in self.get_valid_neighbors(current):
+                        new_cost = cost + self.calculate_cost(current, neighbor)
+                        priority = new_cost + self.heuristic(neighbor, target)
+                        heapq.heappush(queue, (priority, neighbor, path + [neighbor]))
+
 
         return None
+    
+    def greedy(self, start, target, screen, window):
+        visited = set()
+        queue = PriorityQueue()
+        queue.put((self.heuristic(start, target), start, []))
 
+        while not queue.empty():
+            _, current, path = queue.get()
+
+            if current:
+                self.visited_nodes.append(current)
+
+            if current == target:
+                self.current_path = path if path else []
+                return path
+
+            if current not in visited:
+                visited.add(current)
+                if target == self.snake.body[0]:
+                    for neighbor in self.get_valid_neighbors_new(current):
+                        new_cost = self.calculate_cost(current, neighbor)
+                        queue.put((self.heuristic(neighbor, target), neighbor, path + [neighbor]))
+                else:
+                    for neighbor in self.get_valid_neighbors(current):
+                        new_cost = self.calculate_cost(current, neighbor)
+                        queue.put((self.heuristic(neighbor, target), neighbor, path + [neighbor]))
+
+        return None
     def get_valid_neighbors(self, position):
         x, y = position
         valid_neighbors = []
@@ -252,36 +287,48 @@ class GameLogic:
             
     
     def choose_longest_path(self, start):
-            best_direction = None
-            max_distance = 0
+        def count_available_space(x, y, dx, dy):
+            count = 0
+            while (0 <= x < self.width) and (0 <= y < self.height) and (x, y) not in self.snake.body:
+                count += 1
+                x += dx
+                y += dy
+            return count
 
-            for dx, dy in [(0, -1), (0, 1), (-1, 0), (1, 0)]:
-                new_x, new_y = start[0] + dx, start[1] + dy
+        directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+        best_direction = None
+        max_available_space = 0
 
-                if (0 <= new_x < self.width) and (0 <= new_y < self.height) and (new_x, new_y) not in self.snake.body:
-                    distance = self.calculate_distance_to_body((new_x, new_y))
-                    
-                    if distance > max_distance:
-                        max_distance = distance
-                        best_direction = (dx, dy)
+        for dx, dy in directions:
+            new_x, new_y = start[0] + dx, start[1] + dy
+            space = count_available_space(new_x, new_y, dx, dy)
 
-            return best_direction
+            opposite_space = count_available_space(start[0] - dx, start[1] - dy, -dx, -dy)
+            total_space = space + opposite_space - 1  # Subtract 1 to avoid double counting start cell
+
+            if total_space > max_available_space:
+                max_available_space = total_space
+                best_direction = (dx, dy)
+
+            elif total_space == max_available_space and space > max_available_space // 2:
+                # If equal available space, prioritize the direction that has more space in its direct line
+                max_available_space = total_space
+                best_direction = (dx, dy)
+
+        # Di chuyển tiết kiệm không gian
+        if best_direction:
+            new_x, new_y = start[0] + best_direction[0], start[1] + best_direction[1]
+            space_ahead = count_available_space(new_x, new_y, best_direction[0], best_direction[1])
+            space_behind = count_available_space(start[0] - best_direction[0], start[1] - best_direction[1], -best_direction[0], -best_direction[1])
+
+            if space_ahead > space_behind:
+                return best_direction
+            else:
+                return (-best_direction[0], -best_direction[1])
+
+        return best_direction
 
 
-
-    def calculate_distance_to_tail(self, position):
-        tail = self.snake.body[0]
-        return abs(position[0] - tail[0]) + abs(position[1] - tail[1])
-    
-    def calculate_distance_to_body(self, position):
-        max_distance = 0
-
-        for segment in self.snake.body:
-            distance = abs(position[0] - segment[0]) + abs(position[1] - segment[1])
-            if distance > max_distance:
-                max_distance = distance
-
-        return max_distance
     
     #draw nodes when simulating
     def draw_nodes(self, screen):
@@ -295,3 +342,4 @@ class GameLogic:
     #delete nodes for the next simulation
     def reset_nodes(self):
         self.visited_nodes = []
+        

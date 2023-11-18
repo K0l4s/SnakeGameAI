@@ -153,7 +153,9 @@ def main():
                     game_logic.snake.set_moving(True)
                     if event.key == pygame.K_SPACE:
                         if game_logic.game_over():
-                            background.unpause_background_music()
+                            if game_logic.is_paused:
+                                btn_music_toggle.image = btn_music.image
+                                background.unpause_background_music()
                             is_over = False
                             using_algorithm = False
                             game_logic.restart_game()
@@ -293,7 +295,7 @@ def main():
         
         #FPS
         if using_algorithm:
-            clock.tick(AI_speed)
+            clock.tick(300)
         else:
             clock.tick(player_speed)
 
