@@ -67,4 +67,57 @@ class RoundButton:
         image_rect = img.get_rect()
         image_rect.center = self.center
         self.screen.blit(img, image_rect)
-        
+
+class ArrowButton:
+    def __init__(self, screen, center, width, height, image_path, direction = None):
+        self.screen = screen
+        self.width = width
+        self.height = height
+        self.center = center
+        self.image = pygame.image.load(image_path)
+        self.image = pygame.transform.scale(self.image, (width, height))
+        self.direction = direction
+
+    def check_hover(self, mouse_pos):
+        x, y = self.center
+        half_width = self.width / 2
+        half_height = self.height / 2
+
+        if self.direction == 'left':
+            return x - half_width <= mouse_pos[0] <= x + half_width and y - half_height <= mouse_pos[1] <= y + half_height
+        elif self.direction == 'right':
+            return x - half_width <= mouse_pos[0] <= x + half_width and y - half_height <= mouse_pos[1] <= y + half_height
+        elif self.direction == 'up':
+            return x - half_width <= mouse_pos[0] <= x + half_width and y - half_height <= mouse_pos[1] <= y + half_height
+        elif self.direction == 'down':
+            return x - half_width <= mouse_pos[0] <= x + half_width and y - half_height <= mouse_pos[1] <= y + half_height
+        else:
+            return False
+    
+    def collidepoint(self, point):
+        return self.check_hover(point)
+    
+    def draw(self):
+        mouse_pos = pygame.mouse.get_pos()
+        img = self.image.copy()
+         
+        if self.check_hover(mouse_pos):
+            img.set_alpha(180)
+
+        rotated_img = pygame.transform.rotate(img, self.get_rotation_angle())
+        rotated_rect = rotated_img.get_rect(center = self.center)
+        self.screen.blit(rotated_img, rotated_rect)
+    
+    def get_rotation_angle(self):
+        if self.direction == 'left':
+            return 90
+        elif self.direction == 'right':
+            return -90
+        elif self.direction == 'up':
+            return 0
+        elif self.direction == 'down':
+            return 180
+        else:
+            return 0
+
+

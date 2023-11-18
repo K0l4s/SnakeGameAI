@@ -3,7 +3,7 @@ from pygame.math import Vector2
 from Game.snake import Snake
 from Game.gameLogic import GameLogic
 from Graphics.background import Background
-from Graphics.button import Button, RoundButton
+from Graphics.button import Button, RoundButton, ArrowButton
 import Game.colors as color
 from Game.ranks import ranks
 import Game.config as cf
@@ -30,7 +30,10 @@ background = Background(WIDTH, HEIGHT)
 
 score = 0
 
+# Fonts
+default_font = pygame.font.Font(None, 35)
 font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 40)
+setting_font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 35)
 
 btn_bfs_rect = pygame.Rect(SCREEN_WIDTH + 120, 100, 180, 60)
 btn_bfs = Button(window, btn_bfs_rect, "BFS", color.WHITE, font)
@@ -39,16 +42,16 @@ btn_ucs_rect = pygame.Rect(SCREEN_WIDTH + 120, 180, 180, 60)
 btn_ucs = Button(window, btn_ucs_rect, "UCS", color.WHITE, font)
 
 btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 60)
-btn_start = Button(window, btn_start_rect, "Start", color.WHITE, font)
+btn_start = Button(window, btn_start_rect, "START", color.WHITE, font)
 
 btn_setting_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 + 70 , 180, 60)
-btn_setting = Button(window, btn_setting_rect, "Setting", color.WHITE, font)
+btn_setting = Button(window, btn_setting_rect, "SETTING", color.WHITE, font)
 
 btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 180, 60)
-btn_quit = Button(window, btn_quit_rect, "Quit", color.WHITE, font)
+btn_quit = Button(window, btn_quit_rect, "QUIT", color.WHITE, font)
 
 btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 260, 180, 60)
-btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
+btn_exit = Button(window, btn_exit_rect, "EXIT", color.WHITE, font)
 
 btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 
@@ -61,13 +64,24 @@ btn_unpause = RoundButton(window, (120, 685), 30, "Resources/btn_unpause.png")
 
 btn_close = RoundButton(window, (WIDTH // 2 + 150, 600), 30, "Resources/btn_close.png")
 
+btn_dec_player_speed = RoundButton(window, (WIDTH // 2 + 100, 270), 15,"Resources/btn_back.png")
+btn_inc_player_speed = RoundButton(window, (WIDTH // 2 + 170, 270), 15,"Resources/btn_next.png")
+
+btn_dec_AI_speed = RoundButton(window, (WIDTH // 2 + 100, 310), 15,"Resources/btn_back.png")
+btn_inc_AI_speed = RoundButton(window, (WIDTH // 2 + 170, 310), 15,"Resources/btn_next.png")
+
+player_speed = 15
+AI_speed = 30
+player_speed_text = setting_font.render("PLAYER SPEED", True, color.WHITE)
+AI_speed_text = setting_font.render("AI SPEED", True, color.WHITE)
+
 def display_message(message, color, screen, screen_size):
-    popup_font = pygame.font.Font(None, 48)
-    popup_text = popup_font.render(message, True, color)
+    popup_text = font.render(message, True, color)
     popup_rect = popup_text.get_rect(center=(screen_size[0], screen_size[1]))
     screen.blit(popup_text, popup_rect)
 
 def main():
+    global player_speed, AI_speed
     playing = False
     start = False
     is_over = False
@@ -83,7 +97,7 @@ def main():
                 return
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if btn_start_rect.collidepoint(event.pos) and not playing:
+                    if btn_start_rect.collidepoint(event.pos) and not playing and not setting_clicked: 
                         playing = True
                         start = True
                         game_logic.is_paused = False
@@ -93,16 +107,28 @@ def main():
                         background.reset_frame(screen)
                         game_logic.reset_nodes()
                         print(snake.direction)
-                    elif btn_setting_rect.collidepoint(event.pos) and not playing:
+                    elif btn_setting_rect.collidepoint(event.pos) and not playing and not setting_clicked:
                         setting_clicked = True
                         print("SETTING")
-                    elif btn_exit_rect.collidepoint(event.pos):
+                    elif btn_exit_rect.collidepoint(event.pos) and not setting_clicked:
                         playing = False
                         start = False
                         using_algorithm = False
                     elif btn_close.collidepoint(event.pos):
                         setting_clicked = False
-                    elif btn_quit_rect.collidepoint(event.pos) and not playing:
+                    elif btn_dec_player_speed.collidepoint(event.pos):
+                        if player_speed > 10:
+                            player_speed -= 5
+                    elif btn_inc_player_speed.collidepoint(event.pos):
+                        if player_speed < 20:
+                            player_speed += 5
+                    elif btn_dec_AI_speed.collidepoint(event.pos):
+                        if AI_speed > 30:
+                            AI_speed -= 30
+                    elif btn_inc_AI_speed.collidepoint(event.pos):
+                        if AI_speed < 90:
+                            AI_speed += 30
+                    elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
                         pygame.quit()
                         return 
                 
@@ -184,10 +210,18 @@ def main():
                         game_logic.move_along_path()
 
         if setting_clicked:
-            blur_rect = pygame.Surface((SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 100), pygame.SRCALPHA)
-            blur_rect.fill((0,0,0,200))
-            window.blit(blur_rect, (WIDTH // 3 - 20, HEIGHT // 3))
+            setting_rect = pygame.Surface((SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 100), pygame.SRCALPHA)
+            setting_rect.fill(color.DARK_GREEN)
+            window.blit(setting_rect, (WIDTH // 3 - 20, HEIGHT // 3))
+            window.blit(player_speed_text, (WIDTH // 3, HEIGHT // 3 + 10))
+            window.blit(AI_speed_text, (WIDTH // 3, HEIGHT // 3 + 50))
+            window.blit(default_font.render(str(player_speed), True, color.WHITE), (WIDTH // 3 + 305, HEIGHT // 3 + 20))
+            window.blit(default_font.render(str(AI_speed), True, color.WHITE), (WIDTH // 3 + 305, HEIGHT // 3 + 60))
             btn_close.draw()
+            btn_dec_player_speed.draw()
+            btn_inc_player_speed.draw()
+            btn_dec_AI_speed.draw()
+            btn_inc_AI_speed.draw()
         if playing and not using_algorithm:
             game_logic.update()
         if playing:
@@ -231,9 +265,9 @@ def main():
         
         #FPS
         if using_algorithm:
-            clock.tick(50)
+            clock.tick(AI_speed)
         else:
-            clock.tick(15)
+            clock.tick(player_speed)
 
 if __name__ == "__main__":
     main()
