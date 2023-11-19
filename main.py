@@ -47,15 +47,16 @@ btn_a_star = Button(window, btn_a_star_rect, "A star", color.WHITE, font)
 btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 60)
 btn_start = Button(window, btn_start_rect, "START", color.WHITE, font)
 
+btn_greedy_rect = pygame.Rect(SCREEN_WIDTH + 120, 340, 180, 60)
+btn_greedy = Button(window, btn_greedy_rect, "Greedy", color.WHITE, font)
+
 btn_setting_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 + 70 , 180, 60)
 btn_setting = Button(window, btn_setting_rect, "SETTING", color.WHITE, font)
 
 btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 180, 60)
 btn_quit = Button(window, btn_quit_rect, "QUIT", color.WHITE, font)
 
-btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 260, 180, 60)
-btn_exit = Button(window, btn_exit_rect, "EXIT", color.WHITE, font)
-btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 340, 180, 60)
+btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 420, 180, 60)
 btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
 
 btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
@@ -186,6 +187,10 @@ def main():
                                     using_algorithm = True
                                     selected_algorithm = "A star"
                                     print(f"Algorithm: {selected_algorithm}")
+                                elif btn_greedy_rect.collidepoint(event.pos):
+                                    using_algorithm = True
+                                    selected_algorithm = "Greedy"
+                                    print(f"Algorithm: {selected_algorithm}")
                             # elif btn_music_toggle.collidepoint(event.pos):
                             #     print("Music changed")
                             #     if game_logic.is_on_music:
@@ -210,6 +215,7 @@ def main():
             btn_bfs.draw()
             btn_ucs.draw()
             btn_a_star.draw()
+            btn_greedy.draw()
             btn_exit.draw()            
 
         if not start:
@@ -236,6 +242,12 @@ def main():
                     if not game_logic.path:
                         game_logic.reset_nodes()
                         game_logic.simulate_astar(screen, window)
+                    else:
+                        game_logic.move_along_path()
+                elif selected_algorithm == "Greedy":
+                    if not game_logic.path:
+                        game_logic.reset_nodes()
+                        game_logic.simulate_greedy(screen, window)
                     else:
                         game_logic.move_along_path()
 
@@ -295,7 +307,7 @@ def main():
         
         #FPS
         if using_algorithm:
-            clock.tick(AI_speed)
+            clock.tick(1000)
         else:
             clock.tick(player_speed)
 

@@ -249,13 +249,34 @@ class GameLogic:
                                 print("follow default head")
                                 head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
                                 self.path = [head_direction]
-
-    def move_along_path(self):
-        if self.path:
-            direction = self.path.pop(0)
-            self.snake.change_direction(direction)
-            self.snake.set_moving(True)
-            self.update()
+    def simulate_greedy(self, screen, window):
+        if not self.game_over():
+            start = self.snake.body[-1]
+            target = self.food.food
+            path = self.greedy(start, target, screen, window)
+            if path:
+                self.is_finding = True
+                print("default path")
+                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+            else:   
+                tail = self.snake.body[0]
+                path = self.greedy(start, tail, screen, window)
+                if path:
+                    print("following tail")
+                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))   
+                          
+                else:
+                        choose_longest_path = self.choose_longest_path(start)
+                        if choose_longest_path:
+                            print("choose_longest_path")
+                            self.path = [choose_longest_path]  
+                        else:
+                                print("follow default head")
+                                head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+                                self.path = [head_direction]
+    
 
     def simulate_bfs(self, screen, window):
         if not self.game_over():
@@ -328,7 +349,12 @@ class GameLogic:
 
         return best_direction
 
-
+    def move_along_path(self):
+        if self.path:
+            direction = self.path.pop(0)
+            self.snake.change_direction(direction)
+            self.snake.set_moving(True)
+            self.update()
     
     #draw nodes when simulating
     def draw_nodes(self, screen):
