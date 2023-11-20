@@ -41,6 +41,9 @@ btn_bfs = Button(window, btn_bfs_rect, "BFS", color.WHITE, font)
 btn_ucs_rect = pygame.Rect(SCREEN_WIDTH + 120, 180, 180, 60)
 btn_ucs = Button(window, btn_ucs_rect, "UCS", color.WHITE, font)
 
+btn_a_star_rect = pygame.Rect(SCREEN_WIDTH + 120, 260, 180, 60)
+btn_a_star = Button(window, btn_a_star_rect, "A star", color.WHITE, font)
+
 btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 60)
 btn_start = Button(window, btn_start_rect, "START", color.WHITE, font)
 
@@ -50,8 +53,8 @@ btn_setting = Button(window, btn_setting_rect, "SETTING", color.WHITE, font)
 btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 180, 60)
 btn_quit = Button(window, btn_quit_rect, "QUIT", color.WHITE, font)
 
-btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 260, 180, 60)
-btn_exit = Button(window, btn_exit_rect, "EXIT", color.WHITE, font)
+btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 340, 180, 60)
+btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
 
 btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 
@@ -131,6 +134,17 @@ def main():
                     elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
                         pygame.quit()
                         return 
+                    elif btn_music_toggle.collidepoint(event.pos):
+                            print("Music changed")
+                            if game_logic.is_on_music:
+                                btn_music_toggle.image = btn_music_mute.image
+                                background.pause_background_music()
+                                game_logic.is_on_music = False
+                            else:
+                                btn_music_toggle.image = btn_music.image
+                                background.unpause_background_music()
+                                game_logic.is_on_music = True
+
                 
             if playing:
                 if event.type == pygame.KEYDOWN and not game_logic.is_paused:
@@ -139,6 +153,7 @@ def main():
                         if game_logic.game_over():
                             background.unpause_background_music()
                             is_over = False
+                            using_algorithm = False
                             game_logic.restart_game()
                     elif not game_logic.game_over() and not using_algorithm:
                         if event.key == pygame.K_UP:
@@ -163,6 +178,10 @@ def main():
                                     using_algorithm = True
                                     selected_algorithm = "UCS"
                                     print(f"Algorithm: {selected_algorithm}")
+                                elif btn_a_star_rect.collidepoint(event.pos):
+                                    using_algorithm = True
+                                    selected_algorithm = "A star"
+                                    print(f"Algorithm: {selected_algorithm}")
                             elif btn_music_toggle.collidepoint(event.pos):
                                 print("Music changed")
                                 if game_logic.is_on_music:
@@ -186,6 +205,7 @@ def main():
             background.draw(window)
             btn_bfs.draw()
             btn_ucs.draw()
+            btn_a_star.draw()
             btn_exit.draw()            
 
         if not start:
@@ -206,6 +226,12 @@ def main():
                     if not game_logic.path:
                         game_logic.reset_nodes()
                         game_logic.simulate_ucs(screen, window)
+                    else:
+                        game_logic.move_along_path()
+                elif selected_algorithm == "A star":
+                    if not game_logic.path:
+                        game_logic.reset_nodes()
+                        game_logic.simulate_astar(screen, window)
                     else:
                         game_logic.move_along_path()
 
@@ -250,7 +276,7 @@ def main():
                     rank = ranks(score)
                     rank.high_score(score)
                     is_over = True
-                screen.fill(color.BLACK)
+                #screen.fill(color.BLACK)
                 display_message(f"Game Over - Press SPACE to restart! \n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
