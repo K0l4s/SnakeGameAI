@@ -282,6 +282,9 @@ def main():
             screen.blit(game_logic.food.image, (food.food[0] * GRID_SIZE, food.food[1] * GRID_SIZE))
             # screen.blit(game_logic.food.image, game_logic.food.food_rect)
 
+            # Draw obstacles
+            game_logic.draw_obstacles(screen)
+
             # Display score screen
             score = game_logic.get_score()
             display_message(f"Score: {score}",color.WHITE,window, (SCREEN_WIDTH + 200, 50))
@@ -292,7 +295,7 @@ def main():
                     rank = ranks(score)
                     rank.high_score(score)
                     is_over = True
-                #screen.fill(color.BLACK)
+                screen.fill(color.BLACK)
                 display_message(f"Game Over - Press SPACE to restart! \n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
@@ -307,7 +310,7 @@ def main():
         
         #FPS
         if using_algorithm:
-            clock.tick(1000)
+            clock.tick(AI_speed)
         else:
             clock.tick(player_speed)
 
