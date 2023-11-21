@@ -105,6 +105,7 @@ def main():
     using_algorithm = False
     selected_algorithm = ""
     setting_clicked = False
+    is_creating = False
     background.start_background_music()
     while True:
         background.draw_menu(window)
@@ -141,12 +142,15 @@ def main():
                                     obstacle_y = (sub_event.pos[1] - 30) // GRID_SIZE
                                     current_obstacle = Obstacle(obstacle_x, obstacle_y)
                                     game_logic.obstacles.append(current_obstacle)
-                                    for obstacle in game_logic.obstacles:
-                                        print(obstacle.x, obstacle.y)
-                                        print('-----')
+                                    # for obstacle in game_logic.obstacles:
+                                    #     print(obstacle.x, obstacle.y)
+                                    #     print('-----')
                                     if btn_save_obstacles_rect.collidepoint(sub_event.pos):
                                         is_creating = False
-                                        break
+                    # elif btn_create_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
+                    #     is_creating = True
+                    # elif is_creating and btn_save_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
+                    #     is_creating = False
                     elif btn_clear_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
                         print("Clear")
                         game_logic.obstacles = []
@@ -178,7 +182,7 @@ def main():
                                 background.unpause_background_music()
                                 game_logic.is_on_music = True
 
-                
+            
             if playing:
                 if event.type == pygame.KEYDOWN and not game_logic.is_paused:
                     game_logic.snake.set_moving(True)
