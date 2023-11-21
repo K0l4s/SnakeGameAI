@@ -15,5 +15,4 @@ class Food:
             y = random.randint(0, self.height - 1)
             if (x, y) not in self.snake.body and (x, y) not in [(obstacle.x, obstacle.y) for obstacle in obstacles]:
                 self.food = (x, y)
-                print(x,y)
                 break

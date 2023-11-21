@@ -18,7 +18,8 @@ class GameLogic:
         self.width = width
         self.height = height
         self.food = Food(width, height, snake)
-        self.obstacles = [Obstacle(5, 5), Obstacle(10, 10), Obstacle(22, 22), Obstacle(14, 14), Obstacle(3,3)]
+        # self.obstacles = [Obstacle(5, 5), Obstacle(10, 10), Obstacle(22, 22), Obstacle(14, 14), Obstacle(3,3)]
+        self.obstacles = []
         self.game_over_flag = False
         self.score = 0
         self.path = []
@@ -31,6 +32,7 @@ class GameLogic:
         self.is_paused = not self.is_paused
         
     def update(self):
+        self.is_finding = True
         if not self.snake.is_moving or self.is_paused:
             return
         head = self.snake.move()
