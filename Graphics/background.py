@@ -16,6 +16,8 @@ class Background:
         icon.blit(icon_image, (0,0))
         pygame.display.set_icon(icon)
 
+        self.image = pygame.image.load("Resources/background_rect.png")
+        self.image = pygame.transform.scale(self.image, (40, 40))
         #
         self.block_image = pygame.image.load("Resources/block.jpg")
         self.block_image = pygame.transform.scale(self.block_image, (20, 20))
@@ -51,9 +53,7 @@ class Background:
 
     #Draw to delete previous frame
     def reset_frame(self, screen):
-        image = pygame.image.load("Resources/background_note.png")
-        image = pygame.transform.scale(image, (40, 40))
         # Vẽ background
-        for x in range(0, 1280, image.get_width()):
-            for y in range(0, 1280, image.get_height()):
-                screen.blit(image, (x, y))
+        for x in range(0, 1280, self.image.get_width()):
+            for y in range(0, 1280, self.image.get_height()):
+                screen.blit(self.image, (x, y))

@@ -61,7 +61,22 @@ class GameLogic:
     def draw_obstacles(self, screen):
         for obstacle in self.obstacles:
             obstacle.draw(screen)
-            
+
+    def get_obstacle(self, x, y):
+        for obstacle in self.obstacles:
+            if obstacle.x == x and obstacle.y == y:
+                return obstacle
+        return None
+    def remove_obstacles(self, obstacle):
+        print("Removing obstacle")
+        self.obstacles.remove(obstacle)
+        obstacle_rect = pygame.Rect(30 + obstacle.x * cf.GRID_SIZE, 30 + obstacle.y * cf.GRID_SIZE, cf.GRID_SIZE, cf.GRID_SIZE)
+        background_rect_image = pygame.image.load("Resources/background_rect.png")
+        background_rect_image = pygame.transform.scale(background_rect_image, (cf.GRID_SIZE, cf.GRID_SIZE))
+        cf.window.blit(background_rect_image, obstacle_rect)
+
+        pygame.display.update(obstacle_rect)
+
     def restart_game(self):
         self.snake.__init__(self.width // 2, self.height // 2)
         self.food.spawn_food(self.obstacles)
