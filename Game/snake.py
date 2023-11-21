@@ -64,6 +64,13 @@ class Snake:
         head = self.body[-1]
         return head in self.body[:-1]
 
+    def collides_with_obstacles(self, obstacles):
+        head = self.body[-1]
+        for obstacle in obstacles:
+            if head[0] == obstacle.x and head[1] == obstacle.y:
+                return True
+        return False
+    
     def draw_snake(self, screen):
         for index, segment in enumerate(self.body):
             x, y = segment

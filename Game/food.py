@@ -8,12 +8,12 @@ class Food:
         self.image = pygame.image.load("Resources/skin/apple.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (20, 20))
         self.is_eaten = False
-        self.spawn_food()
-    def spawn_food(self):
+    def spawn_food(self, obstacles):
         self.is_eaten = False
         while True:
             x = random.randint(0, self.width - 1)
             y = random.randint(0, self.height - 1)
-            if (x, y) not in self.snake.body:
+            if (x, y) not in self.snake.body and (x, y) not in [(obstacle.x, obstacle.y) for obstacle in obstacles]:
                 self.food = (x, y)
+                print(x,y)
                 break

@@ -1,6 +1,7 @@
 import random
 import pygame
 from Game.food import Food
+from Game.obstacle import Obstacle
 import Game.colors as color
 import Game.config as cf
 clock = pygame.time.Clock()
@@ -17,6 +18,7 @@ class GameLogic:
         self.width = width
         self.height = height
         self.food = Food(width, height, snake)
+        self.obstacles = [Obstacle(5, 5), Obstacle(10, 10), Obstacle(22, 22), Obstacle(14, 14), Obstacle(3,3)]
         self.game_over_flag = False
         self.score = 0
         self.path = []
@@ -37,13 +39,15 @@ class GameLogic:
             self.food.is_eaten = True
             if self.is_on_music:
                 self.snake.play_crunch_sound()
-            self.food.spawn_food()
+            self.food.spawn_food(self.obstacles)
             self.score +=1
             # print(self.score)
         else:
             self.snake.body.pop(0)
-
-        if self.snake.collides_with_wall(self.width, self.height) or self.snake.collides_with_self():
+        
+        if self.snake.collides_with_wall(self.width, self.height) \
+            or self.snake.collides_with_self() \
+            or self.snake.collides_with_obstacles(self.obstacles):
             self.game_over_flag = True
 
     def get_score(self):
@@ -52,9 +56,13 @@ class GameLogic:
     def game_over(self):
         return self.game_over_flag
     
+    def draw_obstacles(self, screen):
+        for obstacle in self.obstacles:
+            obstacle.draw(screen)
+            
     def restart_game(self):
         self.snake.__init__(self.width // 2, self.height // 2)
-        self.food.spawn_food()
+        self.food.spawn_food(self.obstacles)
         self.game_over_flag = False
         self.score = 0
         self.path = []
@@ -179,7 +187,9 @@ class GameLogic:
 
         for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
             new_x, new_y = x + dx, y + dy
-            if (0 <= new_x < self.width) and (0 <= new_y < self.height) and (new_x, new_y) not in self.snake.body:
+            if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
+                and (new_x, new_y) not in self.snake.body \
+                and (new_x, new_y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
                 valid_neighbors.append((new_x, new_y))
 
         return valid_neighbors
@@ -190,7 +200,9 @@ class GameLogic:
 
         for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
             new_x, new_y = x + dx, y + dy
-            if (0 <= new_x < self.width) and (0 <= new_y < self.height) and (new_x, new_y) not in self.snake.body[1:-1]:
+            if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
+                and (new_x, new_y) not in self.snake.body[1:-1] \
+                and (new_x, new_y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
                 valid_neighbors.append((new_x, new_y))
 
         return valid_neighbors
