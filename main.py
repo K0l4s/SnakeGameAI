@@ -144,7 +144,7 @@ def main():
                                     obstacle_x = (sub_event.pos[0] - 30) // GRID_SIZE
                                     obstacle_y = (sub_event.pos[1] - 30) // GRID_SIZE
                                     
-                                    if 0 <= obstacle_x < SCREEN_WIDTH and 0 <= obstacle_y < SCREEN_HEIGHT and (obstacle_x,obstacle_y) not in game_logic.obstacles:
+                                    if (0 <= obstacle_x < SCREEN_WIDTH) and (0 <= obstacle_y < SCREEN_HEIGHT )and (obstacle_x,obstacle_y) not in game_logic.obstacles:
                                         current_obstacle = Obstacle(obstacle_x, obstacle_y)
                                         game_logic.obstacles.append(current_obstacle)
                                         
@@ -216,15 +216,6 @@ def main():
                 if not game_logic.game_over():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
-                            x = event.pos[0] // 20 -2
-                            y = event.pos[1] // 20 -2
-                            print(x,y)
-                            if x < 0 or x > 60 or y < 0 or y > 60:
-                                continue
-                            obs = obstacle.Obstacle(x, y)
-                                
-                            obs.draw(screen)
-
                             if not using_algorithm:
                                 if btn_bfs_rect.collidepoint(event.pos):
                                     using_algorithm = True
