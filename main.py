@@ -8,6 +8,7 @@ from Graphics.button import Button, RoundButton, ArrowButton
 import Game.colors as color
 from Game.ranks import ranks
 import Game.config as cf
+import Game.obstacle as obstacle
 import random
 pygame.init()
 
@@ -60,13 +61,13 @@ btn_quit = Button(window, btn_quit_rect, "QUIT", color.WHITE, font)
 btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 420, 180, 60)
 btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
 
-btn_create_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 - 20,  650, 180, 60)
-btn_create = Button(window, btn_create_obstacles_rect, "Create", color.WHITE, font)
+btn_edit_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 - 20,  655, 180, 60)
+btn_edit = Button(window, btn_edit_obstacles_rect, "Edit", color.WHITE, font)
 
-btn_clear_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 160, 650, 180, 60)
+btn_clear_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 160, 655, 180, 60)
 btn_clear = Button(window, btn_clear_obstacles_rect, "Clear", color.WHITE, font)
 
-btn_save_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 340, 650, 180, 60)
+btn_save_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 340, 655, 180, 60)
 btn_save = Button(window, btn_save_obstacles_rect, "Save", color.WHITE, font)
 
 
@@ -75,9 +76,9 @@ btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 btn_music_mute = RoundButton(window, (40, 685), 30, "Resources/btn_music_mute.png")
 btn_music = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 
-btn_pause_toggle = RoundButton(window, (120, 685), 30, "Resources/btn_pause.png")
-btn_pause = RoundButton(window, (120, 685), 30, "Resources/btn_pause.png")
-btn_unpause = RoundButton(window, (120, 685), 30, "Resources/btn_unpause.png")
+btn_pause_toggle = RoundButton(window, (110, 685), 30, "Resources/btn_pause.png")
+btn_pause = RoundButton(window, (110, 685), 30, "Resources/btn_pause.png")
+btn_unpause = RoundButton(window, (110, 685), 30, "Resources/btn_unpause.png")
 
 btn_close = RoundButton(window, (WIDTH // 2 + 150, 600), 30, "Resources/btn_close.png")
 
@@ -132,27 +133,35 @@ def main():
                         start = False
                         using_algorithm = False
                     
-                    elif btn_create_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
+                    elif btn_edit_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
                         is_creating = True
-                        current_obstacle = None
+                        new_obstacle = None
                         while is_creating:
                             for sub_event in pygame.event.get():
-                                if sub_event.type == pygame.MOUSEBUTTONDOWN and sub_event.button == 1:
+                                if sub_event.type == pygame.QUIT:
+                                    pygame.quit()
+                                    return
+                                elif sub_event.type == pygame.MOUSEBUTTONDOWN and sub_event.button == 1:
                                     obstacle_x = (sub_event.pos[0] - 30) // GRID_SIZE
                                     obstacle_y = (sub_event.pos[1] - 30) // GRID_SIZE
-                                    current_obstacle = Obstacle(obstacle_x, obstacle_y)
-                                    game_logic.obstacles.append(current_obstacle)
-                                    # for obstacle in game_logic.obstacles:
-                                    #     print(obstacle.x, obstacle.y)
-                                    #     print('-----')
+                                    if (0 <= obstacle_x < SCREEN_WIDTH // GRID_SIZE) and (0 <= obstacle_y < SCREEN_HEIGHT // GRID_SIZE):
+                                        obstacle_at_pos = game_logic.get_obstacle(obstacle_x,obstacle_y)
+                                        if obstacle_at_pos:
+                                            game_logic.remove_obstacles(obstacle_at_pos)
+                                        elif (obstacle_x,obstacle_y) not in game_logic.obstacles \
+                                            and (obstacle_x,obstacle_y) not in snake.body:
+                                            new_obstacle = Obstacle(obstacle_x, obstacle_y)
+                                            game_logic.obstacles.append(new_obstacle)
+                                            
+                                            obstacle_rect = new_obstacle.image.get_rect(topleft=(30 + new_obstacle.x * GRID_SIZE, 
+                                                                                                    30 + new_obstacle.y * GRID_SIZE))
+                                            window.blit(new_obstacle.image, obstacle_rect)
+                                            pygame.display.update(obstacle_rect)
                                     if btn_save_obstacles_rect.collidepoint(sub_event.pos):
                                         is_creating = False
-                    # elif btn_create_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
-                    #     is_creating = True
-                    # elif is_creating and btn_save_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
-                    #     is_creating = False
                     elif btn_clear_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
                         print("Clear")
+                        # background.draw(window)
                         game_logic.obstacles = []
                     elif btn_close.collidepoint(event.pos):
                         setting_clicked = False
@@ -181,7 +190,15 @@ def main():
                                 btn_music_toggle.image = btn_music.image
                                 background.unpause_background_music()
                                 game_logic.is_on_music = True
-
+                
+                    elif btn_pause_toggle.collidepoint(event.pos):
+                        game_logic.toggle_pause()
+                        if game_logic.is_paused:
+                            btn_pause_toggle.image = btn_unpause.image
+                            print("Paused")
+                        else: 
+                            btn_pause_toggle.image = btn_pause.image
+                            print("unpaused")
             
             if playing:
                 if event.type == pygame.KEYDOWN and not game_logic.is_paused:
@@ -235,14 +252,6 @@ def main():
                             #         btn_music_toggle.image = btn_music.image
                             #         background.unpause_background_music()
                             #         game_logic.is_on_music = True
-                            elif btn_pause_toggle.collidepoint(event.pos):
-                                game_logic.toggle_pause()
-                                if game_logic.is_paused:
-                                    btn_pause_toggle.image = btn_unpause.image
-                                    print("Paused")
-                                else: 
-                                    btn_pause_toggle.image = btn_pause.image
-                                    print("unpaused")
         #draw button in game
         if start:
             background.draw(window)
@@ -251,7 +260,7 @@ def main():
             btn_a_star.draw()
             btn_greedy.draw()
             btn_exit.draw()            
-            btn_create.draw()
+            btn_edit.draw()
             btn_clear.draw()
             btn_save.draw()
 
@@ -259,7 +268,6 @@ def main():
             btn_start.draw()
             btn_setting.draw()
             btn_quit.draw()
-
         if using_algorithm:
             if not game_logic.is_paused:
                 if selected_algorithm == "BFS":
@@ -332,7 +340,7 @@ def main():
                     rank = ranks(score)
                     rank.high_score(score)
                     is_over = True
-                screen.fill(color.BLACK)
+                #yscreen.fill(color.BLACK)
                 display_message(f"Game Over - Press SPACE to restart! \n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
@@ -342,7 +350,6 @@ def main():
         if start:
             btn_music_toggle.draw()
             btn_pause_toggle.draw()
-
         pygame.display.update()
         
         #FPS

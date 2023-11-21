@@ -18,8 +18,8 @@ class GameLogic:
         self.width = width
         self.height = height
         self.food = Food(width, height, snake)
-        self.obstacles = [Obstacle(5, 5), Obstacle(10, 10), Obstacle(22, 22), Obstacle(14, 14), Obstacle(3,3)]
-        # self.obstacles = []
+        # self.obstacles = [Obstacle(5, 5), Obstacle(10, 10), Obstacle(22, 22), Obstacle(14, 14), Obstacle(3,3)]
+        self.obstacles = []
         self.game_over_flag = False
         self.score = 0
         self.path = []
@@ -61,7 +61,22 @@ class GameLogic:
     def draw_obstacles(self, screen):
         for obstacle in self.obstacles:
             obstacle.draw(screen)
-            
+
+    def get_obstacle(self, x, y):
+        for obstacle in self.obstacles:
+            if obstacle.x == x and obstacle.y == y:
+                return obstacle
+        return None
+    def remove_obstacles(self, obstacle):
+        print("Removing obstacle")
+        self.obstacles.remove(obstacle)
+        obstacle_rect = pygame.Rect(30 + obstacle.x * cf.GRID_SIZE, 30 + obstacle.y * cf.GRID_SIZE, cf.GRID_SIZE, cf.GRID_SIZE)
+        background_rect_image = pygame.image.load("Resources/background_rect.png")
+        background_rect_image = pygame.transform.scale(background_rect_image, (cf.GRID_SIZE, cf.GRID_SIZE))
+        cf.window.blit(background_rect_image, obstacle_rect)
+
+        pygame.display.update(obstacle_rect)
+
     def restart_game(self):
         self.snake.__init__(self.width // 2, self.height // 2)
         self.food.spawn_food(self.obstacles)
@@ -324,7 +339,7 @@ class GameLogic:
     def choose_longest_path(self, start):
         def count_available_space(x, y, dx, dy):
             count = 0
-            while (0 <= x < self.width) and (0 <= y < self.height) and (x, y) not in self.snake.body:
+            while (0 <= x < self.width) and (0 <= y < self.height) and (x, y) not in self.snake.body and (new_x, new_y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
                 count += 1
                 x += dx
                 y += dy
@@ -336,6 +351,7 @@ class GameLogic:
 
         for dx, dy in directions:
             new_x, new_y = start[0] + dx, start[1] + dy
+            
             space = count_available_space(new_x, new_y, dx, dy)
 
             opposite_space = count_available_space(start[0] - dx, start[1] - dy, -dx, -dy)
