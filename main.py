@@ -130,8 +130,11 @@ def main():
                         playing = False
                         start = False
                         using_algorithm = False
+                        background.draw(window)
+                        game_logic.obstacles = []
                     
                     elif btn_create_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
+                        
                         is_creating = True
                         current_obstacle = None
                         while is_creating:
@@ -139,8 +142,15 @@ def main():
                                 if sub_event.type == pygame.MOUSEBUTTONDOWN and sub_event.button == 1:
                                     obstacle_x = (sub_event.pos[0] - 30) // GRID_SIZE
                                     obstacle_y = (sub_event.pos[1] - 30) // GRID_SIZE
-                                    current_obstacle = Obstacle(obstacle_x, obstacle_y)
-                                    game_logic.obstacles.append(current_obstacle)
+                                    
+                                    if 0 <= obstacle_x < SCREEN_WIDTH and 0 <= obstacle_y < SCREEN_HEIGHT and (obstacle_x,obstacle_y) not in game_logic.obstacles:
+                                        current_obstacle = Obstacle(obstacle_x, obstacle_y)
+                                        game_logic.obstacles.append(current_obstacle)
+                                        
+                                        obstacle_rect = current_obstacle.image.get_rect(topleft=(30 + current_obstacle.x * 20, 30 + current_obstacle.y * 20))
+                                        window.blit(current_obstacle.image, obstacle_rect)
+                                        pygame.display.update(obstacle_rect)
+                                    
                                     for obstacle in game_logic.obstacles:
                                         print(obstacle.x, obstacle.y)
                                         print('-----')
@@ -149,6 +159,7 @@ def main():
                                         break
                     elif btn_clear_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
                         print("Clear")
+                        background.draw(window)
                         game_logic.obstacles = []
                     elif btn_close.collidepoint(event.pos):
                         setting_clicked = False
@@ -255,7 +266,6 @@ def main():
             btn_start.draw()
             btn_setting.draw()
             btn_quit.draw()
-
         if using_algorithm:
             if not game_logic.is_paused:
                 if selected_algorithm == "BFS":
@@ -338,7 +348,6 @@ def main():
         if start:
             btn_music_toggle.draw()
             btn_pause_toggle.draw()
-
         pygame.display.update()
         
         #FPS

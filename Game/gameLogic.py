@@ -18,8 +18,8 @@ class GameLogic:
         self.width = width
         self.height = height
         self.food = Food(width, height, snake)
-        self.obstacles = [Obstacle(5, 5), Obstacle(10, 10), Obstacle(22, 22), Obstacle(14, 14), Obstacle(3,3)]
-        # self.obstacles = []
+        # self.obstacles = [Obstacle(5, 5), Obstacle(10, 10), Obstacle(22, 22), Obstacle(14, 14), Obstacle(3,3)]
+        self.obstacles = []
         self.game_over_flag = False
         self.score = 0
         self.path = []
