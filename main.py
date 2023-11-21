@@ -143,8 +143,8 @@ def main():
                                 if sub_event.type == pygame.MOUSEBUTTONDOWN and sub_event.button == 1:
                                     obstacle_x = (sub_event.pos[0] - 30) // GRID_SIZE
                                     obstacle_y = (sub_event.pos[1] - 30) // GRID_SIZE
-                                    
-                                    if (0 <= obstacle_x < SCREEN_WIDTH) and (0 <= obstacle_y < SCREEN_HEIGHT )and (obstacle_x,obstacle_y) not in game_logic.obstacles:
+                                    print(obstacle_x, obstacle_y)
+                                    if (0 <= obstacle_x < SCREEN_WIDTH) and (0 <= obstacle_y < SCREEN_HEIGHT) and (obstacle_x,obstacle_y) not in game_logic.obstacles:
                                         current_obstacle = Obstacle(obstacle_x, obstacle_y)
                                         game_logic.obstacles.append(current_obstacle)
                                         
