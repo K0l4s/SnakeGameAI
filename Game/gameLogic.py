@@ -322,7 +322,7 @@ class GameLogic:
     def choose_longest_path(self, start):
         def count_available_space(x, y, dx, dy):
             count = 0
-            while (0 <= x < self.width) and (0 <= y < self.height) and (x, y) not in self.snake.body:
+            while (0 <= x < self.width) and (0 <= y < self.height) and (x, y) not in self.snake.body and (new_x, new_y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
                 count += 1
                 x += dx
                 y += dy
@@ -334,6 +334,7 @@ class GameLogic:
 
         for dx, dy in directions:
             new_x, new_y = start[0] + dx, start[1] + dy
+            
             space = count_available_space(new_x, new_y, dx, dy)
 
             opposite_space = count_available_space(start[0] - dx, start[1] - dy, -dx, -dy)

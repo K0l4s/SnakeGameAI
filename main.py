@@ -7,6 +7,7 @@ from Graphics.button import Button, RoundButton, ArrowButton
 import Game.colors as color
 from Game.ranks import ranks
 import Game.config as cf
+import Game.obstacle as obstacle
 import random
 pygame.init()
 
@@ -174,6 +175,15 @@ def main():
                 if not game_logic.game_over():
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
+                            x = event.pos[0] // 20 -2
+                            y = event.pos[1] // 20 -2
+                            print(x,y)
+                            if x < 0 or x > 60 or y < 0 or y > 60:
+                                continue
+                            obs = obstacle.Obstacle(x, y)
+                                
+                            obs.draw(screen)
+
                             if not using_algorithm:
                                 if btn_bfs_rect.collidepoint(event.pos):
                                     using_algorithm = True
@@ -295,7 +305,7 @@ def main():
                     rank = ranks(score)
                     rank.high_score(score)
                     is_over = True
-                screen.fill(color.BLACK)
+                #yscreen.fill(color.BLACK)
                 display_message(f"Game Over - Press SPACE to restart! \n Your scores: {score}", 
                                 color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
 
