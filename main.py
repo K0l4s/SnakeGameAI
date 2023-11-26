@@ -250,16 +250,6 @@ def main():
                                     using_algorithm = True
                                     selected_algorithm = "Greedy"
                                     print(f"Algorithm: {selected_algorithm}")
-                            # elif btn_music_toggle.collidepoint(event.pos):
-                            #     print("Music changed")
-                            #     if game_logic.is_on_music:
-                            #         btn_music_toggle.image = btn_music_mute.image
-                            #         background.pause_background_music()
-                            #         game_logic.is_on_music = False
-                            #     else:
-                            #         btn_music_toggle.image = btn_music.image
-                            #         background.unpause_background_music()
-                            #         game_logic.is_on_music = True
         #draw button in game
         if start:
             background.draw(window)
