@@ -46,20 +46,26 @@ btn_ucs = Button(window, btn_ucs_rect, "UCS", color.WHITE, font)
 btn_a_star_rect = pygame.Rect(SCREEN_WIDTH + 120, 260, 180, 60)
 btn_a_star = Button(window, btn_a_star_rect, "A star", color.WHITE, font)
 
-btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 60)
-btn_start = Button(window, btn_start_rect, "START", color.WHITE, font)
-
 btn_greedy_rect = pygame.Rect(SCREEN_WIDTH + 120, 340, 180, 60)
 btn_greedy = Button(window, btn_greedy_rect, "Greedy", color.WHITE, font)
+
+btn_dfs_rect = pygame.Rect(SCREEN_WIDTH + 120, 420, 180, 60)
+btn_dfs = Button(window, btn_dfs_rect, "DFS", color.WHITE, font)
+
+btn_ids_rect = pygame.Rect(SCREEN_WIDTH + 120, 500, 180, 60)
+btn_ids = Button(window, btn_ids_rect, "IDS", color.WHITE, font)
+
+btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 580, 180, 60)
+btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
+
+btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 60)
+btn_start = Button(window, btn_start_rect, "START", color.WHITE, font)
 
 btn_setting_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 + 70 , 180, 60)
 btn_setting = Button(window, btn_setting_rect, "SETTING", color.WHITE, font)
 
 btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 180, 60)
 btn_quit = Button(window, btn_quit_rect, "QUIT", color.WHITE, font)
-
-btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 420, 180, 60)
-btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
 
 btn_edit_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 - 20,  655, 180, 60)
 btn_edit = Button(window, btn_edit_obstacles_rect, "Edit", color.WHITE, font)
@@ -250,6 +256,14 @@ def main():
                                     using_algorithm = True
                                     selected_algorithm = "Greedy"
                                     print(f"Algorithm: {selected_algorithm}")
+                                elif btn_dfs_rect.collidepoint(event.pos):
+                                    using_algorithm = True
+                                    selected_algorithm = "DFS"
+                                    print(f"Algorithm: {selected_algorithm}")
+                                elif btn_ids_rect.collidepoint(event.pos):
+                                    using_algorithm = True
+                                    selected_algorithm = "IDS"
+                                    print(f"Algorithm: {selected_algorithm}")
         #draw button in game
         if start:
             background.draw(window)
@@ -257,6 +271,8 @@ def main():
             btn_ucs.draw()
             btn_a_star.draw()
             btn_greedy.draw()
+            btn_dfs.draw()
+            btn_ids.draw()
             btn_exit.draw()            
             btn_edit.draw()
             btn_clear.draw()
@@ -271,7 +287,7 @@ def main():
                 if selected_algorithm == "BFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_ids(screen, window)
+                        game_logic.simulate_bfs(screen, window)
                     else:
                         game_logic.move_along_path()
         
@@ -291,6 +307,18 @@ def main():
                     if not game_logic.path:
                         game_logic.reset_nodes()
                         game_logic.simulate_greedy(screen, window)
+                    else:
+                        game_logic.move_along_path()
+                elif selected_algorithm == "DFS":
+                    if not game_logic.path:
+                        game_logic.reset_nodes()
+                        game_logic.simulate_dfs(screen, window)
+                    else:
+                        game_logic.move_along_path()
+                elif selected_algorithm == "IDS":
+                    if not game_logic.path:
+                        game_logic.reset_nodes()
+                        game_logic.simulate_ids(screen, window)
                     else:
                         game_logic.move_along_path()
 
@@ -356,8 +384,7 @@ def main():
         
         #FPS
         if using_algorithm:
-            # clock.tick(AI_speed)
-            clock.tick(100)
+            clock.tick(AI_speed)
         else:
             clock.tick(player_speed)
 
