@@ -93,10 +93,18 @@ AI_speed = 30
 player_speed_text = setting_font.render("PLAYER SPEED", True, color.WHITE)
 AI_speed_text = setting_font.render("AI SPEED", True, color.WHITE)
 
-def display_message(message, color, screen, screen_size):
-    popup_text = font.render(message, True, color)
+def display_message(message, font, color, screen, screen_size, highboard=None):
+    popup_font = pygame.font.Font(None, font) 
+    popup_text = popup_font.render(message, True, color)
     popup_rect = popup_text.get_rect(center=(screen_size[0], screen_size[1]))
     screen.blit(popup_text, popup_rect)
+
+    if highboard is not None:
+        high_scores_font = pygame.font.Font(None, font) 
+        high_scores_text = high_scores_font.render(highboard, True, color)
+        high_scores_rect = high_scores_text.get_rect(center=(screen_size[0], screen_size[1] -177))
+        screen.blit(high_scores_text, high_scores_rect)
+        display_message("--------------------------------", 35, color, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 85), highboard=None) 
 
 def main():
     global player_speed, AI_speed
@@ -273,7 +281,7 @@ def main():
                 if selected_algorithm == "BFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_bfs(screen, window)
+                        game_logic.simulate_ids(screen, window)
                     else:
                         game_logic.move_along_path()
         
@@ -332,18 +340,22 @@ def main():
 
             # Display score screen
             score = game_logic.get_score()
-            display_message(f"Score: {score}",color.WHITE,window, (SCREEN_WIDTH + 200, 50))
+            display_message(f"Score: {score}", 55,color.WHITE,window, (SCREEN_WIDTH + 200, 50))
 
             if game_logic.game_over():
                 if not is_over:
                     background.pause_background_music()
                     rank = ranks(score)
-                    rank.high_score(score)
+                    high_scores = rank.high_score(score)
+                    highboard = '\n'.join(high_scores['High score'].astype(str))
                     is_over = True
-                #yscreen.fill(color.BLACK)
-                display_message(f"Game Over - Press SPACE to restart! \n Your scores: {score}", 
-                                color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-
+                # screen.fill(color.BLACK)
+                display_message("High Board", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 245), highboard=None) 
+                display_message("--------------------------------", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 205), highboard=None) 
+                display_message(f"\nGame Over - Press SPACE to restart! \n Your scores: {score}", 35, 
+                                    color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 120),
+                                    highboard=highboard)    
+                
             window.blit(screen, (30, 30))
         
         #draw button (only on menu game)
@@ -354,7 +366,8 @@ def main():
         
         #FPS
         if using_algorithm:
-            clock.tick(AI_speed)
+            # clock.tick(AI_speed)
+            clock.tick(100)
         else:
             clock.tick(player_speed)
 
