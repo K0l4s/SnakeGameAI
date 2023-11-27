@@ -103,6 +103,11 @@ volume_text = setting_font.render("VOLUME", True, color.WHITE)
 current_volume = background.background_music_volume
 volume_slider = pygame.Rect(WIDTH // 3 + 200, 340, 165, 20) 
 
+skin_text = setting_font.render("CHANGE SKIN", True, color.WHITE)
+current_skin_index = cf.current_skin_index
+btn_back_skin = RoundButton(window, (WIDTH // 2 + 110, 390), 15,"Resources/btn_back.png")
+btn_next_skin = RoundButton(window, (WIDTH // 2 + 170, 390), 15,"Resources/btn_next.png")
+
 def display_message(message, font, color, screen, position, highboard=None):
     popup_font = pygame.font.Font(None, font)
     lines = message.split('\n')
@@ -132,6 +137,7 @@ def main():
     setting_clicked = False
     is_creating = False
     background.start_background_music()
+    global current_skin_index
     while True:
         background.draw_menu(window)
         for event in pygame.event.get():
@@ -205,6 +211,14 @@ def main():
                             current_volume = (event.pos[0] - volume_slider.x) / volume_slider.width
                             current_volume = max(0, min(1, current_volume))
                             background.set_volume_background_music(current_volume)
+                    elif btn_back_skin.collidepoint(event.pos) and setting_clicked:
+                        if current_skin_index > 0:
+                            current_skin_index -= 1
+                        snake.change_skin(current_skin_index)
+                    elif btn_next_skin.collidepoint(event.pos) and setting_clicked:
+                        if current_skin_index < 1:
+                            current_skin_index += 1
+                        snake.change_skin(current_skin_index)
                     elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
                         pygame.quit()
                         return 
@@ -344,15 +358,23 @@ def main():
             window.blit(AI_speed_text, (WIDTH // 3, HEIGHT // 3 + 50))
             window.blit(default_font.render(str(player_speed), True, color.WHITE), (WIDTH // 3 + 305, HEIGHT // 3 + 20))
             window.blit(default_font.render(str(AI_speed), True, color.WHITE), (WIDTH // 3 + 305, HEIGHT // 3 + 60))
-            btn_close.draw()
             btn_dec_player_speed.draw()
             btn_inc_player_speed.draw()
             btn_dec_AI_speed.draw()
             btn_inc_AI_speed.draw()
+            btn_next_skin.draw()
+            btn_back_skin.draw()
             window.blit(volume_text, (WIDTH // 3, HEIGHT // 3 + 90))
             pygame.draw.rect(window, color.WHITE, volume_slider)
             pygame.draw.rect(window, color.GREEN, (volume_slider.x, volume_slider.y, current_volume * volume_slider.width, volume_slider.height))
-        
+            window.blit(skin_text, (WIDTH // 3, HEIGHT // 3 + 130))
+            window.blit(default_font.render(str(current_skin_index), True, color.WHITE), (WIDTH // 3 + 315, HEIGHT // 3 + 140))
+            current_skin_preview = pygame.image.load(f'Resources/skin/skin_{current_skin_index}/full.png').convert_alpha()
+            current_skin_preview = pygame.transform.scale(current_skin_preview, (300, 180))
+            window.blit(current_skin_preview, (WIDTH // 3 + 25, HEIGHT // 3 + 190))
+            btn_close.draw()
+
+
         if playing and not using_algorithm:
             game_logic.update()
         if playing:
