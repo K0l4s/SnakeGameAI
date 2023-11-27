@@ -175,20 +175,19 @@ def main():
                                         is_creating = False
                     elif btn_clear_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
                         print("Clear")
-                        # background.draw(window)
                         game_logic.obstacles = []
-                    elif btn_close.collidepoint(event.pos):
+                    elif btn_close.collidepoint(event.pos) and setting_clicked:
                         setting_clicked = False
-                    elif btn_dec_player_speed.collidepoint(event.pos):
+                    elif btn_dec_player_speed.collidepoint(event.pos) and setting_clicked:
                         if player_speed > 10:
                             player_speed -= 5
-                    elif btn_inc_player_speed.collidepoint(event.pos):
+                    elif btn_inc_player_speed.collidepoint(event.pos) and setting_clicked:
                         if player_speed < 20:
                             player_speed += 5
-                    elif btn_dec_AI_speed.collidepoint(event.pos):
+                    elif btn_dec_AI_speed.collidepoint(event.pos) and setting_clicked:
                         if AI_speed > 30:
                             AI_speed -= 30
-                    elif btn_inc_AI_speed.collidepoint(event.pos):
+                    elif btn_inc_AI_speed.collidepoint(event.pos) and setting_clicked:
                         if AI_speed < 90:
                             AI_speed += 30
                     elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
