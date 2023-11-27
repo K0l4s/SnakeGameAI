@@ -99,17 +99,27 @@ AI_speed = 30
 player_speed_text = setting_font.render("PLAYER SPEED", True, color.WHITE)
 AI_speed_text = setting_font.render("AI SPEED", True, color.WHITE)
 
-def display_message(message, font, color, screen, screen_size, highboard=None):
-    popup_font = pygame.font.Font(None, font) 
-    popup_text = popup_font.render(message, True, color)
-    popup_rect = popup_text.get_rect(center=(screen_size[0], screen_size[1]))
-    screen.blit(popup_text, popup_rect)
+volume_text = setting_font.render("VOLUME", True, color.WHITE)
+current_volume = background.background_music_volume
+volume_slider = pygame.Rect(WIDTH // 3 + 200, 340, 165, 20) 
+
+def display_message(message, font, color, screen, position, highboard=None):
+    popup_font = pygame.font.Font(None, font)
+    lines = message.split('\n')
+    line_height = popup_font.get_linesize()
+
+    for i, line in enumerate(lines):
+        popup_text = popup_font.render(line, True, color)
+        popup_rect = popup_text.get_rect(center=(position[0], position[1] + i * line_height))
+        screen.blit(popup_text, popup_rect)
 
     if highboard is not None:
-        high_scores_font = pygame.font.Font(None, font) 
-        high_scores_text = high_scores_font.render(highboard, True, color)
-        high_scores_rect = high_scores_text.get_rect(center=(screen_size[0], screen_size[1] -177))
-        screen.blit(high_scores_text, high_scores_rect)
+        high_scores_font = pygame.font.Font(None, font)
+        highboard_lines = highboard.split('\n')
+        for j, highboard_line in enumerate(highboard_lines):
+            high_scores_text = high_scores_font.render(highboard_line, True, color)
+            high_scores_rect = high_scores_text.get_rect(center=(position[0], position[1] + (j - 11) * line_height))
+            screen.blit(high_scores_text, high_scores_rect)
         display_message("--------------------------------", 35, color, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 85), highboard=None) 
 
 def main():
@@ -175,22 +185,26 @@ def main():
                                         is_creating = False
                     elif btn_clear_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
                         print("Clear")
-                        # background.draw(window)
                         game_logic.obstacles = []
-                    elif btn_close.collidepoint(event.pos):
+                    elif btn_close.collidepoint(event.pos) and setting_clicked:
                         setting_clicked = False
-                    elif btn_dec_player_speed.collidepoint(event.pos):
+                    elif btn_dec_player_speed.collidepoint(event.pos) and setting_clicked:
                         if player_speed > 10:
                             player_speed -= 5
-                    elif btn_inc_player_speed.collidepoint(event.pos):
+                    elif btn_inc_player_speed.collidepoint(event.pos) and setting_clicked:
                         if player_speed < 20:
                             player_speed += 5
-                    elif btn_dec_AI_speed.collidepoint(event.pos):
+                    elif btn_dec_AI_speed.collidepoint(event.pos) and setting_clicked:
                         if AI_speed > 30:
                             AI_speed -= 30
-                    elif btn_inc_AI_speed.collidepoint(event.pos):
+                    elif btn_inc_AI_speed.collidepoint(event.pos) and setting_clicked:
                         if AI_speed < 90:
                             AI_speed += 30
+                    elif volume_slider.collidepoint(event.pos) and setting_clicked:
+                            global current_volume
+                            current_volume = (event.pos[0] - volume_slider.x) / volume_slider.width
+                            current_volume = max(0, min(1, current_volume))
+                            background.set_volume_background_music(current_volume)
                     elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
                         pygame.quit()
                         return 
@@ -277,7 +291,7 @@ def main():
             btn_edit.draw()
             btn_clear.draw()
             btn_save.draw()
-
+            
         if not start:
             btn_start.draw()
             btn_setting.draw()
@@ -335,6 +349,10 @@ def main():
             btn_inc_player_speed.draw()
             btn_dec_AI_speed.draw()
             btn_inc_AI_speed.draw()
+            window.blit(volume_text, (WIDTH // 3, HEIGHT // 3 + 90))
+            pygame.draw.rect(window, color.WHITE, volume_slider)
+            pygame.draw.rect(window, color.GREEN, (volume_slider.x, volume_slider.y, current_volume * volume_slider.width, volume_slider.height))
+        
         if playing and not using_algorithm:
             game_logic.update()
         if playing:
@@ -365,10 +383,11 @@ def main():
                     background.pause_background_music()
                     rank = ranks(score)
                     high_scores = rank.high_score(score)
-                    highboard = '\n'.join(high_scores['High score'].astype(str))
+                    highboard = ' \n '.join(high_scores['High score'].astype(str))
+                    print(highboard)
                     is_over = True
-                # screen.fill(color.BLACK)
-                display_message("High Board", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 245), highboard=None) 
+                screen.fill(color.BLACK)
+                display_message("High Score", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 245), highboard=None) 
                 display_message("--------------------------------", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 205), highboard=None) 
                 display_message(f"\nGame Over - Press SPACE to restart! \n Your scores: {score}", 35, 
                                     color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 120),
