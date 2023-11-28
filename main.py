@@ -315,38 +315,38 @@ def main():
                 if selected_algorithm == "BFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
+                        game_logic.simulate_algorithm( selected_algorithm)
                     else:
                         game_logic.move_along_path()
         
                 elif selected_algorithm == "UCS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
+                        game_logic.simulate_algorithm( selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "A star":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
+                        game_logic.simulate_algorithm( selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "Greedy":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
+                        game_logic.simulate_algorithm( selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "DFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
+                        game_logic.simulate_algorithm( selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "IDS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
+                        game_logic.simulate_algorithm( selected_algorithm)
                     else:
                         game_logic.move_along_path()
 
@@ -391,7 +391,6 @@ def main():
 
             # Draw food
             screen.blit(game_logic.food.image, (food.food[0] * GRID_SIZE, food.food[1] * GRID_SIZE))
-            # screen.blit(game_logic.food.image, game_logic.food.food_rect)
 
             # Draw obstacles
             game_logic.draw_obstacles(screen)
