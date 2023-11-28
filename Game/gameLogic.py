@@ -247,7 +247,7 @@ class GameLogic:
         x, y = position
         valid_neighbors = []
 
-        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
             new_x, new_y = x + dx, y + dy
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
                 and (new_x, new_y) not in self.snake.body \
@@ -260,7 +260,7 @@ class GameLogic:
         x, y = position
         valid_neighbors = []
 
-        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
             new_x, new_y = x + dx, y + dy
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
                 and (new_x, new_y) not in self.snake.body[1:-1] \
