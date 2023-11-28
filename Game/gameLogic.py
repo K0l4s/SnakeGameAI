@@ -233,15 +233,37 @@ class GameLogic:
                 visited.add(current)
                 if target == self.snake.body[0]:
                     for neighbor in self.get_valid_neighbors_new(current):
-                        new_cost = self.calculate_cost(current, neighbor)
                         queue.put((self.heuristic(neighbor, target), neighbor, path + [neighbor]))
                 else:
                     for neighbor in self.get_valid_neighbors(current):
-                        new_cost = self.calculate_cost(current, neighbor)
                         queue.put((self.heuristic(neighbor, target), neighbor, path + [neighbor]))
 
         return None
-    
+    def beam_search(self, start, target, beam_width, screen, window):
+        visited = set()
+        queue = PriorityQueue()
+        queue.put((self.heuristic(start, target), start, []))
+
+        while not queue.empty():
+            _, current, path = queue.get()
+
+            if current:
+                self.visited_nodes.append(current)
+            
+            if current == target:
+                self.current_path = path if path else []
+                return path
+
+            if current not in visited:
+                visited.add(current)
+                neighbors = self.get_valid_neighbors(current)  # Cần điều chỉnh phần này theo cài đặt của bạn
+                neighbors = sorted(neighbors, key=lambda n: self.heuristic(n, target))[:beam_width]
+                for neighbor in neighbors:
+                    new_cost = self.calculate_cost(current, neighbor)
+                    queue.put((self.heuristic(neighbor, target), neighbor, path + [neighbor]))
+
+        return None
+
 
     def get_valid_neighbors(self, position):
         x, y = position
@@ -307,7 +329,7 @@ class GameLogic:
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
             else:
                 tail = self.snake.body[0]
-                path = self.ucs(start, tail, screen, window)
+                path = self.a_star(start, tail, screen, window)
                 if path:
                     print("following tail")
                     self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
@@ -355,7 +377,6 @@ class GameLogic:
             target = self.food.food
             path = self.bfs(start, target, screen, window)
             if path:
-                self.is_finding = True
                 print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
@@ -380,14 +401,14 @@ class GameLogic:
         if not self.game_over():
             start = self.snake.body[-1]
             target = self.food.food
-            path = self.dfs(start, target, 1225,screen, window)
+            path = self.beam_search(start, target,4,screen, window)
             if path:
                 print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
             else:   
                 tail = self.snake.body[0]
-                path = self.dfs(start, tail, 1225, screen, window)
+                path = self.beam_search(start, tail,4, screen, window)
                 if path:
                     print("following tail")
                     self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
