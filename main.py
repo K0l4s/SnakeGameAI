@@ -366,7 +366,7 @@ def main():
                     high_scores = rank.high_score(score)
                     highboard = '\n'.join(high_scores['High score'].astype(str))
                     is_over = True
-                # screen.fill(color.BLACK)
+                screen.fill(color.BLACK)
                 display_message("High Board", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 245), highboard=None) 
                 display_message("--------------------------------", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 205), highboard=None) 
                 display_message(f"\nGame Over - Press SPACE to restart! \n Your scores: {score}", 35, 
