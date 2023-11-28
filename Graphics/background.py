@@ -7,7 +7,7 @@ class Background:
         self.background_image = pygame.image.load("Resources/background.jpg")
         self.background_image = pygame.transform.scale(self.background_image, (self.width, self.height))
 
-        self.background_menu = pygame.image.load("Resources/menu_game.jpg")
+        self.background_menu = pygame.image.load("Resources/main_background.jpg")
         self.background_menu = pygame.transform.scale(self.background_menu, (self.width, self.height))
 
         #Set icon
