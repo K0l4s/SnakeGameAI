@@ -179,7 +179,7 @@ class GameLogic:
     def heuristic(self, a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
     
-    
+
     def a_star(self, start, target):
         visited = set()
         queue = [(0, start, [])]
@@ -198,12 +198,12 @@ class GameLogic:
                 visited.add(current)
                 if target == self.snake.body[0]:
                     for neighbor in self.get_valid_neighbors_new(current):
-                        new_cost = cost + self.calculate_cost(current, neighbor)
+                        new_cost = cost + 1
                         priority = new_cost + self.heuristic(neighbor, target)
                         heapq.heappush(queue, (priority, neighbor, path + [neighbor]))
                 else:
                     for neighbor in self.get_valid_neighbors(current):
-                        new_cost = cost + self.calculate_cost(current, neighbor)
+                        new_cost = cost + 1
                         priority = new_cost + self.heuristic(neighbor, target)
                         heapq.heappush(queue, (priority, neighbor, path + [neighbor]))
 
@@ -241,21 +241,30 @@ class GameLogic:
         queue.put((self.heuristic(start, target), start, []))
 
         while not queue.empty():
-            _, current, path = queue.get()
+            candidates = []
+            for _ in range(queue.qsize()):
+                _, current, path = queue.get()
+                
+                if current:
+                    self.visited_nodes.append(current)
+                
+                if current == target:
+                    self.current_path = path if path else []
+                    return path
 
-            if current:
-                self.visited_nodes.append(current)
-            
-            if current == target:
-                self.current_path = path if path else []
-                return path
+                if current not in visited:
+                    visited.add(current)
+                    if target == self.snake.body[0]:
+                        neighbors = self.get_valid_neighbors_new(current)
+                    else:
+                        neighbors = self.get_valid_neighbors(current)
 
-            if current not in visited:
-                visited.add(current)
-                neighbors = self.get_valid_neighbors(current) 
-                neighbors = sorted(neighbors, key=lambda n: self.heuristic(n, target))[:beam_width]
-                for neighbor in neighbors:
-                    queue.put((self.heuristic(neighbor, target), neighbor, path + [neighbor]))
+                    for neighbor in neighbors:
+                        candidates.append((self.heuristic(neighbor, target), neighbor, path + [neighbor]))
+
+            candidates = sorted(candidates, key=lambda x: x[0])[:beam_width]
+            for candidate in candidates:
+                queue.put(candidate)
 
         return None
 
@@ -296,7 +305,7 @@ class GameLogic:
         elif algorithm == "A star":
             return self.a_star(start, target)
         elif algorithm == "DFS":
-            return self.beam_search(start, target, 4)
+            return self.beam_search(start, target, 35)
         elif algorithm == "IDS":
             return self.ids(start, target)
         
