@@ -4,7 +4,7 @@ class Background:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.background_image = pygame.image.load("Resources/background.jpg")
+        self.background_image = pygame.image.load("Resources/screen_background.jpg")
         self.background_image = pygame.transform.scale(self.background_image, (self.width, self.height))
 
         self.background_menu = pygame.image.load("Resources/main_background.jpg")
@@ -22,7 +22,7 @@ class Background:
         self.block_image = pygame.image.load("Resources/block.jpg")
         self.block_image = pygame.transform.scale(self.block_image, (20, 20))
 
-        self.background_music_volume = 0.3
+        self.background_music_volume = 0.1
 
     def draw(self, window):
         window.blit(self.background_image, (0,0))

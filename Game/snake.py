@@ -7,8 +7,6 @@ class Snake:
         self.is_moving = False
         self.skin_index = cf.current_skin_index
         self.update_skin(self.skin_index)
-        print("updated")
-        print(self.skin_index)
         self.crunch_sound = pygame.mixer.Sound('Resources/Sound/crunch.wav')
 
     def change_direction(self, new_direction):

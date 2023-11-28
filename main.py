@@ -55,8 +55,8 @@ btn_dfs = Button(window, btn_dfs_rect, "DFS", color.WHITE, font)
 btn_ids_rect = pygame.Rect(SCREEN_WIDTH + 120, 500, 180, 60)
 btn_ids = Button(window, btn_ids_rect, "IDS", color.WHITE, font)
 
-btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 580, 180, 60)
-btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
+btn_beam_rect = pygame.Rect(SCREEN_WIDTH + 120, 580, 180, 60)
+btn_beam = Button(window, btn_beam_rect, "Beam", color.WHITE, font)
 
 btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 200, 70)
 btn_start = Button(window, btn_start_rect, "START", color.WHITE, font)
@@ -76,7 +76,6 @@ btn_clear = Button(window, btn_clear_obstacles_rect, "Clear", color.WHITE, font)
 btn_save_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 340, 655, 180, 60)
 btn_save = Button(window, btn_save_obstacles_rect, "Save", color.WHITE, font)
 
-
 btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 
 btn_music_mute = RoundButton(window, (40, 685), 30, "Resources/btn_music_mute.png")
@@ -85,6 +84,8 @@ btn_music = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
 btn_pause_toggle = RoundButton(window, (110, 685), 30, "Resources/btn_pause.png")
 btn_pause = RoundButton(window, (110, 685), 30, "Resources/btn_pause.png")
 btn_unpause = RoundButton(window, (110, 685), 30, "Resources/btn_unpause.png")
+
+btn_exit = RoundButton(window, (180, 685), 30, "Resources/btn_home.png")
 
 btn_close = RoundButton(window, (WIDTH // 2 + 150, 600), 30, "Resources/btn_close.png")
 
@@ -158,7 +159,7 @@ def main():
                     elif btn_setting_rect.collidepoint(event.pos) and not playing and not setting_clicked:
                         setting_clicked = True
                         print("SETTING")
-                    elif btn_exit_rect.collidepoint(event.pos) and not setting_clicked:
+                    elif btn_exit.collidepoint(event.pos) and not setting_clicked:
                         playing = False
                         start = False
                         using_algorithm = False
@@ -223,7 +224,6 @@ def main():
                         pygame.quit()
                         return 
                     elif btn_music_toggle.collidepoint(event.pos):
-                            print("Music changed")
                             if game_logic.is_on_music:
                                 btn_music_toggle.image = btn_music_mute.image
                                 background.pause_background_music()
@@ -292,6 +292,10 @@ def main():
                                     using_algorithm = True
                                     selected_algorithm = "IDS"
                                     print(f"Algorithm: {selected_algorithm}")
+                                elif btn_beam_rect.collidepoint(event.pos):
+                                    using_algorithm = True
+                                    selected_algorithm = "Beam"
+                                    print(f"Algorithm: {selected_algorithm}")
         #draw button in game
         if start:
             background.draw(window)
@@ -301,6 +305,7 @@ def main():
             btn_greedy.draw()
             btn_dfs.draw()
             btn_ids.draw()
+            btn_beam.draw()
             btn_exit.draw()            
             btn_edit.draw()
             btn_clear.draw()
@@ -315,38 +320,44 @@ def main():
                 if selected_algorithm == "BFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm( selected_algorithm)
+                        game_logic.simulate_algorithm(selected_algorithm)
                     else:
                         game_logic.move_along_path()
         
                 elif selected_algorithm == "UCS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm( selected_algorithm)
+                        game_logic.simulate_algorithm(selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "A star":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm( selected_algorithm)
+                        game_logic.simulate_algorithm(selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "Greedy":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm( selected_algorithm)
+                        game_logic.simulate_algorithm(selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "DFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm( selected_algorithm)
+                        game_logic.simulate_algorithm(selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "IDS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_algorithm( selected_algorithm)
+                        game_logic.simulate_algorithm(selected_algorithm)
+                    else:
+                        game_logic.move_along_path()
+                elif selected_algorithm == "Beam":
+                    if not game_logic.path:
+                        game_logic.reset_nodes()
+                        game_logic.simulate_algorithm(selected_algorithm)
                     else:
                         game_logic.move_along_path()
 
@@ -397,7 +408,7 @@ def main():
 
             # Display score screen
             score = game_logic.get_score()
-            display_message(f"Score: {score}", 55,color.WHITE,window, (SCREEN_WIDTH + 200, 50))
+            display_message(f" Score: {score}", 55,color.WHITE,window, (SCREEN_WIDTH + 200, 50))
 
             if game_logic.game_over():
                 if not is_over:

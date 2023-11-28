@@ -66,7 +66,6 @@ class GameLogic:
                 return obstacle
         return None
     def remove_obstacles(self, obstacle):
-        print("Removing obstacle")
         print(obstacle.x, obstacle.y)
         self.obstacles.remove(obstacle)
         obstacle_rect = pygame.Rect(30 + obstacle.x * cf.GRID_SIZE, 30 + obstacle.y * cf.GRID_SIZE, cf.GRID_SIZE, cf.GRID_SIZE)
@@ -110,7 +109,7 @@ class GameLogic:
                         queue.append((neighbor, path + [neighbor]))
         
         return None
-    def dfs(self, start, target,max_depth):
+    def dfs(self, start, target, max_depth):
         visited = set()
         stack = [(start,[],0)]
         
@@ -305,9 +304,11 @@ class GameLogic:
         elif algorithm == "A star":
             return self.a_star(start, target)
         elif algorithm == "DFS":
-            return self.beam_search(start, target, 35)
+            return self.dfs(start, target, 1225)
         elif algorithm == "IDS":
             return self.ids(start, target)
+        elif algorithm == "Beam":
+            return self.beam_search(start, target, 32)
         
     def simulate_algorithm(self, algorithm):
         if not self.game_over():
