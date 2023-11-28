@@ -66,7 +66,6 @@ class GameLogic:
                 return obstacle
         return None
     def remove_obstacles(self, obstacle):
-        print("Removing obstacle")
         print(obstacle.x, obstacle.y)
         self.obstacles.remove(obstacle)
         obstacle_rect = pygame.Rect(30 + obstacle.x * cf.GRID_SIZE, 30 + obstacle.y * cf.GRID_SIZE, cf.GRID_SIZE, cf.GRID_SIZE)
@@ -110,7 +109,7 @@ class GameLogic:
                         queue.append((neighbor, path + [neighbor]))
         
         return None
-    def dfs(self, start, target,max_depth):
+    def dfs(self, start, target, max_depth):
         visited = set()
         stack = [(start,[],0)]
         
@@ -198,12 +197,12 @@ class GameLogic:
                 visited.add(current)
                 if target == self.snake.body[0]:
                     for neighbor in self.get_valid_neighbors_new(current):
-                        new_cost = cost + self.calculate_cost(current, neighbor)
+                        new_cost = cost + 1
                         priority = new_cost + self.heuristic(neighbor, target)
                         heapq.heappush(queue, (priority, neighbor, path + [neighbor]))
                 else:
                     for neighbor in self.get_valid_neighbors(current):
-                        new_cost = cost + self.calculate_cost(current, neighbor)
+                        new_cost = cost + 1
                         priority = new_cost + self.heuristic(neighbor, target)
                         heapq.heappush(queue, (priority, neighbor, path + [neighbor]))
 
@@ -296,9 +295,11 @@ class GameLogic:
         elif algorithm == "A star":
             return self.a_star(start, target)
         elif algorithm == "DFS":
-            return self.beam_search(start, target, 4)
+            return self.dfs(start, target, 1225)
         elif algorithm == "IDS":
             return self.ids(start, target)
+        elif algorithm == "Beam":
+            return self.beam_search(start, target, 32)
         
     def simulate_algorithm(self, algorithm):
         if not self.game_over():
