@@ -1,46 +1,15 @@
 import pygame 
+import Game.config as cf
 class Snake:
     def __init__(self, x, y):
         self.body = [(x, y), (x-1, y)]
         self.direction = (-1, 0)
         self.is_moving = False
-        self.tail_up = pygame.image.load('Resources/skin/ekans_skin/tail_up.png').convert_alpha()
-        self.tail_down = pygame.image.load('Resources/skin/ekans_skin/tail_down.png').convert_alpha()
-        self.tail_right = pygame.image.load('Resources/skin/ekans_skin/tail_right.png').convert_alpha()
-        self.tail_left = pygame.image.load('Resources/skin/ekans_skin/tail_left.png').convert_alpha()
-
-        self.head_up = pygame.image.load('Resources/skin/ekans_skin/head_up.png').convert_alpha()
-        self.head_down = pygame.image.load('Resources/skin/ekans_skin/head_down.png').convert_alpha()
-        self.head_right = pygame.image.load('Resources/skin/ekans_skin/head_right.png').convert_alpha()
-        self.head_left = pygame.image.load('Resources/skin/ekans_skin/head_left.png').convert_alpha()
-
-        self.body_vertical = pygame.image.load('Resources/skin/ekans_skin/body_vertical.png').convert_alpha()
-        self.body_horizontal = pygame.image.load('Resources/skin/ekans_skin/body_horizontal.png').convert_alpha()
-
-        self.body_tr = pygame.image.load('Resources/skin/ekans_skin/body_tr.png').convert_alpha()
-        self.body_tl = pygame.image.load('Resources/skin/ekans_skin/body_tl.png').convert_alpha()
-        self.body_br = pygame.image.load('Resources/skin/ekans_skin/body_br.png').convert_alpha()
-        self.body_bl = pygame.image.load('Resources/skin/ekans_skin/body_bl.png').convert_alpha()
-
+        self.skin_index = cf.current_skin_index
+        self.update_skin(self.skin_index)
+        print("updated")
+        print(self.skin_index)
         self.crunch_sound = pygame.mixer.Sound('Resources/Sound/crunch.wav')
-        
-        self.head_up = pygame.transform.scale(self.head_up, (20, 20))
-        self.head_down = pygame.transform.scale(self.head_down, (20, 20))
-        self.head_right = pygame.transform.scale(self.head_right, (20, 20))
-        self.head_left = pygame.transform.scale(self.head_left, (20, 20))
-
-        self.tail_up = pygame.transform.scale(self.tail_up, (20, 20))
-        self.tail_down = pygame.transform.scale(self.tail_down, (20, 20))
-        self.tail_right = pygame.transform.scale(self.tail_right, (20, 20))
-        self.tail_left = pygame.transform.scale(self.tail_left, (20, 20))
-
-        self.body_vertical = pygame.transform.scale(self.body_vertical, (20, 20))
-        self.body_horizontal = pygame.transform.scale(self.body_horizontal, (20, 20))
-
-        self.body_tr = pygame.transform.scale(self.body_tr, (20, 20))
-        self.body_tl = pygame.transform.scale(self.body_tl, (20, 20))
-        self.body_br = pygame.transform.scale(self.body_br, (20, 20))
-        self.body_bl = pygame.transform.scale(self.body_bl, (20, 20))
 
     def change_direction(self, new_direction):
         if isinstance(new_direction, tuple) and len(new_direction) == 2:
@@ -128,3 +97,44 @@ class Snake:
         
     def set_moving(self, flag):
         self.is_moving = flag
+
+    def update_skin(self, skin_index):
+        self.head_up = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/head_up.png').convert_alpha()
+        self.head_down = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/head_down.png').convert_alpha()
+        self.head_right = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/head_right.png').convert_alpha()
+        self.head_left = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/head_left.png').convert_alpha()
+
+        self.tail_up = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/tail_up.png').convert_alpha()
+        self.tail_down = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/tail_down.png').convert_alpha()
+        self.tail_right = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/tail_right.png').convert_alpha()
+        self.tail_left = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/tail_left.png').convert_alpha()
+
+        self.body_vertical = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/body_vertical.png').convert_alpha()
+        self.body_horizontal = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/body_horizontal.png').convert_alpha()
+
+        self.body_tr = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/body_tr.png').convert_alpha()
+        self.body_tl = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/body_tl.png').convert_alpha()
+        self.body_br = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/body_br.png').convert_alpha()
+        self.body_bl = pygame.image.load(f'Resources/skin/skin_{self.skin_index}/body_bl.png').convert_alpha()
+
+        self.head_up = pygame.transform.scale(self.head_up, (20, 20))
+        self.head_down = pygame.transform.scale(self.head_down, (20, 20))
+        self.head_right = pygame.transform.scale(self.head_right, (20, 20))
+        self.head_left = pygame.transform.scale(self.head_left, (20, 20))
+
+        self.tail_up = pygame.transform.scale(self.tail_up, (20, 20))
+        self.tail_down = pygame.transform.scale(self.tail_down, (20, 20))
+        self.tail_right = pygame.transform.scale(self.tail_right, (20, 20))
+        self.tail_left = pygame.transform.scale(self.tail_left, (20, 20))
+
+        self.body_vertical = pygame.transform.scale(self.body_vertical, (20, 20))
+        self.body_horizontal = pygame.transform.scale(self.body_horizontal, (20, 20))
+
+        self.body_tr = pygame.transform.scale(self.body_tr, (20, 20))
+        self.body_tl = pygame.transform.scale(self.body_tl, (20, 20))
+        self.body_br = pygame.transform.scale(self.body_br, (20, 20))
+        self.body_bl = pygame.transform.scale(self.body_bl, (20, 20))
+    
+    def change_skin(self, skin_index):
+        cf.current_skin_index = skin_index
+        self.update_skin(skin_index)

@@ -22,6 +22,8 @@ class Background:
         self.block_image = pygame.image.load("Resources/block.jpg")
         self.block_image = pygame.transform.scale(self.block_image, (20, 20))
 
+        self.background_music_volume = 0.3
+
     def draw(self, window):
         window.blit(self.background_image, (0,0))
     def draw_menu(self,window):
@@ -37,7 +39,7 @@ class Background:
     def start_background_music(self):
         pygame.mixer.music.load("Resources/Sound/background_music.wav")
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.set_volume(self.background_music_volume)
 
     def stop_background_music(self):
         pygame.mixer.music.stop()

@@ -99,17 +99,32 @@ AI_speed = 30
 player_speed_text = setting_font.render("PLAYER SPEED", True, color.WHITE)
 AI_speed_text = setting_font.render("AI SPEED", True, color.WHITE)
 
-def display_message(message, font, color, screen, screen_size, highboard=None):
-    popup_font = pygame.font.Font(None, font) 
-    popup_text = popup_font.render(message, True, color)
-    popup_rect = popup_text.get_rect(center=(screen_size[0], screen_size[1]))
-    screen.blit(popup_text, popup_rect)
+volume_text = setting_font.render("VOLUME", True, color.WHITE)
+current_volume = background.background_music_volume
+volume_slider = pygame.Rect(WIDTH // 3 + 200, 340, 165, 20) 
+
+skin_text = setting_font.render("CHANGE SKIN", True, color.WHITE)
+current_skin_index = cf.current_skin_index
+btn_back_skin = RoundButton(window, (WIDTH // 2 + 110, 390), 15,"Resources/btn_back.png")
+btn_next_skin = RoundButton(window, (WIDTH // 2 + 170, 390), 15,"Resources/btn_next.png")
+
+def display_message(message, font, color, screen, position, highboard=None):
+    popup_font = pygame.font.Font(None, font)
+    lines = message.split('\n')
+    line_height = popup_font.get_linesize()
+
+    for i, line in enumerate(lines):
+        popup_text = popup_font.render(line, True, color)
+        popup_rect = popup_text.get_rect(center=(position[0], position[1] + i * line_height))
+        screen.blit(popup_text, popup_rect)
 
     if highboard is not None:
-        high_scores_font = pygame.font.Font(None, font) 
-        high_scores_text = high_scores_font.render(highboard, True, color)
-        high_scores_rect = high_scores_text.get_rect(center=(screen_size[0], screen_size[1] -177))
-        screen.blit(high_scores_text, high_scores_rect)
+        high_scores_font = pygame.font.Font(None, font)
+        highboard_lines = highboard.split('\n')
+        for j, highboard_line in enumerate(highboard_lines):
+            high_scores_text = high_scores_font.render(highboard_line, True, color)
+            high_scores_rect = high_scores_text.get_rect(center=(position[0], position[1] + (j - 11) * line_height))
+            screen.blit(high_scores_text, high_scores_rect)
         display_message("--------------------------------", 35, color, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 85), highboard=None) 
 
 def main():
@@ -122,6 +137,7 @@ def main():
     setting_clicked = False
     is_creating = False
     background.start_background_music()
+    global current_skin_index
     while True:
         background.draw_menu(window)
         for event in pygame.event.get():
@@ -190,6 +206,19 @@ def main():
                     elif btn_inc_AI_speed.collidepoint(event.pos) and setting_clicked:
                         if AI_speed < 90:
                             AI_speed += 30
+                    elif volume_slider.collidepoint(event.pos) and setting_clicked:
+                            global current_volume
+                            current_volume = (event.pos[0] - volume_slider.x) / volume_slider.width
+                            current_volume = max(0, min(1, current_volume))
+                            background.set_volume_background_music(current_volume)
+                    elif btn_back_skin.collidepoint(event.pos) and setting_clicked:
+                        if current_skin_index > 0:
+                            current_skin_index -= 1
+                        snake.change_skin(current_skin_index)
+                    elif btn_next_skin.collidepoint(event.pos) and setting_clicked:
+                        if current_skin_index < 1:
+                            current_skin_index += 1
+                        snake.change_skin(current_skin_index)
                     elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
                         pygame.quit()
                         return 
@@ -276,7 +305,7 @@ def main():
             btn_edit.draw()
             btn_clear.draw()
             btn_save.draw()
-
+            
         if not start:
             btn_start.draw()
             btn_setting.draw()
@@ -329,11 +358,23 @@ def main():
             window.blit(AI_speed_text, (WIDTH // 3, HEIGHT // 3 + 50))
             window.blit(default_font.render(str(player_speed), True, color.WHITE), (WIDTH // 3 + 305, HEIGHT // 3 + 20))
             window.blit(default_font.render(str(AI_speed), True, color.WHITE), (WIDTH // 3 + 305, HEIGHT // 3 + 60))
-            btn_close.draw()
             btn_dec_player_speed.draw()
             btn_inc_player_speed.draw()
             btn_dec_AI_speed.draw()
             btn_inc_AI_speed.draw()
+            btn_next_skin.draw()
+            btn_back_skin.draw()
+            window.blit(volume_text, (WIDTH // 3, HEIGHT // 3 + 90))
+            pygame.draw.rect(window, color.WHITE, volume_slider)
+            pygame.draw.rect(window, color.GREEN, (volume_slider.x, volume_slider.y, current_volume * volume_slider.width, volume_slider.height))
+            window.blit(skin_text, (WIDTH // 3, HEIGHT // 3 + 130))
+            window.blit(default_font.render(str(current_skin_index), True, color.WHITE), (WIDTH // 3 + 315, HEIGHT // 3 + 140))
+            current_skin_preview = pygame.image.load(f'Resources/skin/skin_{current_skin_index}/full.png').convert_alpha()
+            current_skin_preview = pygame.transform.scale(current_skin_preview, (300, 180))
+            window.blit(current_skin_preview, (WIDTH // 3 + 25, HEIGHT // 3 + 190))
+            btn_close.draw()
+
+
         if playing and not using_algorithm:
             game_logic.update()
         if playing:
@@ -364,10 +405,11 @@ def main():
                     background.pause_background_music()
                     rank = ranks(score)
                     high_scores = rank.high_score(score)
-                    highboard = '\n'.join(high_scores['High score'].astype(str))
+                    highboard = ' \n '.join(high_scores['High score'].astype(str))
+                    print(highboard)
                     is_over = True
                 screen.fill(color.BLACK)
-                display_message("High Board", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 245), highboard=None) 
+                display_message("High Score", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 245), highboard=None) 
                 display_message("--------------------------------", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 205), highboard=None) 
                 display_message(f"\nGame Over - Press SPACE to restart! \n Your scores: {score}", 35, 
                                     color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 120),
