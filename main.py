@@ -58,13 +58,13 @@ btn_ids = Button(window, btn_ids_rect, "IDS", color.WHITE, font)
 btn_exit_rect = pygame.Rect(SCREEN_WIDTH + 120, 580, 180, 60)
 btn_exit = Button(window, btn_exit_rect, "Exit", color.WHITE, font)
 
-btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 180, 60)
+btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 200, 70)
 btn_start = Button(window, btn_start_rect, "START", color.WHITE, font)
 
-btn_setting_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 + 70 , 180, 60)
+btn_setting_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 + 70 , 200, 70)
 btn_setting = Button(window, btn_setting_rect, "SETTING", color.WHITE, font)
 
-btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 180, 60)
+btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 200, 70)
 btn_quit = Button(window, btn_quit_rect, "QUIT", color.WHITE, font)
 
 btn_edit_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 - 20,  655, 180, 60)
@@ -88,18 +88,18 @@ btn_unpause = RoundButton(window, (110, 685), 30, "Resources/btn_unpause.png")
 
 btn_close = RoundButton(window, (WIDTH // 2 + 150, 600), 30, "Resources/btn_close.png")
 
-btn_dec_player_speed = RoundButton(window, (WIDTH // 2 + 100, 270), 15,"Resources/btn_back.png")
-btn_inc_player_speed = RoundButton(window, (WIDTH // 2 + 170, 270), 15,"Resources/btn_next.png")
+btn_dec_player_speed = RoundButton(window, (WIDTH // 2 + 100, 270), 15,"Resources/btn_minus.png")
+btn_inc_player_speed = RoundButton(window, (WIDTH // 2 + 170, 270), 15,"Resources/btn_plus.png")
 
-btn_dec_AI_speed = RoundButton(window, (WIDTH // 2 + 100, 310), 15,"Resources/btn_back.png")
-btn_inc_AI_speed = RoundButton(window, (WIDTH // 2 + 170, 310), 15,"Resources/btn_next.png")
+btn_dec_AI_speed = RoundButton(window, (WIDTH // 2 + 100, 310), 15,"Resources/btn_minus.png")
+btn_inc_AI_speed = RoundButton(window, (WIDTH // 2 + 170, 310), 15,"Resources/btn_plus.png")
 
 player_speed = 15
 AI_speed = 30
 player_speed_text = setting_font.render("PLAYER SPEED", True, color.WHITE)
 AI_speed_text = setting_font.render("AI SPEED", True, color.WHITE)
 
-volume_text = setting_font.render("VOLUME", True, color.WHITE)
+volume_text = setting_font.render("MUSIC", True, color.WHITE)
 current_volume = background.background_music_volume
 volume_slider = pygame.Rect(WIDTH // 3 + 200, 340, 165, 20) 
 
@@ -216,7 +216,7 @@ def main():
                             current_skin_index -= 1
                         snake.change_skin(current_skin_index)
                     elif btn_next_skin.collidepoint(event.pos) and setting_clicked:
-                        if current_skin_index < 1:
+                        if current_skin_index < 2:
                             current_skin_index += 1
                         snake.change_skin(current_skin_index)
                     elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
@@ -315,38 +315,38 @@ def main():
                 if selected_algorithm == "BFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_bfs(screen, window)
+                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
                     else:
                         game_logic.move_along_path()
         
                 elif selected_algorithm == "UCS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_ucs(screen, window)
+                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "A star":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_astar(screen, window)
+                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "Greedy":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_greedy(screen, window)
+                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "DFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_dfs(screen, window)
+                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "IDS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        game_logic.simulate_ids(screen, window)
+                        game_logic.simulate_algorithm(screen, window, selected_algorithm)
                     else:
                         game_logic.move_along_path()
 
@@ -405,8 +405,7 @@ def main():
                     background.pause_background_music()
                     rank = ranks(score)
                     high_scores = rank.high_score(score)
-                    highboard = ' \n '.join(high_scores['High score'].astype(str))
-                    print(highboard)
+                    highboard = '\n'.join(high_scores['High score'].astype(str))
                     is_over = True
                 screen.fill(color.BLACK)
                 display_message("High Score", 35, color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 245), highboard=None) 

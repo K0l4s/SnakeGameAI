@@ -291,45 +291,33 @@ class GameLogic:
 
         return valid_neighbors
 
-    def simulate_ucs(self, screen, window):
+    def find_by_algorithm(self, start, target, screen, window, algorithm):
+        if algorithm == "BFS":
+            return self.bfs(start, target, screen, window)
+        elif algorithm == "UCS":
+            return self.ucs(start, target, screen, window)
+        elif algorithm == "Greedy":
+            return self.greedy(start, target, screen, window)
+        elif algorithm == "A star":
+            return self.a_star(start, target, screen, window)
+        elif algorithm == "DFS":
+            return self.dfs(start, target, screen, window)
+        elif algorithm == "IDS":
+            return self.ids(start, target, screen, window)
+        
+    def simulate_algorithm(self, screen, window, algorithm):
         if not self.game_over():
             start = self.snake.body[-1]
             target = self.food.food
-            path = self.ucs(start, target, screen, window)
-            if path:
-                print("default path")
-                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-            else:
-                tail = self.snake.body[0]
-                path = self.ucs(start, tail, screen, window)
-                if path:
-                    print("following tail")
-                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))         
-                else:
-                        choose_longest_path = self.choose_longest_path(start)
-                        if choose_longest_path:
-                            print("choose_longest_path")
-                            self.path = [choose_longest_path]  
-                        else:
-                                print("follow default head")
-                                head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
-                                self.path = [head_direction]
-    
-    def simulate_astar(self, screen, window):
-        if not self.game_over():
-            start = self.snake.body[-1]
-            target = self.food.food
-            path = self.a_star(start, target, screen, window)
             
+            path = self.find_by_algorithm(start, target, screen, window, algorithm)
             if path:
                 print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
             else:
                 tail = self.snake.body[0]
-                path = self.a_star(start, tail, screen, window)
+                path = self.find_by_algorithm(start, tail, screen, window, algorithm)
                 if path:
                     print("following tail")
                     self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
@@ -343,32 +331,85 @@ class GameLogic:
                                 print("follow default head")
                                 head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
                                 self.path = [head_direction]
-    def simulate_greedy(self, screen, window):
-        if not self.game_over():
-            start = self.snake.body[-1]
-            target = self.food.food
-            path = self.greedy(start, target, screen, window)
-            if path:
-                print("default path")
-                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-            else:   
-                tail = self.snake.body[0]
-                path = self.greedy(start, tail, screen, window)
-                if path:
-                    print("following tail")
-                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))   
+
+    # def simulate_ucs(self, screen, window):
+    #     if not self.game_over():
+    #         start = self.snake.body[-1]
+    #         target = self.food.food
+    #         path = self.ucs(start, target, screen, window)
+    #         if path:
+    #             print("default path")
+    #             self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+    #             self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+    #         else:
+    #             tail = self.snake.body[0]
+    #             path = self.ucs(start, tail, screen, window)
+    #             if path:
+    #                 print("following tail")
+    #                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+    #                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))         
+    #             else:
+    #                     choose_longest_path = self.choose_longest_path(start)
+    #                     if choose_longest_path:
+    #                         print("choose_longest_path")
+    #                         self.path = [choose_longest_path]  
+    #                     else:
+    #                             print("follow default head")
+    #                             head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+    #                             self.path = [head_direction]
+    
+    # def simulate_astar(self, screen, window):
+    #     if not self.game_over():
+    #         start = self.snake.body[-1]
+    #         target = self.food.food
+    #         path = self.a_star(start, target, screen, window)
+            
+    #         if path:
+    #             print("default path")
+    #             self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+    #             self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+    #         else:
+    #             tail = self.snake.body[0]
+    #             path = self.a_star(start, tail, screen, window)
+    #             if path:
+    #                 print("following tail")
+    #                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+    #                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))         
+    #             else:
+    #                     choose_longest_path = self.choose_longest_path(start)
+    #                     if choose_longest_path:
+    #                         print("choose_longest_path")
+    #                         self.path = [choose_longest_path]  
+    #                     else:
+    #                             print("follow default head")
+    #                             head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+    #                             self.path = [head_direction]
+    # def simulate_greedy(self, screen, window):
+    #     if not self.game_over():
+    #         start = self.snake.body[-1]
+    #         target = self.food.food
+    #         path = self.greedy(start, target, screen, window)
+    #         if path:
+    #             print("default path")
+    #             self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+    #             self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+    #         else:   
+    #             tail = self.snake.body[0]
+    #             path = self.greedy(start, tail, screen, window)
+    #             if path:
+    #                 print("following tail")
+    #                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+    #                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))   
                           
-                else:
-                        choose_longest_path = self.choose_longest_path(start)
-                        if choose_longest_path:
-                            print("choose_longest_path")
-                            self.path = [choose_longest_path]  
-                        else:
-                                print("follow default head")
-                                head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
-                                self.path = [head_direction]
+    #             else:
+    #                     choose_longest_path = self.choose_longest_path(start)
+    #                     if choose_longest_path:
+    #                         print("choose_longest_path")
+    #                         self.path = [choose_longest_path]  
+    #                     else:
+    #                             print("follow default head")
+    #                             head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+    #                             self.path = [head_direction]
     
 
     def simulate_bfs(self, screen, window):
@@ -377,6 +418,7 @@ class GameLogic:
             target = self.food.food
             path = self.bfs(start, target, screen, window)
             if path:
+                self.is_finding = True
                 print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
@@ -401,54 +443,54 @@ class GameLogic:
         if not self.game_over():
             start = self.snake.body[-1]
             target = self.food.food
-            path = self.beam_search(start, target,4,screen, window)
+            path = self.dfs(start, target, 1225,screen, window)
             if path:
                 print("default path")
                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
             else:   
                 tail = self.snake.body[0]
-                path = self.beam_search(start, tail,4, screen, window)
+                path = self.dfs(start, tail, 1225, screen, window)
                 if path:
                     print("following tail")
                     self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
                     self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))   
                           
-                else:
-                    choose_longest_path = self.choose_longest_path(start)
-                    if choose_longest_path:
-                        print("choose_longest_path")
-                        self.path = [choose_longest_path]  
-                    else:
-                        print("follow default head")
-                        head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
-                        self.path = [head_direction]  
-    def simulate_ids(self, screen, window):
-        if not self.game_over():
-            start = self.snake.body[-1]
-            target = self.food.food
-            path = self.ids(start, target, screen, window)
-            if path:
-                print("default path")
-                self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
-            else:   
-                tail = self.snake.body[0]
-                path = self.ids(start, tail, screen, window)
-                if path:
-                    print("following tail")                    
-                    self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
-                    self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))   
+    #             else:
+    #                 choose_longest_path = self.choose_longest_path(start)
+    #                 if choose_longest_path:
+    #                     print("choose_longest_path")
+    #                     self.path = [choose_longest_path]  
+    #                 else:
+    #                     print("follow default head")
+    #                     head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+    #                     self.path = [head_direction]  
+    # def simulate_ids(self, screen, window):
+    #     if not self.game_over():
+    #         start = self.snake.body[-1]
+    #         target = self.food.food
+    #         path = self.ids(start, target, screen, window)
+    #         if path:
+    #             print("default path")
+    #             self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+    #             self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))
+    #         else:   
+    #             tail = self.snake.body[0]
+    #             path = self.ids(start, tail, screen, window)
+    #             if path:
+    #                 print("following tail")                    
+    #                 self.path = [(path[0][0] - start[0], path[0][1] - start[1])]
+    #                 self.path.extend((path[i][0] - path[i-1][0], path[i][1] - path[i-1][1]) for i in range(1, len(path)))   
                           
-                else:
-                    choose_longest_path = self.choose_longest_path(start)
-                    if choose_longest_path:
-                        print("choose_longest_path")
-                        self.path = [choose_longest_path]  
-                    else:
-                        print("follow default head")
-                        head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
-                        self.path = [head_direction]  
+    #             else:
+    #                 choose_longest_path = self.choose_longest_path(start)
+    #                 if choose_longest_path:
+    #                     print("choose_longest_path")
+    #                     self.path = [choose_longest_path]  
+    #                 else:
+    #                     print("follow default head")
+    #                     head_direction = (self.snake.body[-1][0] - self.snake.body[-2][0], self.snake.body[-1][1] - self.snake.body[-2][1])
+    #                     self.path = [head_direction]  
     def choose_longest_path(self, start):
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
         
