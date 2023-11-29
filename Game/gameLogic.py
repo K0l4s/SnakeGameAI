@@ -85,6 +85,7 @@ class GameLogic:
         self.game_over_flag = False
         self.score = 0
         self.path = []
+        bg.unpause_background_music()
 
     def bfs(self, start, target):
         visited = set()
@@ -178,7 +179,7 @@ class GameLogic:
     def heuristic(self, a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
     
-    
+
     def a_star(self, start, target):
         visited = set()
         queue = [(0, start, [])]
@@ -240,21 +241,30 @@ class GameLogic:
         queue.put((self.heuristic(start, target), start, []))
 
         while not queue.empty():
-            _, current, path = queue.get()
+            candidates = []
+            for _ in range(queue.qsize()):
+                _, current, path = queue.get()
+                
+                if current:
+                    self.visited_nodes.append(current)
+                
+                if current == target:
+                    self.current_path = path if path else []
+                    return path
 
-            if current:
-                self.visited_nodes.append(current)
-            
-            if current == target:
-                self.current_path = path if path else []
-                return path
+                if current not in visited:
+                    visited.add(current)
+                    if target == self.snake.body[0]:
+                        neighbors = self.get_valid_neighbors_new(current)
+                    else:
+                        neighbors = self.get_valid_neighbors(current)
 
-            if current not in visited:
-                visited.add(current)
-                neighbors = self.get_valid_neighbors(current) 
-                neighbors = sorted(neighbors, key=lambda n: self.heuristic(n, target))[:beam_width]
-                for neighbor in neighbors:
-                    queue.put((self.heuristic(neighbor, target), neighbor, path + [neighbor]))
+                    for neighbor in neighbors:
+                        candidates.append((self.heuristic(neighbor, target), neighbor, path + [neighbor]))
+
+            candidates = sorted(candidates, key=lambda x: x[0])[:beam_width]
+            for candidate in candidates:
+                queue.put(candidate)
 
         return None
 
@@ -263,7 +273,7 @@ class GameLogic:
         x, y = position
         valid_neighbors = []
 
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        for dx, dy in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
             new_x, new_y = x + dx, y + dy
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
                 and (new_x, new_y) not in self.snake.body \
@@ -276,7 +286,7 @@ class GameLogic:
         x, y = position
         valid_neighbors = []
 
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        for dx, dy in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
             new_x, new_y = x + dx, y + dy
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
                 and (new_x, new_y) not in self.snake.body[1:-1] \
@@ -299,7 +309,7 @@ class GameLogic:
         elif algorithm == "IDS":
             return self.ids(start, target)
         elif algorithm == "Beam":
-            return self.beam_search(start, target, 32)
+            return self.beam_search(start, target, 10)
         
     def simulate_algorithm(self, algorithm):
         if not self.game_over():
@@ -325,28 +335,39 @@ class GameLogic:
                             self.path = [head_direction]
 
     def choose_longest_path(self, start):
-        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        directions = [(1, 0), (-1, 0)]
+        best_direction = None
         
-        def calculate_available_space(dx, dy,):
-            head = self.snake.body[-1]
-            x, y =  head[0] + dx, head[1] + dy
-            count = 0
-            while (0 <= x < self.width) and (0 <= y < self.height) and (x, y) not in self.snake.body and (x, y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
-                count += 1
-                x += dx
-                y += dy
-            return count
-
-        sorted_directions = sorted(directions, key=lambda d: calculate_available_space(d[0], d[1]), reverse=True)
-
-        for dx, dy in sorted_directions:
+        for dx, dy in directions:
             new_x, new_y = start[0] + dx, start[1] + dy
+            space_count = 0
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
                     and (new_x, new_y) not in self.snake.body \
                     and (new_x, new_y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
-                return (dx, dy)
+            
+                best_direction = (dx, dy)
+        if best_direction:
+            return best_direction
+        else:
+            directions = [(0, -1), (0, 1)]
+            max_space = 0
+            best_direction = None
+            
+            for dx, dy in directions:
+                new_x, new_y = start[0] + dx, start[1] + dy
+                space_count = 0
+                while (0 <= new_x < self.width) and (0 <= new_y < self.height) \
+                        and (new_x, new_y) not in self.snake.body \
+                        and (new_x, new_y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
+                    space_count += 1
+                    new_x += dx
+                    new_y += dy
 
-        return None
+                if space_count > max_space:
+                    max_space = space_count
+                    best_direction = (dx, dy)
+
+        return best_direction
 
     def move_along_path(self):
         if self.path:
