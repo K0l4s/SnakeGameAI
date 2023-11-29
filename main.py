@@ -217,7 +217,7 @@ def main():
                             current_skin_index -= 1
                         snake.change_skin(current_skin_index)
                     elif btn_next_skin.collidepoint(event.pos) and setting_clicked:
-                        if current_skin_index < 2:
+                        if current_skin_index < 3:
                             current_skin_index += 1
                         snake.change_skin(current_skin_index)
                     elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
