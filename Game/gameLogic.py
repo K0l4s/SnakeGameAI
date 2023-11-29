@@ -334,16 +334,39 @@ class GameLogic:
                             self.path = [head_direction]
 
     def choose_longest_path(self, start):
-        directions = [(1, 0), (-1, 0), (0, -1), (0, 1)]
+        directions = [(1, 0), (-1, 0)]
+        best_direction = None
         
         for dx, dy in directions:
             new_x, new_y = start[0] + dx, start[1] + dy
+            space_count = 0
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
                     and (new_x, new_y) not in self.snake.body \
                     and (new_x, new_y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
-                    return (dx, dy)
-        
-        return None
+            
+                best_direction = (dx, dy)
+        if best_direction:
+            return best_direction
+        else:
+            directions = [(0, -1), (0, 1)]
+            max_space = 0
+            best_direction = None
+            
+            for dx, dy in directions:
+                new_x, new_y = start[0] + dx, start[1] + dy
+                space_count = 0
+                while (0 <= new_x < self.width) and (0 <= new_y < self.height) \
+                        and (new_x, new_y) not in self.snake.body \
+                        and (new_x, new_y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
+                    space_count += 1
+                    new_x += dx
+                    new_y += dy
+
+                if space_count > max_space:
+                    max_space = space_count
+                    best_direction = (dx, dy)
+
+        return best_direction
 
     def move_along_path(self):
         if self.path:
