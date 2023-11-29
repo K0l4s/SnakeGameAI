@@ -272,7 +272,7 @@ class GameLogic:
         x, y = position
         valid_neighbors = []
 
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        for dx, dy in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
             new_x, new_y = x + dx, y + dy
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
                 and (new_x, new_y) not in self.snake.body \
@@ -285,7 +285,7 @@ class GameLogic:
         x, y = position
         valid_neighbors = []
 
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+        for dx, dy in [(1, 0), (-1, 0), (0, -1), (0, 1)]:
             new_x, new_y = x + dx, y + dy
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
                 and (new_x, new_y) not in self.snake.body[1:-1] \
@@ -308,7 +308,7 @@ class GameLogic:
         elif algorithm == "IDS":
             return self.ids(start, target)
         elif algorithm == "Beam":
-            return self.beam_search(start, target, 32)
+            return self.beam_search(start, target, 10)
         
     def simulate_algorithm(self, algorithm):
         if not self.game_over():
@@ -334,27 +334,15 @@ class GameLogic:
                             self.path = [head_direction]
 
     def choose_longest_path(self, start):
-        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        directions = [(1, 0), (-1, 0), (0, -1), (0, 1)]
         
-        def calculate_available_space(dx, dy,):
-            head = self.snake.body[-1]
-            x, y =  head[0] + dx, head[1] + dy
-            count = 0
-            while (0 <= x < self.width) and (0 <= y < self.height) and (x, y) not in self.snake.body and (x, y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
-                count += 1
-                x += dx
-                y += dy
-            return count
-
-        sorted_directions = sorted(directions, key=lambda d: calculate_available_space(d[0], d[1]), reverse=True)
-
-        for dx, dy in sorted_directions:
+        for dx, dy in directions:
             new_x, new_y = start[0] + dx, start[1] + dy
             if (0 <= new_x < self.width) and (0 <= new_y < self.height) \
                     and (new_x, new_y) not in self.snake.body \
                     and (new_x, new_y) not in [(obstacle.x, obstacle.y) for obstacle in self.obstacles]:
-                return (dx, dy)
-
+                    return (dx, dy)
+        
         return None
 
     def move_along_path(self):
