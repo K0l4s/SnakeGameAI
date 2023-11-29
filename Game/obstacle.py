@@ -1,5 +1,4 @@
 import pygame
-import Game.colors as color
 class Obstacle:
     def __init__(self, x, y):
         self.x = x
