@@ -1,15 +1,12 @@
 import pygame
-from pygame.math import Vector2
 from Game.snake import Snake
 from Game.obstacle import Obstacle
 from Game.gameLogic import GameLogic
 from Graphics.background import Background
-from Graphics.button import Button, RoundButton, ArrowButton
+from Graphics.button import Button, RoundButton
 import Game.colors as color
 from Game.ranks import ranks
 import Game.config as cf
-import Game.obstacle as obstacle
-import random
 pygame.init()
 
 WIDTH, HEIGHT = cf.WIDTH, cf.HEIGHT
@@ -158,7 +155,6 @@ def main():
                         game_logic.reset_nodes()
                     elif btn_setting_rect.collidepoint(event.pos) and not playing and not setting_clicked:
                         setting_clicked = True
-                        print("SETTING")
                     elif btn_exit.collidepoint(event.pos) and not setting_clicked:
                         playing = False
                         start = False
@@ -240,7 +236,7 @@ def main():
                             print("Paused")
                         else: 
                             btn_pause_toggle.image = btn_pause.image
-                            print("unpaused")
+                            print("Unpaused")
             
             if playing:
                 if event.type == pygame.KEYDOWN and not game_logic.is_paused:

@@ -1,7 +1,5 @@
-import random
 import pygame
 from Game.food import Food
-from Game.obstacle import Obstacle
 import Game.colors as color
 import Game.config as cf
 clock = pygame.time.Clock()
@@ -9,9 +7,6 @@ from queue import PriorityQueue
 from Graphics.background import Background
 bg = Background(cf.WIDTH, cf.HEIGHT)
 import heapq
-from random import randrange
-from collections import deque
-
 class GameLogic:
     def __init__(self, snake, width, height):
         self.snake = snake
@@ -66,7 +61,6 @@ class GameLogic:
                 return obstacle
         return None
     def remove_obstacles(self, obstacle):
-        print(obstacle.x, obstacle.y)
         self.obstacles.remove(obstacle)
         obstacle_rect = pygame.Rect(30 + obstacle.x * cf.GRID_SIZE, 30 + obstacle.y * cf.GRID_SIZE, cf.GRID_SIZE, cf.GRID_SIZE)
         if (obstacle.x + obstacle.y) % 2 == 0:
@@ -85,7 +79,6 @@ class GameLogic:
         self.game_over_flag = False
         self.score = 0
         self.path = []
-        bg.unpause_background_music()
 
     def bfs(self, start, target):
         visited = set()
