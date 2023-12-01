@@ -7,6 +7,7 @@ from Graphics.button import Button, RoundButton
 import Game.colors as color
 from Game.ranks import ranks
 import Game.config as cf
+import time as time
 pygame.init()
 
 WIDTH, HEIGHT = cf.WIDTH, cf.HEIGHT
@@ -316,44 +317,72 @@ def main():
                 if selected_algorithm == "BFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start
+                        print("Time", excu)
                     else:
                         game_logic.move_along_path()
         
                 elif selected_algorithm == "UCS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Time", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "A star":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Time", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "Greedy":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Time", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "DFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Time", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "IDS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Time", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "Beam":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Time", excu)
                     else:
                         game_logic.move_along_path()
 
