@@ -7,7 +7,7 @@ from Graphics.button import Button, RoundButton
 import Game.colors as color
 from Game.ranks import ranks
 import Game.config as cf
-import time
+import time as time
 pygame.init()
 
 WIDTH, HEIGHT = cf.WIDTH, cf.HEIGHT
@@ -35,26 +35,29 @@ default_font = pygame.font.Font(None, 35)
 font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 40)
 setting_font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 35)
 
-btn_bfs_rect = pygame.Rect(SCREEN_WIDTH + 120, 100, 180, 60)
+btn_bfs_rect = pygame.Rect(SCREEN_WIDTH + 60, 70, 180, 60)
 btn_bfs = Button(window, btn_bfs_rect, "BFS", color.WHITE, font)
 
-btn_ucs_rect = pygame.Rect(SCREEN_WIDTH + 120, 180, 180, 60)
+btn_ucs_rect = pygame.Rect(SCREEN_WIDTH + 60, 140, 180, 60)
 btn_ucs = Button(window, btn_ucs_rect, "UCS", color.WHITE, font)
 
-btn_a_star_rect = pygame.Rect(SCREEN_WIDTH + 120, 260, 180, 60)
-btn_a_star = Button(window, btn_a_star_rect, "A star", color.WHITE, font)
+btn_a_star_rect = pygame.Rect(SCREEN_WIDTH + 60, 210, 180, 60)
+btn_a_star = Button(window, btn_a_star_rect, "ASTAR", color.WHITE, font)
 
-btn_greedy_rect = pygame.Rect(SCREEN_WIDTH + 120, 340, 180, 60)
-btn_greedy = Button(window, btn_greedy_rect, "Greedy", color.WHITE, font)
+btn_greedy_rect = pygame.Rect(SCREEN_WIDTH + 60, 280, 180, 60)
+btn_greedy = Button(window, btn_greedy_rect, "GREEDY", color.WHITE, font)
 
-btn_dfs_rect = pygame.Rect(SCREEN_WIDTH + 120, 420, 180, 60)
+btn_dfs_rect = pygame.Rect(SCREEN_WIDTH + 60, 350, 180, 60)
 btn_dfs = Button(window, btn_dfs_rect, "DFS", color.WHITE, font)
 
-btn_ids_rect = pygame.Rect(SCREEN_WIDTH + 120, 500, 180, 60)
+btn_ids_rect = pygame.Rect(SCREEN_WIDTH + 60, 420, 180, 60)
 btn_ids = Button(window, btn_ids_rect, "IDS", color.WHITE, font)
 
-btn_beam_rect = pygame.Rect(SCREEN_WIDTH + 120, 580, 180, 60)
-btn_beam = Button(window, btn_beam_rect, "Beam", color.WHITE, font)
+btn_beam_rect = pygame.Rect(SCREEN_WIDTH + 60, 490, 180, 60)
+btn_beam = Button(window, btn_beam_rect, "BEAM", color.WHITE, font)
+
+btn_reset_rect = pygame.Rect(SCREEN_WIDTH + 60, 560, 180, 60)
+btn_reset = Button(window, btn_reset_rect, "RESET", color.WHITE, font)
 
 btn_start_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50 , 200, 70)
 btn_start = Button(window, btn_start_rect, "START", color.WHITE, font)
@@ -92,6 +95,9 @@ btn_inc_player_speed = RoundButton(window, (WIDTH // 2 + 170, 270), 15,"Resource
 
 btn_dec_AI_speed = RoundButton(window, (WIDTH // 2 + 100, 310), 15,"Resources/btn_minus.png")
 btn_inc_AI_speed = RoundButton(window, (WIDTH // 2 + 170, 310), 15,"Resources/btn_plus.png")
+
+btn_dec_AI_speed_ingame = RoundButton(window, (WIDTH // 2 + 260, HEIGHT // 2 + 330), 15,"Resources/btn_minus.png")
+btn_inc_AI_speed_ingame = RoundButton(window, (WIDTH // 2 + 330,  HEIGHT // 2 + 330), 15,"Resources/btn_plus.png")
 
 player_speed = 15
 AI_speed = 30
@@ -160,7 +166,10 @@ def main():
                         playing = False
                         start = False
                         using_algorithm = False
-                    
+                    elif btn_reset_rect.collidepoint(event.pos):
+                        game_logic.restart_game()
+                        game_logic.reset_nodes()
+                        using_algorithm = False
                     elif btn_edit_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
                         is_creating = True
                         new_obstacle = None
@@ -202,6 +211,12 @@ def main():
                         if AI_speed > 15:
                             AI_speed -= 10
                     elif btn_inc_AI_speed.collidepoint(event.pos) and setting_clicked:
+                        if AI_speed < 90:
+                            AI_speed += 10
+                    elif btn_dec_AI_speed_ingame.collidepoint(event.pos):
+                        if AI_speed > 15:
+                            AI_speed -= 10
+                    elif btn_inc_AI_speed_ingame.collidepoint(event.pos):
                         if AI_speed < 90:
                             AI_speed += 10
                     elif volume_slider.collidepoint(event.pos) and setting_clicked:
@@ -303,6 +318,11 @@ def main():
             btn_dfs.draw()
             btn_ids.draw()
             btn_beam.draw()
+            btn_reset.draw()
+            window.blit(AI_speed_text, (WIDTH // 2 + 240, HEIGHT // 2 + 270))
+            window.blit(default_font.render(str(AI_speed), True, color.WHITE), (WIDTH // 2 + 280, HEIGHT // 2 + 320))
+            btn_dec_AI_speed_ingame.draw()
+            btn_inc_AI_speed_ingame.draw()
             btn_exit.draw()            
             btn_edit.draw()
             btn_clear.draw()
@@ -317,48 +337,72 @@ def main():
                 if selected_algorithm == "BFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
-                        cf.start_time = time.time()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
-                        cf.end_time = time.time()
-                        cf.execution_time = cf.end_time - cf.start_time
-                        print(f"Thoi gian chay: {cf.execution_time}")
+                        end = time.time()
+                        excu = end - start
+                        print("Thoi gian chay: ", excu)
                     else:
                         game_logic.move_along_path()
         
                 elif selected_algorithm == "UCS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Thoi gian chay: ", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "A star":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Thoi gian chay: ", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "Greedy":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Thoi gian chay: ", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "DFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Thoi gian chay: ", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "IDS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Thoi gian chay: ", excu)
                     else:
                         game_logic.move_along_path()
                 elif selected_algorithm == "Beam":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        start = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        end = time.time()
+                        excu = end - start 
+                        print("Thoi gian chay: ", excu)
                     else:
                         game_logic.move_along_path()
 
@@ -409,7 +453,7 @@ def main():
 
             # Display score screen
             score = game_logic.get_score()
-            display_message(f" Score: {score}", 55,color.WHITE,window, (SCREEN_WIDTH + 200, 50))
+            display_message(f" Score: {score}", 55,color.WHITE,window, (SCREEN_WIDTH + 140, 40))
 
             if game_logic.game_over():
                 if not is_over:
