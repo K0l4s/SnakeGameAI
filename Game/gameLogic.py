@@ -144,7 +144,7 @@ class GameLogic:
         max_depth = 5
         solution = None
         
-        while solution is None and max_depth <= 1225:
+        while solution is None and max_depth <= 1050:
             solution = self.dfs(start, target, max_depth)
             max_depth += 1
         # print(max_depth)
@@ -324,7 +324,7 @@ class GameLogic:
         elif algorithm == "A star":
             return self.a_star(start, target)
         elif algorithm == "DFS":
-            return self.dfs(start, target, 1225)
+            return self.dfs(start, target, 1050)
         elif algorithm == "IDS":
             return self.ids(start, target)
         elif algorithm == "Beam":
