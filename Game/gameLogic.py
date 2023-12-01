@@ -95,7 +95,7 @@ class GameLogic:
                 self.visited_nodes.append(current)
             if current == target:
                 self.current_path = path if path else []
-                print(len(visited))
+                print(f"So dinh da duyet: {len(visited)}")
                 return path
 
             if target == self.snake.body[0]:
@@ -111,6 +111,8 @@ class GameLogic:
         
         return None
     def dfs(self, start, target, max_depth):
+        cf.start_time = pygame.time.get_ticks()
+
         visited = set()
         stack = [(start,[],0)]
         
@@ -125,7 +127,7 @@ class GameLogic:
                 
             if current == target:
                 self.current_path = path if path else []
-                print(len(visited))
+                print(f"So dinh da duyet: {len(visited)}")
                 return path
             
             visited.add(current)
@@ -163,7 +165,7 @@ class GameLogic:
 
             if current == target:
                 self.current_path = path if path else []
-                print(len(visited))
+                print(f"So dinh da duyet: {len(visited)}")
                 return path
 
             if current not in visited:
@@ -239,7 +241,7 @@ class GameLogic:
 
             if current == target:
                 self.current_path = path if path else []
-                print(len(visited))
+                print(f"So dinh da duyet: {len(visited)}")
                 return path
 
             if current not in visited:
@@ -267,7 +269,7 @@ class GameLogic:
                 
                 if current == target:
                     self.current_path = path if path else []
-                    print(len(visited))
+                    print(f"So dinh da duyet: {len(visited)}")
                     return path
 
                 if current not in visited:
