@@ -7,6 +7,7 @@ from queue import PriorityQueue
 from Graphics.background import Background
 bg = Background(cf.WIDTH, cf.HEIGHT)
 import heapq
+import time
 class GameLogic:
     def __init__(self, snake, width, height):
         self.snake = snake
@@ -32,6 +33,7 @@ class GameLogic:
         head = self.snake.move()
 
         if head == self.food.food:
+           
             self.food.is_eaten = True
             if self.is_on_music:
                 self.snake.play_crunch_sound()
@@ -89,6 +91,8 @@ class GameLogic:
                 self.visited_nodes.append(current)
             if current == target:
                 self.current_path = path if path else []
+                print(f'Số đỉnh đã duyệt: {len(visited)}') 
+                
                 return path
 
             if target == self.snake.body[0]:
@@ -104,6 +108,8 @@ class GameLogic:
         
         return None
     def dfs(self, start, target, max_depth):
+        cf.start_time = pygame.time.get_ticks()
+
         visited = set()
         stack = [(start,[],0)]
         
@@ -118,6 +124,11 @@ class GameLogic:
                 
             if current == target:
                 self.current_path = path if path else []
+                print(f'Số đỉnh đã duyệt: {len(visited)}')
+                cf.end_time = pygame.time.get_ticks()
+
+                cf.execution_time = cf.end_time - cf.start_time
+                print(f"thoi gian chay: {cf.execution_time}")
                 return path
             
             visited.add(current)
@@ -136,10 +147,10 @@ class GameLogic:
         max_depth = 5
         solution = None
         
-        while solution is None and max_depth <= 1225:
+        while solution is None and max_depth <= 1050:
             solution = self.dfs(start, target, max_depth)
             max_depth += 1
-        print(max_depth)
+        # print(max_depth)
         return solution
     
     def ucs(self, start, target):
@@ -155,6 +166,7 @@ class GameLogic:
 
             if current == target:
                 self.current_path = path if path else []
+                print(f'Số đỉnh đã duyệt: {len(visited)}')
                 return path
 
             if current not in visited:
@@ -185,6 +197,7 @@ class GameLogic:
 
             if current == target:
                 self.current_path = path if path else []
+                print(f'Số đỉnh đã duyệt: {len(visited)}')
                 return path
 
             if current not in visited:
@@ -216,6 +229,7 @@ class GameLogic:
 
             if current == target:
                 self.current_path = path if path else []
+                print(f'Số đỉnh đã duyệt: {len(visited)}')
                 return path
 
             if current not in visited:
@@ -243,6 +257,7 @@ class GameLogic:
                 
                 if current == target:
                     self.current_path = path if path else []
+                    print(f'Số đỉnh đã duyệt: {len(visited)}')
                     return path
 
                 if current not in visited:
@@ -298,7 +313,7 @@ class GameLogic:
         elif algorithm == "A star":
             return self.a_star(start, target)
         elif algorithm == "DFS":
-            return self.dfs(start, target, 1225)
+            return self.dfs(start, target, 1050)
         elif algorithm == "IDS":
             return self.ids(start, target)
         elif algorithm == "Beam":

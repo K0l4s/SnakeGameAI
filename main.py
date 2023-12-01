@@ -7,6 +7,7 @@ from Graphics.button import Button, RoundButton
 import Game.colors as color
 from Game.ranks import ranks
 import Game.config as cf
+import time
 pygame.init()
 
 WIDTH, HEIGHT = cf.WIDTH, cf.HEIGHT
@@ -198,11 +199,11 @@ def main():
                         if player_speed < 20:
                             player_speed += 5
                     elif btn_dec_AI_speed.collidepoint(event.pos) and setting_clicked:
-                        if AI_speed > 30:
-                            AI_speed -= 30
+                        if AI_speed > 15:
+                            AI_speed -= 10
                     elif btn_inc_AI_speed.collidepoint(event.pos) and setting_clicked:
                         if AI_speed < 90:
-                            AI_speed += 30
+                            AI_speed += 10
                     elif volume_slider.collidepoint(event.pos) and setting_clicked:
                             global current_volume
                             current_volume = (event.pos[0] - volume_slider.x) / volume_slider.width
@@ -312,11 +313,15 @@ def main():
             btn_setting.draw()
             btn_quit.draw()
         if using_algorithm:
-            if not game_logic.is_paused:
+            if not game_logic.is_paused and not game_logic.game_over():
                 if selected_algorithm == "BFS":
                     if not game_logic.path:
                         game_logic.reset_nodes()
+                        cf.start_time = time.time()
                         game_logic.simulate_algorithm(selected_algorithm)
+                        cf.end_time = time.time()
+                        cf.execution_time = cf.end_time - cf.start_time
+                        print(f"Thoi gian chay: {cf.execution_time}")
                     else:
                         game_logic.move_along_path()
         
