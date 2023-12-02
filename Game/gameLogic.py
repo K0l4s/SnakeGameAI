@@ -317,19 +317,18 @@ class GameLogic:
 
     def find_by_algorithm(self, start, target, algorithm):
         if algorithm == "BFS":
-        
             return self.bfs(start, target)
         elif algorithm == "UCS":
             return self.ucs(start, target)
-        elif algorithm == "Greedy":
+        elif algorithm == "GREEDY":
             return self.greedy(start, target)
-        elif algorithm == "A star":
+        elif algorithm == "ASTAR":
             return self.a_star(start, target)
         elif algorithm == "DFS":
             return self.dfs(start, target, 1050)
         elif algorithm == "IDS":
             return self.ids(start, target)
-        elif algorithm == "Beam":
+        elif algorithm == "BEAM":
             return self.beam_search(start, target, 10)
         
     def simulate_algorithm(self, algorithm):
