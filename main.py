@@ -34,6 +34,7 @@ score = 0
 default_font = pygame.font.Font(None, 35)
 font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 40)
 setting_font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 35)
+nums_font = pygame.font.Font("Resources/fonts/October Night.ttf", 30)
 
 btn_bfs_rect = pygame.Rect(SCREEN_WIDTH + 60, 70, 160, 60)
 btn_bfs = Button(window, btn_bfs_rect, "BFS", color.WHITE, font)
@@ -68,13 +69,13 @@ btn_setting = Button(window, btn_setting_rect, "SETTING", color.WHITE, font)
 btn_quit_rect = pygame.Rect(WIDTH //2 - 100, HEIGHT //2 - 50+ 140 , 200, 70)
 btn_quit = Button(window, btn_quit_rect, "QUIT", color.WHITE, font)
 
-btn_edit_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 - 20,  655, 160, 60)
+btn_edit_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 20,  655, 160, 60)
 btn_edit = Button(window, btn_edit_obstacles_rect, "Edit", color.GREEN, font)
 
-btn_clear_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 160, 655, 160, 60)
+btn_clear_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 190, 655, 160, 60)
 btn_clear = Button(window, btn_clear_obstacles_rect, "Clear", color.GREEN, font)
 
-btn_save_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 340, 655, 160, 60)
+btn_save_obstacles_rect = pygame.Rect(SCREEN_WIDTH // 3 + 360, 655, 160, 60)
 btn_save = Button(window, btn_save_obstacles_rect, "Save", color.GREEN, font)
 
 btn_music_toggle = RoundButton(window, (40, 685), 30, "Resources/btn_music.png")
@@ -354,79 +355,82 @@ def main():
             btn_setting.draw()
             btn_quit.draw()
         if using_algorithm:
-            if not game_logic.is_paused and not game_logic.game_over():
-                window.blit(font.render(f"SIMULATING: {selected_algorithm}", True, color.LIGHT_BLUE), (SCREEN_WIDTH + 70, 340))
-                if selected_algorithm == "BFS":
-                    if not game_logic.path:
-                        game_logic.reset_nodes()
-                        start = time.time()
-                        game_logic.simulate_algorithm(selected_algorithm)
-                        end = time.time()
-                        excu = end - start
-                        print("Thoi gian chay: ", excu)
-                    else:
-                        game_logic.move_along_path()
-        
-                elif selected_algorithm == "UCS":
-                    if not game_logic.path:
-                        game_logic.reset_nodes()
-                        start = time.time()
-                        game_logic.simulate_algorithm(selected_algorithm)
-                        end = time.time()
-                        excu = end - start 
-                        print("Thoi gian chay: ", excu)
-                    else:
-                        game_logic.move_along_path()
-                elif selected_algorithm == "ASTAR":
-                    if not game_logic.path:
-                        game_logic.reset_nodes()
-                        start = time.time()
-                        game_logic.simulate_algorithm(selected_algorithm)
-                        end = time.time()
-                        excu = end - start 
-                        print("Thoi gian chay: ", excu)
-                    else:
-                        game_logic.move_along_path()
-                elif selected_algorithm == "GREEDY":
-                    if not game_logic.path:
-                        game_logic.reset_nodes()
-                        start = time.time()
-                        game_logic.simulate_algorithm(selected_algorithm)
-                        end = time.time()
-                        excu = end - start 
-                        print("Thoi gian chay: ", excu)
-                    else:
-                        game_logic.move_along_path()
-                elif selected_algorithm == "DFS":
-                    if not game_logic.path:
-                        game_logic.reset_nodes()
-                        start = time.time()
-                        game_logic.simulate_algorithm(selected_algorithm)
-                        end = time.time()
-                        excu = end - start 
-                        print("Thoi gian chay: ", excu)
-                    else:
-                        game_logic.move_along_path()
-                elif selected_algorithm == "IDS":
-                    if not game_logic.path:
-                        game_logic.reset_nodes()
-                        start = time.time()
-                        game_logic.simulate_algorithm(selected_algorithm)
-                        end = time.time()
-                        excu = end - start 
-                        print("Thoi gian chay: ", excu)
-                    else:
-                        game_logic.move_along_path()
-                elif selected_algorithm == "BEAM":
-                    if not game_logic.path:
-                        game_logic.reset_nodes()
-                        start = time.time()
-                        game_logic.simulate_algorithm(selected_algorithm)
-                        end = time.time()
-                        excu = end - start 
-                        print("Thoi gian chay: ", excu)
-                    else:
-                        game_logic.move_along_path()
+            if not game_logic.game_over():
+                window.blit(nums_font.render(f"SIMULATING: {selected_algorithm}", True, color.LIGHT_BLUE), (SCREEN_WIDTH + 70, 350))
+                
+                if not game_logic.is_paused:
+                    if selected_algorithm == "BFS":
+                        if not game_logic.path:
+                            game_logic.reset_nodes()
+                            start = time.time()
+                            game_logic.simulate_algorithm(selected_algorithm)
+                            end = time.time()
+                            cf.time_exec = end - start
+                        else:
+                            game_logic.move_along_path()
+                    elif selected_algorithm == "UCS":
+                        if not game_logic.path:
+                            game_logic.reset_nodes()
+                            start = time.time()
+                            game_logic.simulate_algorithm(selected_algorithm)
+                            end = time.time()
+                            exec = end - start 
+                            cf.time_exec = end - start
+                        else:
+                            game_logic.move_along_path()
+                    elif selected_algorithm == "ASTAR":
+                        if not game_logic.path:
+                            game_logic.reset_nodes()
+                            start = time.time()
+                            game_logic.simulate_algorithm(selected_algorithm)
+                            end = time.time()
+                            exec = end - start 
+                            cf.time_exec = end - start
+                        else:
+                            game_logic.move_along_path()
+                    elif selected_algorithm == "GREEDY":
+                        if not game_logic.path:
+                            game_logic.reset_nodes()
+                            start = time.time()
+                            game_logic.simulate_algorithm(selected_algorithm)
+                            end = time.time()
+                            exec = end - start 
+                            cf.time_exec = end - start
+                        else:
+                            game_logic.move_along_path()
+                    elif selected_algorithm == "DFS":
+                        if not game_logic.path:
+                            game_logic.reset_nodes()
+                            start = time.time()
+                            game_logic.simulate_algorithm(selected_algorithm)
+                            end = time.time()
+                            exec = end - start 
+                            cf.time_exec = end - start
+                        else:
+                            game_logic.move_along_path()
+                    elif selected_algorithm == "IDS":
+                        if not game_logic.path:
+                            game_logic.reset_nodes()
+                            start = time.time()
+                            game_logic.simulate_algorithm(selected_algorithm)
+                            end = time.time()
+                            exec = end - start 
+                            cf.time_exec = end - start
+                        else:
+                            game_logic.move_along_path()
+                    elif selected_algorithm == "BEAM":
+                        if not game_logic.path:
+                            game_logic.reset_nodes()
+                            start = time.time()
+                            game_logic.simulate_algorithm(selected_algorithm)
+                            end = time.time()
+                            exec = end - start 
+                            cf.time_exec = end - start
+                        else:
+                            game_logic.move_along_path()
+                window.blit(nums_font.render(f"VISITED: {cf.total_visited}", True, color.LIGHT_BLUE), (SCREEN_WIDTH + 70, 390))
+                window.blit(nums_font.render(f"TIME: {cf.time_exec}", True, color.LIGHT_BLUE), (SCREEN_WIDTH + 70, 430))
+                    
 
         if setting_clicked:
             setting_rect = pygame.Surface((SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 100), pygame.SRCALPHA)
@@ -489,7 +493,9 @@ def main():
                 display_message(f"\nGAME OVER - Press SPACE to restart! \n Your scores: {score}",
                                     color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 170),
                                     highboard=highboard)    
-                
+
+            # window.blit(font.render(f"VISITED: {cf.visited}", True, color.LIGHT_BLUE), (SCREEN_WIDTH + 70, 380))
+
             window.blit(screen, (30, 30))
         
         #draw button (only on menu game)
