@@ -207,7 +207,7 @@ class GameLogic:
             if current == target:
                 path = self.reconstruct_path(came_from, current)
                 self.current_path = [move for (_, move, _) in path]
-                cf.total_visited = len(open_set.queue)
+                cf.total_visited = len(self.visited_nodes)
                 return [move for (_, move, _) in path]
 
            
