@@ -10,6 +10,9 @@ class Background:
         self.background_menu = pygame.image.load("Resources/main_background.jpg")
         self.background_menu = pygame.transform.scale(self.background_menu, (self.width, self.height))
 
+        self.logo_image = pygame.image.load("Resources/logo.png")
+        self.logo_image = pygame.transform.scale(self.logo_image, (60, 60))
+
         #Set icon
         icon = pygame.Surface((200,156))
         icon_image = pygame.image.load("Resources/snake_icon.ico")
@@ -26,8 +29,10 @@ class Background:
 
     def draw(self, window):
         window.blit(self.background_image, (0,0))
+
     def draw_menu(self,window):
         window.blit(self.background_menu, (0,0))
+
     def draw_border(self, window):
         for x in range(0, cf.SCREEN_WIDTH + 40, cf.GRID_SIZE):
             window.blit(self.block_image, (x + 10, 10))
@@ -35,6 +40,9 @@ class Background:
         for y in range(0, cf.SCREEN_HEIGHT, cf.GRID_SIZE):
             window.blit(self.block_image, (0 + 10, y + 30))
             window.blit(self.block_image, (cf.SCREEN_WIDTH + 30, y + 30))
+
+    def draw_logo(self, window):
+        window.blit(self.logo_image, (cf.WIDTH // 2 + 470, cf.HEIGHT // 2 + 280))
 
     def start_background_music(self):
         pygame.mixer.music.load("Resources/Sound/background_music.wav")

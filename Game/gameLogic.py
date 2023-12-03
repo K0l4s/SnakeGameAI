@@ -6,7 +6,8 @@ clock = pygame.time.Clock()
 from queue import PriorityQueue
 from Graphics.background import Background
 bg = Background(cf.WIDTH, cf.HEIGHT)
-import heapq
+from Game.obstacle import Obstacle
+
 class GameLogic:
     def __init__(self, snake, width, height):
         self.snake = snake
@@ -22,6 +23,11 @@ class GameLogic:
         self.is_paused = False
         self.visited_nodes = []
         self.current_path = []
+        self.font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 40)
+
+        # self.obstacles = [Obstacle(8,27),Obstacle(7,27),Obstacle(6,27), Obstacle(11, 22),Obstacle(11, 19),Obstacle(11, 21), Obstacle(3, 27), Obstacle(4, 27), Obstacle(5,27), Obstacle(11,20),
+        #                   Obstacle(11,23), Obstacle(11,24), Obstacle(11,25), Obstacle(11,26), Obstacle(11,27), Obstacle(11,28), Obstacle(11,29),
+        #                   Obstacle(11,18),Obstacle(11,17),Obstacle(11,16),Obstacle(11,15),Obstacle(10,15),Obstacle(9,15),Obstacle(6,15),Obstacle(5,15),Obstacle(4,15),Obstacle(3,15),Obstacle(7,15),Obstacle(8,15)]
     def toggle_pause(self):
         self.is_paused = not self.is_paused
         
@@ -32,6 +38,7 @@ class GameLogic:
         head = self.snake.move()
 
         if head == self.food.food:
+            
             self.food.is_eaten = True
             if self.is_on_music:
                 self.snake.play_crunch_sound()
@@ -79,6 +86,12 @@ class GameLogic:
         self.game_over_flag = False
         self.score = 0
         self.path = []
+        ob1 = self.get_obstacle((cf.SCREEN_WIDTH // cf.GRID_SIZE) // 2, (cf.SCREEN_HEIGHT // cf.GRID_SIZE) // 2)
+        if ob1 in self.obstacles:
+            self.remove_obstacles(ob1)
+        ob2 = self.get_obstacle(((cf.SCREEN_WIDTH // cf.GRID_SIZE) // 2) - 1, (cf.SCREEN_HEIGHT // cf.GRID_SIZE) // 2)
+        if ob2 in self.obstacles:
+            self.remove_obstacles(ob2)
 
     def bfs(self, start, target):
         visited = set()
@@ -89,6 +102,7 @@ class GameLogic:
                 self.visited_nodes.append(current)
             if current == target:
                 self.current_path = path if path else []
+                cf.total_visited = len(visited)
                 return path
 
             if target == self.snake.body[0]:
@@ -104,6 +118,8 @@ class GameLogic:
         
         return None
     def dfs(self, start, target, max_depth):
+        cf.start_time = pygame.time.get_ticks()
+
         visited = set()
         stack = [(start,[],0)]
         
@@ -118,6 +134,7 @@ class GameLogic:
                 
             if current == target:
                 self.current_path = path if path else []
+                cf.total_visited = len(visited)
                 return path
             
             visited.add(current)
@@ -136,10 +153,10 @@ class GameLogic:
         max_depth = 5
         solution = None
         
-        while solution is None and max_depth <= 1225:
+        while solution is None and max_depth <= 1050:
             solution = self.dfs(start, target, max_depth)
             max_depth += 1
-        print(max_depth)
+        # print(max_depth)
         return solution
     
     def ucs(self, start, target):
@@ -155,6 +172,7 @@ class GameLogic:
 
             if current == target:
                 self.current_path = path if path else []
+                cf.total_visited = len(visited)
                 return path
 
             if current not in visited:
@@ -172,35 +190,49 @@ class GameLogic:
     def heuristic(self, a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
     
-
+    def reconstruct_path(self,came_from, current_state):
+        path = []
+        while current_state is not None:
+            state, move, _ = came_from.get(current_state, (None, None, None))
+            if move is not None:
+                path.insert(0, (state, move, None))
+            current_state = state
+        return path
+    
     def a_star(self, start, target):
-        visited = set()
-        queue = [(0, start, [])]
-        
-        while queue:
-            cost, current, path = heapq.heappop(queue)
+        open_set = PriorityQueue()
+        open_set.put((0, start))  
+        came_from = {}
+        g_score = {start: 0}  
+        while not open_set.empty():
+            _, current = open_set.get()
             
             if current:
                 self.visited_nodes.append(current)
 
             if current == target:
-                self.current_path = path if path else []
-                return path
+                path = self.reconstruct_path(came_from, current)
+                self.current_path = [move for (_, move, _) in path]
+                cf.total_visited = len(self.visited_nodes)
+                return [move for (_, move, _) in path]
 
-            if current not in visited:
-                visited.add(current)
-                if target == self.snake.body[0]:
-                    for neighbor in self.get_valid_neighbors_new(current):
-                        new_cost = cost + 1
-                        priority = new_cost + self.heuristic(neighbor, target)
-                        heapq.heappush(queue, (priority, neighbor, path + [neighbor]))
-                else:
-                    for neighbor in self.get_valid_neighbors(current):
-                        new_cost = cost + 1
-                        priority = new_cost + self.heuristic(neighbor, target)
-                        heapq.heappush(queue, (priority, neighbor, path + [neighbor]))
-
-
+           
+            if target == self.snake.body[0]:
+                for neighbor in self.get_valid_neighbors_new(current):
+                    tentative_g_score = g_score[current] + 1 
+                    if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
+                        came_from[neighbor] = (current, neighbor, None)
+                        g_score[neighbor] = tentative_g_score
+                        f_score = tentative_g_score + self.heuristic(neighbor, target)
+                        open_set.put((f_score, neighbor))
+            else:
+                for neighbor in self.get_valid_neighbors(current):
+                    tentative_g_score = g_score[current] + 1 
+                    if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
+                        came_from[neighbor] = (current, neighbor, None)
+                        g_score[neighbor] = tentative_g_score
+                        f_score = tentative_g_score + self.heuristic(neighbor, target)
+                        open_set.put((f_score, neighbor))
         return None
     
     def greedy(self, start, target):
@@ -216,6 +248,7 @@ class GameLogic:
 
             if current == target:
                 self.current_path = path if path else []
+                cf.total_visited = len(visited)
                 return path
 
             if current not in visited:
@@ -243,6 +276,7 @@ class GameLogic:
                 
                 if current == target:
                     self.current_path = path if path else []
+                    cf.total_visited = len(visited)
                     return path
 
                 if current not in visited:
@@ -293,15 +327,15 @@ class GameLogic:
             return self.bfs(start, target)
         elif algorithm == "UCS":
             return self.ucs(start, target)
-        elif algorithm == "Greedy":
+        elif algorithm == "GREEDY":
             return self.greedy(start, target)
-        elif algorithm == "A star":
+        elif algorithm == "ASTAR":
             return self.a_star(start, target)
         elif algorithm == "DFS":
-            return self.dfs(start, target, 1225)
+            return self.dfs(start, target, 1050)
         elif algorithm == "IDS":
             return self.ids(start, target)
-        elif algorithm == "Beam":
+        elif algorithm == "BEAM":
             return self.beam_search(start, target, 10)
         
     def simulate_algorithm(self, algorithm):

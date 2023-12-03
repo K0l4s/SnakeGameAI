@@ -8,7 +8,7 @@ class Button:
         self.text_color = text_color
         self.font = font
         self.btn_image = pygame.image.load("Resources/btn_image.png")
-        self.btn_image = pygame.transform.scale(self.btn_image, (180, 60))
+        self.btn_image = pygame.transform.scale(self.btn_image, (160, 60))
         self.hover_image = self.create_hover_image(self.btn_image)
 
     def create_hover_image(self, image):

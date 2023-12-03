@@ -13,6 +13,7 @@ class Food:
         while True:
             x = random.randint(0, self.width - 1)
             y = random.randint(0, self.height - 1)
+            # (x,y) = (5,28)
             if (x, y) not in self.snake.body and (x, y) not in [(obstacle.x, obstacle.y) for obstacle in obstacles]:
                 self.food = (x, y)
                 break
