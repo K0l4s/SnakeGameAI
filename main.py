@@ -174,7 +174,7 @@ def main():
                         game_logic.restart_game()
                         game_logic.reset_nodes()
                         using_algorithm = False
-                    elif btn_edit_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
+                    elif btn_edit_obstacles_rect.collidepoint(event.pos) and not setting_clicked and not is_over:
                         is_creating = True
                         mouse_dragging= True
                         new_obstacle = None
@@ -224,7 +224,6 @@ def main():
                                     if btn_save_obstacles_rect.collidepoint(sub_event.pos):
                                         is_creating = False
                     elif btn_clear_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
-                        print("Clear")
                         game_logic.obstacles = []
                     elif btn_close.collidepoint(event.pos) and setting_clicked:
                         setting_clicked = False
@@ -262,7 +261,7 @@ def main():
                     elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
                         pygame.quit()
                         return 
-                    elif btn_music_toggle.collidepoint(event.pos):
+                    elif btn_music_toggle.collidepoint(event.pos) and not is_over:
                             if game_logic.is_on_music:
                                 btn_music_toggle.image = btn_music_mute.image
                                 background.pause_background_music()
@@ -272,7 +271,7 @@ def main():
                                 background.unpause_background_music()
                                 game_logic.is_on_music = True
                 
-                    elif btn_pause_toggle.collidepoint(event.pos):
+                    elif btn_pause_toggle.collidepoint(event.pos) and not is_over:
                         game_logic.toggle_pause()
                         if game_logic.is_paused:
                             btn_pause_toggle.image = btn_unpause.image
@@ -286,9 +285,10 @@ def main():
                     game_logic.snake.set_moving(True)
                     if event.key == pygame.K_SPACE:
                         if game_logic.game_over():
-                            if game_logic.is_paused:
-                                btn_music_toggle.image = btn_music.image
-                                background.unpause_background_music()
+                            # if game_logic.is_paused:
+                            btn_music_toggle.image = btn_music.image
+                            background.unpause_background_music()
+                            game_logic.is_on_music = True
                             is_over = False
                             using_algorithm = False
                             game_logic.reset_nodes()
@@ -374,7 +374,6 @@ def main():
                             start = time.time()
                             game_logic.simulate_algorithm(selected_algorithm)
                             end = time.time()
-                            exec = end - start 
                             cf.time_exec = end - start
                         else:
                             game_logic.move_along_path()
@@ -384,7 +383,6 @@ def main():
                             start = time.time()
                             game_logic.simulate_algorithm(selected_algorithm)
                             end = time.time()
-                            exec = end - start 
                             cf.time_exec = end - start
                         else:
                             game_logic.move_along_path()
@@ -394,7 +392,6 @@ def main():
                             start = time.time()
                             game_logic.simulate_algorithm(selected_algorithm)
                             end = time.time()
-                            exec = end - start 
                             cf.time_exec = end - start
                         else:
                             game_logic.move_along_path()
@@ -404,7 +401,6 @@ def main():
                             start = time.time()
                             game_logic.simulate_algorithm(selected_algorithm)
                             end = time.time()
-                            exec = end - start 
                             cf.time_exec = end - start
                         else:
                             game_logic.move_along_path()
@@ -414,7 +410,6 @@ def main():
                             start = time.time()
                             game_logic.simulate_algorithm(selected_algorithm)
                             end = time.time()
-                            exec = end - start 
                             cf.time_exec = end - start
                         else:
                             game_logic.move_along_path()
@@ -424,7 +419,6 @@ def main():
                             start = time.time()
                             game_logic.simulate_algorithm(selected_algorithm)
                             end = time.time()
-                            exec = end - start 
                             cf.time_exec = end - start
                         else:
                             game_logic.move_along_path()
