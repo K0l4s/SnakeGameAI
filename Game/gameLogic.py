@@ -7,8 +7,7 @@ from queue import PriorityQueue
 from Graphics.background import Background
 bg = Background(cf.WIDTH, cf.HEIGHT)
 from Game.obstacle import Obstacle
-import heapq
-import time
+
 class GameLogic:
     def __init__(self, snake, width, height):
         self.snake = snake
@@ -24,6 +23,8 @@ class GameLogic:
         self.is_paused = False
         self.visited_nodes = []
         self.current_path = []
+        self.font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 40)
+
         # self.obstacles = [Obstacle(8,27),Obstacle(7,27),Obstacle(6,27), Obstacle(11, 22),Obstacle(11, 19),Obstacle(11, 21), Obstacle(3, 27), Obstacle(4, 27), Obstacle(5,27), Obstacle(11,20),
         #                   Obstacle(11,23), Obstacle(11,24), Obstacle(11,25), Obstacle(11,26), Obstacle(11,27), Obstacle(11,28), Obstacle(11,29),
         #                   Obstacle(11,18),Obstacle(11,17),Obstacle(11,16),Obstacle(11,15),Obstacle(10,15),Obstacle(9,15),Obstacle(6,15),Obstacle(5,15),Obstacle(4,15),Obstacle(3,15),Obstacle(7,15),Obstacle(8,15)]
@@ -95,7 +96,7 @@ class GameLogic:
                 self.visited_nodes.append(current)
             if current == target:
                 self.current_path = path if path else []
-                print(f"So dinh da duyet: {len(visited)}")
+                cf.total_visited = len(visited)
                 return path
 
             if target == self.snake.body[0]:
@@ -127,7 +128,7 @@ class GameLogic:
                 
             if current == target:
                 self.current_path = path if path else []
-                print(f"So dinh da duyet: {len(visited)}")
+                cf.total_visited = len(visited)
                 return path
             
             visited.add(current)
@@ -165,7 +166,7 @@ class GameLogic:
 
             if current == target:
                 self.current_path = path if path else []
-                print(f"So dinh da duyet: {len(visited)}")
+                cf.total_visited = len(visited)
                 return path
 
             if current not in visited:
@@ -206,7 +207,7 @@ class GameLogic:
             if current == target:
                 path = self.reconstruct_path(came_from, current)
                 self.current_path = [move for (_, move, _) in path]
-                print(len(open_set.queue))
+                cf.total_visited = len(open_set.queue)
                 return [move for (_, move, _) in path]
 
            
@@ -241,7 +242,7 @@ class GameLogic:
 
             if current == target:
                 self.current_path = path if path else []
-                print(f"So dinh da duyet: {len(visited)}")
+                cf.total_visited = len(visited)
                 return path
 
             if current not in visited:
@@ -269,7 +270,7 @@ class GameLogic:
                 
                 if current == target:
                     self.current_path = path if path else []
-                    print(f"So dinh da duyet: {len(visited)}")
+                    cf.total_visited = len(visited)
                     return path
 
                 if current not in visited:
@@ -317,19 +318,18 @@ class GameLogic:
 
     def find_by_algorithm(self, start, target, algorithm):
         if algorithm == "BFS":
-        
             return self.bfs(start, target)
         elif algorithm == "UCS":
             return self.ucs(start, target)
-        elif algorithm == "Greedy":
+        elif algorithm == "GREEDY":
             return self.greedy(start, target)
-        elif algorithm == "A star":
+        elif algorithm == "ASTAR":
             return self.a_star(start, target)
         elif algorithm == "DFS":
             return self.dfs(start, target, 1050)
         elif algorithm == "IDS":
             return self.ids(start, target)
-        elif algorithm == "Beam":
+        elif algorithm == "BEAM":
             return self.beam_search(start, target, 10)
         
     def simulate_algorithm(self, algorithm):
