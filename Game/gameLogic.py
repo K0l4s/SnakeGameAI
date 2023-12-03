@@ -86,6 +86,12 @@ class GameLogic:
         self.game_over_flag = False
         self.score = 0
         self.path = []
+        ob1 = self.get_obstacle((cf.SCREEN_WIDTH // cf.GRID_SIZE) // 2, (cf.SCREEN_HEIGHT // cf.GRID_SIZE) // 2)
+        if ob1 in self.obstacles:
+            self.remove_obstacles(ob1)
+        ob2 = self.get_obstacle(((cf.SCREEN_WIDTH // cf.GRID_SIZE) // 2) - 1, (cf.SCREEN_HEIGHT // cf.GRID_SIZE) // 2)
+        if ob2 in self.obstacles:
+            self.remove_obstacles(ob2)
 
     def bfs(self, start, target):
         visited = set()
@@ -207,7 +213,7 @@ class GameLogic:
             if current == target:
                 path = self.reconstruct_path(came_from, current)
                 self.current_path = [move for (_, move, _) in path]
-                cf.total_visited = len(open_set.queue)
+                cf.total_visited = len(self.visited_nodes)
                 return [move for (_, move, _) in path]
 
            
