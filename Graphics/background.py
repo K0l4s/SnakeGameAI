@@ -21,7 +21,7 @@ class Background:
 
         self.image = pygame.image.load("Resources/background_rect.png")
         self.image = pygame.transform.scale(self.image, (40, 40))
-        #
+        # 
         self.block_image = pygame.image.load("Resources/block.jpg")
         self.block_image = pygame.transform.scale(self.block_image, (20, 20))
 

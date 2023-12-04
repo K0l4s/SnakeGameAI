@@ -283,7 +283,6 @@ def main():
                     game_logic.snake.set_moving(True)
                     if event.key == pygame.K_SPACE:
                         if game_logic.game_over():
-                            # if game_logic.is_paused:
                             btn_music_toggle.image = btn_music.image
                             background.unpause_background_music()
                             game_logic.is_on_music = True
@@ -485,8 +484,6 @@ def main():
                 display_message(f"\nGAME OVER - Press SPACE to restart! \n Your scores: {score}",
                                     color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 170),
                                     highboard=highboard)    
-
-            # window.blit(font.render(f"VISITED: {cf.visited}", True, color.LIGHT_BLUE), (SCREEN_WIDTH + 70, 380))
 
             window.blit(screen, (30, 30))
         

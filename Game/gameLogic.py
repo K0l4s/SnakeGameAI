@@ -25,9 +25,6 @@ class GameLogic:
         self.current_path = []
         self.font = pygame.font.Font("Resources/fonts/Coconut Cookies.ttf", 40)
 
-        # self.obstacles = [Obstacle(8,27),Obstacle(7,27),Obstacle(6,27), Obstacle(11, 22),Obstacle(11, 19),Obstacle(11, 21), Obstacle(3, 27), Obstacle(4, 27), Obstacle(5,27), Obstacle(11,20),
-        #                   Obstacle(11,23), Obstacle(11,24), Obstacle(11,25), Obstacle(11,26), Obstacle(11,27), Obstacle(11,28), Obstacle(11,29),
-        #                   Obstacle(11,18),Obstacle(11,17),Obstacle(11,16),Obstacle(11,15),Obstacle(10,15),Obstacle(9,15),Obstacle(6,15),Obstacle(5,15),Obstacle(4,15),Obstacle(3,15),Obstacle(7,15),Obstacle(8,15)]
     def toggle_pause(self):
         self.is_paused = not self.is_paused
         
@@ -156,7 +153,6 @@ class GameLogic:
         while solution is None and max_depth <= 1050:
             solution = self.dfs(start, target, max_depth)
             max_depth += 1
-        # print(max_depth)
         return solution
     
     def ucs(self, start, target):
