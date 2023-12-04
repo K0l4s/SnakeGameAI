@@ -275,10 +275,8 @@ def main():
                         game_logic.toggle_pause()
                         if game_logic.is_paused:
                             btn_pause_toggle.image = btn_unpause.image
-                            print("Paused")
                         else: 
                             btn_pause_toggle.image = btn_pause.image
-                            print("Unpaused")
             
             if playing:
                 if event.type == pygame.KEYDOWN and not game_logic.is_paused:
