@@ -336,7 +336,7 @@ class GameLogic:
         elif algorithm == "IDS":
             return self.ids(start, target)
         elif algorithm == "BEAM":
-            return self.beam_search(start, target, 10)
+            return self.beam_search(start, target, 30)
         
     def simulate_algorithm(self, algorithm):
         if not self.game_over():
