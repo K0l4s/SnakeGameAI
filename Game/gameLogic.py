@@ -6,7 +6,6 @@ clock = pygame.time.Clock()
 from queue import PriorityQueue
 from Graphics.background import Background
 bg = Background(cf.WIDTH, cf.HEIGHT)
-from Game.obstacle import Obstacle
 
 class GameLogic:
     def __init__(self, snake, width, height):
