@@ -6,6 +6,7 @@ clock = pygame.time.Clock()
 from queue import PriorityQueue
 from Graphics.background import Background
 bg = Background(cf.WIDTH, cf.HEIGHT)
+from Game.obstacle import Obstacle
 
 class GameLogic:
     def __init__(self, snake, width, height):
@@ -13,7 +14,9 @@ class GameLogic:
         self.width = width
         self.height = height
         self.food = Food(width, height, snake)
-        self.obstacles = []
+        self.obstacles = [Obstacle(10,20), Obstacle(12,14), Obstacle(13,14), Obstacle(14,14), 
+                          Obstacle(24,12), Obstacle(26,12), Obstacle(18,20), Obstacle(19, 20), Obstacle(20, 20),
+                          Obstacle(5,4), Obstacle(5,6), Obstacle(10, 11), Obstacle(11, 11), Obstacle(12,11)]
         self.game_over_flag = False
         self.score = 0
         self.path = []

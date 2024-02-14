@@ -12,6 +12,11 @@ class Background:
 
         self.logo_image = pygame.image.load("Resources/logo.png")
         self.logo_image = pygame.transform.scale(self.logo_image, (60, 60))
+        
+        pygame.font.init()
+        self.font = pygame.font.Font("Resources/fonts/October Night.ttf", 25)
+
+        self.version = "v1.0"
 
         #Set icon
         icon = pygame.Surface((200,156))
@@ -25,7 +30,8 @@ class Background:
         self.block_image = pygame.image.load("Resources/block.jpg")
         self.block_image = pygame.transform.scale(self.block_image, (20, 20))
 
-        self.background_music_volume = 0.1
+        self.background_music_volume = 0.05
+
 
     def draw(self, window):
         window.blit(self.background_image, (0,0))
@@ -43,9 +49,12 @@ class Background:
 
     def draw_logo(self, window):
         window.blit(self.logo_image, (cf.WIDTH // 2 + 470, cf.HEIGHT // 2 + 280))
+        text_surface = self.font.render(self.version, True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(cf.WIDTH // 2 + 450, cf.HEIGHT // 2 + 325))
+        window.blit(text_surface, text_rect)
 
     def start_background_music(self):
-        pygame.mixer.music.load("Resources/Sound/background_music.wav")
+        pygame.mixer.music.load("Resources/Sound/background_music.ogg")
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(self.background_music_volume)
 

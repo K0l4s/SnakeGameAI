@@ -1,30 +1,29 @@
 import os
-import pandas as pd
+from openpyxl import Workbook, load_workbook
 
 class ranks:
-    def __init__(self,score):
+    def __init__(self, score):
         self.score = score
 
-    def high_score(self,score):
+    def high_score(self):
         file_path = 'ranks.xlsx'
 
         if not os.path.exists(file_path):
-            df = pd.DataFrame(columns=['High score'])
-            df.to_excel(file_path, index=False)
+            wb = Workbook()
+            ws = wb.active
+            ws.append(['High score'])
+            wb.save(file_path)
 
-        try:
-            df = pd.read_excel(file_path)
-        except FileNotFoundError:
-            df = pd.DataFrame(columns=['High score'])
-        
-        if self.score > 0:
-            if not df['High score'].isin([self.score]).any():
-                new_row = pd.DataFrame({'High score': [self.score]})
-                df = pd.concat([new_row, df], ignore_index=True)
+        wb = load_workbook(file_path)
+        ws = wb.active
+        scores = [cell.value for cell in ws['A'][1:]]
 
-                df = df.sort_values(by='High score', ascending=False).reset_index(drop=True)
+        if self.score > 0 and self.score not in scores:
+            ws.insert_rows(2)
+            ws['A2'] = self.score
 
-        df = df.iloc[:10]
-        df.to_excel(file_path, index=False)
-        return df.head(10)
-    
+        scores.sort(reverse=True)
+        scores = scores[:10]
+        wb.save(file_path)
+
+        return scores

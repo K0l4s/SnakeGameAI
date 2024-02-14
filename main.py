@@ -5,9 +5,13 @@ from Game.gameLogic import GameLogic
 from Graphics.background import Background
 from Graphics.button import Button, RoundButton
 import Game.colors as color
-from Game.ranks import ranks
+# from Game.ranks import ranks
+from Game.scoreManager import ScoreManager
+
 import Game.config as cf
 import time as time
+import asyncio
+
 pygame.init()
 
 WIDTH, HEIGHT = cf.WIDTH, cf.HEIGHT
@@ -133,7 +137,7 @@ def display_message(message, color, screen, position, highboard=None):
             screen.blit(high_scores_text, high_scores_rect)
         display_message("--------------------------------", color, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 160), highboard=None) 
 
-def main():
+async def main():
     global player_speed, AI_speed
     playing = False
     start = False
@@ -145,6 +149,7 @@ def main():
     mouse_dragging = False
     last_obstacle_x, last_obstacle_y = None, None
     background.start_background_music()
+    score_Manager = ScoreManager()
     global current_skin_index
     while True:
         background.draw_menu(window)
@@ -174,57 +179,58 @@ def main():
                         game_logic.restart_game()
                         game_logic.reset_nodes()
                         using_algorithm = False
-                    elif btn_edit_obstacles_rect.collidepoint(event.pos) and not setting_clicked and not is_over:
-                        is_creating = True
-                        mouse_dragging= True
-                        new_obstacle = None
-                        while is_creating:
-                            for sub_event in pygame.event.get():
-                                if sub_event.type == pygame.QUIT:
-                                    pygame.quit()
-                                    return
-                                elif sub_event.type == pygame.MOUSEBUTTONDOWN and sub_event.button == 1:
-                                    obstacle_x = (sub_event.pos[0] - 30) // GRID_SIZE
-                                    obstacle_y = (sub_event.pos[1] - 30) // GRID_SIZE
-                                    if (0 <= obstacle_x < SCREEN_WIDTH // GRID_SIZE) and (0 <= obstacle_y < SCREEN_HEIGHT // GRID_SIZE):
-                                        obstacle_at_pos = game_logic.get_obstacle(obstacle_x,obstacle_y)
-                                        if obstacle_at_pos:
-                                            game_logic.remove_obstacles(obstacle_at_pos)
-                                        elif (obstacle_x,obstacle_y) not in game_logic.obstacles \
-                                            and (obstacle_x,obstacle_y) not in snake.body and (obstacle_x,obstacle_y) != food.food:
-                                            new_obstacle = Obstacle(obstacle_x, obstacle_y)
-                                            game_logic.obstacles.append(new_obstacle)
+                    # elif btn_edit_obstacles_rect.collidepoint(event.pos) and not setting_clicked and not is_over:
+                    #     is_creating = True
+                    #     mouse_dragging= True
+                    #     new_obstacle = None
+                    #     while is_creating:
+                    #         print("Editing23")
+                    #         for sub_event in pygame.event.get():
+                    #             if sub_event.type == pygame.QUIT:
+                    #                 pygame.quit()
+                    #                 return
+                    #             elif sub_event.type == pygame.MOUSEBUTTONDOWN and sub_event.button == 1:
+                    #                 obstacle_x = (sub_event.pos[0] - 30) // GRID_SIZE
+                    #                 obstacle_y = (sub_event.pos[1] - 30) // GRID_SIZE
+                    #                 if (0 <= obstacle_x < SCREEN_WIDTH // GRID_SIZE) and (0 <= obstacle_y < SCREEN_HEIGHT // GRID_SIZE):
+                    #                     obstacle_at_pos = game_logic.get_obstacle(obstacle_x,obstacle_y)
+                    #                     if obstacle_at_pos:
+                    #                         game_logic.remove_obstacles(obstacle_at_pos)
+                    #                     elif (obstacle_x,obstacle_y) not in game_logic.obstacles \
+                    #                         and (obstacle_x,obstacle_y) not in snake.body and (obstacle_x,obstacle_y) != food.food:
+                    #                         new_obstacle = Obstacle(obstacle_x, obstacle_y)
+                    #                         game_logic.obstacles.append(new_obstacle)
                                             
-                                            obstacle_rect = new_obstacle.image.get_rect(topleft=(30 + new_obstacle.x * GRID_SIZE, 
-                                                                                                    30 + new_obstacle.y * GRID_SIZE))
-                                            window.blit(new_obstacle.image, obstacle_rect)
-                                            pygame.display.update(obstacle_rect)
-                                    if btn_save_obstacles_rect.collidepoint(sub_event.pos):
-                                        is_creating = False
-                                elif sub_event.type == pygame.MOUSEMOTION and sub_event.buttons[0] == 1 and mouse_dragging:
-                                    obstacle_x = (sub_event.pos[0] - 30) // GRID_SIZE
-                                    obstacle_y = (sub_event.pos[1] - 30) // GRID_SIZE
-                                    if (obstacle_x, obstacle_y) != (last_obstacle_x, last_obstacle_y):
-                                        if (0 <= obstacle_x < SCREEN_WIDTH // GRID_SIZE) and (0 <= obstacle_y < SCREEN_HEIGHT // GRID_SIZE):
-                                            obstacle_at_pos = game_logic.get_obstacle(obstacle_x,obstacle_y)
-                                            if obstacle_at_pos:
-                                                game_logic.remove_obstacles(obstacle_at_pos)
-                                            elif (obstacle_x,obstacle_y) not in game_logic.obstacles \
-                                                and (obstacle_x,obstacle_y) not in snake.body and (obstacle_x,obstacle_y) != food.food:
-                                                new_obstacle = Obstacle(obstacle_x, obstacle_y)
-                                                game_logic.obstacles.append(new_obstacle)
+                    #                         obstacle_rect = new_obstacle.image.get_rect(topleft=(30 + new_obstacle.x * GRID_SIZE, 
+                    #                                                                                 30 + new_obstacle.y * GRID_SIZE))
+                    #                         window.blit(new_obstacle.image, obstacle_rect)
+                    #                         pygame.display.update(obstacle_rect)
+                    #                 if btn_save_obstacles_rect.collidepoint(sub_event.pos):
+                    #                     is_creating = False
+                    #             elif sub_event.type == pygame.MOUSEMOTION and sub_event.buttons[0] == 1 and mouse_dragging:
+                    #                 obstacle_x = (sub_event.pos[0] - 30) // GRID_SIZE
+                    #                 obstacle_y = (sub_event.pos[1] - 30) // GRID_SIZE
+                    #                 if (obstacle_x, obstacle_y) != (last_obstacle_x, last_obstacle_y):
+                    #                     if (0 <= obstacle_x < SCREEN_WIDTH // GRID_SIZE) and (0 <= obstacle_y < SCREEN_HEIGHT // GRID_SIZE):
+                    #                         obstacle_at_pos = game_logic.get_obstacle(obstacle_x,obstacle_y)
+                    #                         if obstacle_at_pos:
+                    #                             game_logic.remove_obstacles(obstacle_at_pos)
+                    #                         elif (obstacle_x,obstacle_y) not in game_logic.obstacles \
+                    #                             and (obstacle_x,obstacle_y) not in snake.body and (obstacle_x,obstacle_y) != food.food:
+                    #                             new_obstacle = Obstacle(obstacle_x, obstacle_y)
+                    #                             game_logic.obstacles.append(new_obstacle)
                                                 
-                                                obstacle_rect = new_obstacle.image.get_rect(topleft=(30 + new_obstacle.x * GRID_SIZE, 
-                                                                                                        30 + new_obstacle.y * GRID_SIZE))
-                                                window.blit(new_obstacle.image, obstacle_rect)
-                                                pygame.display.update(obstacle_rect)
-                                            elif sub_event.type == pygame.MOUSEBUTTONUP and sub_event.button == 1:
-                                                mouse_dragging = False
-                                        last_obstacle_x, last_obstacle_y = obstacle_x, obstacle_y
-                                    if btn_save_obstacles_rect.collidepoint(sub_event.pos):
-                                        is_creating = False
-                    elif btn_clear_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
-                        game_logic.obstacles = []
+                    #                             obstacle_rect = new_obstacle.image.get_rect(topleft=(30 + new_obstacle.x * GRID_SIZE, 
+                    #                                                                                     30 + new_obstacle.y * GRID_SIZE))
+                    #                             window.blit(new_obstacle.image, obstacle_rect)
+                    #                             pygame.display.update(obstacle_rect)
+                    #                         elif sub_event.type == pygame.MOUSEBUTTONUP and sub_event.button == 1:
+                    #                             mouse_dragging = False
+                    #                     last_obstacle_x, last_obstacle_y = obstacle_x, obstacle_y
+                    #                 if btn_save_obstacles_rect.collidepoint(sub_event.pos):
+                    #                     is_creating = False
+                    # elif btn_clear_obstacles_rect.collidepoint(event.pos) and not setting_clicked:
+                    #     game_logic.obstacles = []
                     elif btn_close.collidepoint(event.pos) and setting_clicked:
                         setting_clicked = False
                     elif btn_dec_player_speed.collidepoint(event.pos) and setting_clicked:
@@ -258,9 +264,9 @@ def main():
                         if current_skin_index < 3:
                             current_skin_index += 1
                         snake.change_skin(current_skin_index)
-                    elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
-                        pygame.quit()
-                        return 
+                    # elif btn_quit_rect.collidepoint(event.pos) and not playing and not setting_clicked:
+                    #     # pygame.quit()
+                    #     return 
                     elif btn_music_toggle.collidepoint(event.pos) and not is_over:
                             if game_logic.is_on_music:
                                 btn_music_toggle.image = btn_music_mute.image
@@ -342,15 +348,15 @@ def main():
             btn_dec_AI_speed_ingame.draw()
             btn_inc_AI_speed_ingame.draw()
             btn_exit.draw()            
-            btn_edit.draw()
-            btn_clear.draw()
-            btn_save.draw()
+            # btn_edit.draw()
+            # btn_clear.draw()
+            # btn_save.draw()
             background.draw_logo(window)
             
         if not start:
             btn_start.draw()
             btn_setting.draw()
-            btn_quit.draw()
+            # btn_quit.draw()
         if using_algorithm:
             if not game_logic.game_over():
                 window.blit(nums_font.render(f"SIMULATING: {selected_algorithm}", True, color.LIGHT_BLUE), (SCREEN_WIDTH + 70, 350))
@@ -474,16 +480,16 @@ def main():
             if game_logic.game_over():
                 if not is_over:
                     background.pause_background_music()
-                    rank = ranks(score)
-                    high_scores = rank.high_score(score)
-                    highboard = '\n'.join(high_scores['High score'].astype(str))
+                    score_Manager.add_score(score)
+                    high_scores = score_Manager.get_high_scores()
                     is_over = True
+
                 screen.fill(color.BLACK)
                 display_message("HIGH SCORES", color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 250), highboard=None) 
                 display_message("--------------------------------", color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 205), highboard=None) 
                 display_message(f"\nGAME OVER - Press SPACE to restart! \n Your scores: {score}",
                                     color.RED, screen, (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 170),
-                                    highboard=highboard)    
+                                    highboard='\n'.join(map(str, high_scores)))    
 
             window.blit(screen, (30, 30))
         
@@ -498,6 +504,10 @@ def main():
             clock.tick(AI_speed)
         else:
             clock.tick(player_speed)
+        await asyncio.sleep(0)
+# if __name__ == "__main__":
+#     main()
 
-if __name__ == "__main__":
-    main()
+asyncio.run(main())
+
+
